@@ -86,14 +86,21 @@
       </div>
     </section>
 
-    <section id="demo" class="mb-28">
-      <div class="glass rounded-3xl p-4 md:p-6 overflow-hidden">
-        <div class="aspect-video rounded-2xl overflow-hidden bg-black/40 flex items-center justify-center text-slate-400 text-center p-10">
-          Replace this section with your demo GIF or screen recording.<br /><br />
-          Example: before/after browsing with GoPeek.
-        </div>
-      </div>
-    </section>
+  <section id="demo" class="mb-28">
+  <div class="glass rounded-3xl p-4 md:p-6 overflow-hidden">
+    <video
+      controls
+      autoplay
+      muted
+      loop
+      class="w-full rounded-2xl"
+      style="max-height: 540px; background: #000;"
+    >
+      <source src="gopeek_demo.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</section>
 
     <section class="grid md:grid-cols-3 gap-6 mb-28">
 
