@@ -401,15 +401,49 @@
 
             </div>
 
-            <div class="glass rounded-3xl p-4 md:p-6">
+            <div class="glass rounded-3xl p-4 md:p-6 relative group">
 
-                <video controls autoplay muted loop
-                    class="w-full rounded-2xl border border-slate-200 aspect-video object-cover">
+                <div class="overflow-hidden w-full rounded-2xl border border-slate-200">
 
-                    <source src="GoPeek Demo Reddit 1.4.mp4" type="video/mp4" />
+                    <div id="video-track"
+                        class="flex transition-transform duration-500 ease-in-out w-full">
 
-                </video>
+                        <div class="w-full shrink-0 bg-black">
+                            <video controls autoplay muted loop
+                                class="w-full rounded-2xl aspect-video object-cover">
+                                <source src="GoPeek Demo Reddit 1.4.mp4" type="video/mp4" />
+                            </video>
+                        </div>
 
+                        <div class="w-full shrink-0 bg-black">
+                            <video controls muted loop
+                                class="w-full rounded-2xl aspect-video object-cover">
+                                <source src="gopeak_demo_long.mp4" type="video/mp4" />
+                            </video>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button onclick="prevVideo()"
+                    class="carousel-button absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 w-12 h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    ←
+                </button>
+
+                <button onclick="nextVideo()"
+                    class="carousel-button absolute right-8 top-1/2 -translate-y-1/2 text-slate-800 w-12 h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    →
+                </button>
+
+            </div>
+
+            <div class="flex justify-center gap-3 mt-6">
+                <button onclick="goToVideo(0)"
+                    class="vid-dot w-3 h-3 rounded-full bg-slate-800 transition-colors"></button>
+
+                <button onclick="goToVideo(1)"
+                    class="vid-dot w-3 h-3 rounded-full bg-slate-300 transition-colors"></button>
             </div>
 
         </section>
@@ -698,6 +732,38 @@
 
             updateImageSlider();
 
+        }
+
+        // --- Video Slider Logic ---
+        let currentVideo = 0;
+        const totalVideos = 2;
+        const videoTrack = document.getElementById('video-track');
+        const videoDots = document.querySelectorAll('.vid-dot');
+
+        function updateVideoSlider() {
+            videoTrack.style.transform = `translateX(-${currentVideo * 100}%)`;
+            videoDots.forEach((dot, index) => {
+                if (index === currentVideo) {
+                    dot.classList.replace('bg-slate-300', 'bg-slate-800');
+                } else {
+                    dot.classList.replace('bg-slate-800', 'bg-slate-300');
+                }
+            });
+        }
+
+        function nextVideo() {
+            currentVideo = (currentVideo + 1) % totalVideos;
+            updateVideoSlider();
+        }
+
+        function prevVideo() {
+            currentVideo = (currentVideo - 1 + totalVideos) % totalVideos;
+            updateVideoSlider();
+        }
+
+        function goToVideo(index) {
+            currentVideo = index;
+            updateVideoSlider();
         }
 
         // --- Image Modal Logic ---
