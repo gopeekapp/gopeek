@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoPeek — Preview Links Instantly</title>
+  <meta
+    name="description"
+    content="Preview links instantly without opening new tabs. Reduce tab chaos and browse faster without losing your place."
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #0b1020;
+      overflow-x: hidden;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #ffffff, #8ab4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[400px] h-[400px] bg-blue-500/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[420px] h-[420px] bg-indigo-500/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-lg font-bold">
+        G
+      </div>
+      <span class="text-xl font-semibold">GoPeek</span>
+    </div>
+
+    <a
+      href="#waitlist"
+      class="glass px-5 py-2 rounded-xl hover:bg-white/10 transition"
+    >
+      Get Early Access
+    </a>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 pt-10 pb-24">
+
+    <section class="text-center max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full text-sm text-blue-100 mb-8">
+        Chrome Extension • Coming Soon
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6 gradient-text">
+        Preview links instantly without opening new tabs.
+      </h1>
+
+      <p class="text-lg md:text-xl text-slate-300 leading-relaxed max-w-3xl mx-auto mb-10">
+        GoPeek lets you preview links in floating mini windows so you can browse faster,
+        reduce tab chaos, and never lose your place while researching.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <a
+          href="#waitlist"
+          class="bg-white text-black px-7 py-4 rounded-2xl font-semibold hover:scale-[1.02] transition"
+        >
+          Join Early Access
+        </a>
+
+        <a
+          href="#demo"
+          class="glass px-7 py-4 rounded-2xl font-semibold hover:bg-white/10 transition"
+        >
+          Watch Demo
+        </a>
+      </div>
+    </section>
+
+    <section id="demo" class="mb-28">
+      <div class="glass rounded-3xl p-4 md:p-6 overflow-hidden">
+        <div class="aspect-video rounded-2xl overflow-hidden bg-black/40 flex items-center justify-center text-slate-400 text-center p-10">
+          Replace this section with your demo GIF or screen recording.<br /><br />
+          Example: before/after browsing with GoPeek.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid md:grid-cols-3 gap-6 mb-28">
+
+      <div class="glass rounded-3xl p-7">
+        <div class="text-3xl mb-4">⚡</div>
+        <h3 class="text-2xl font-bold mb-3">Instant Peeking</h3>
+        <p class="text-slate-300 leading-relaxed">
+          Hold Shift and hover any link to instantly preview it without leaving your current page.
+        </p>
+      </div>
+
+      <div class="glass rounded-3xl p-7">
+        <div class="text-3xl mb-4">🧠</div>
+        <h3 class="text-2xl font-bold mb-3">Keep Context</h3>
+        <p class="text-slate-300 leading-relaxed">
+          No more opening 20 tabs just to quickly inspect GitHub repos, docs, or references.
+        </p>
+      </div>
+
+      <div class="glass rounded-3xl p-7">
+        <div class="text-3xl mb-4">🪄</div>
+        <h3 class="text-2xl font-bold mb-3">Smooth Workflow</h3>
+        <p class="text-slate-300 leading-relaxed">
+          Built for developers, researchers, students, and anyone tired of browser chaos.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="mb-28">
+      <div class="text-center mb-10">
+        <h2 class="text-4xl font-black mb-4">Perfect For</h2>
+        <p class="text-slate-400 text-lg">
+          The people who live inside their browser.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <div class="glass rounded-2xl p-6 text-center">
+          <div class="text-3xl mb-3">💻</div>
+          <div class="font-semibold text-lg">Developers</div>
+        </div>
+
+        <div class="glass rounded-2xl p-6 text-center">
+          <div class="text-3xl mb-3">📚</div>
+          <div class="font-semibold text-lg">Researchers</div>
+        </div>
+
+        <div class="glass rounded-2xl p-6 text-center">
+          <div class="text-3xl mb-3">🎓</div>
+          <div class="font-semibold text-lg">Students</div>
+        </div>
+
+        <div class="glass rounded-2xl p-6 text-center">
+          <div class="text-3xl mb-3">🧭</div>
+          <div class="font-semibold text-lg">Tab Explorers</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="waitlist" class="glass rounded-[2rem] p-10 md:p-14 text-center max-w-4xl mx-auto">
+      <h2 class="text-4xl md:text-5xl font-black mb-5">
+        Be First To Try GoPeek
+      </h2>
+
+      <p class="text-slate-300 text-lg leading-relaxed max-w-2xl mx-auto mb-10">
+        The first public version is almost ready. Join the waitlist and get early access when GoPeek launches.
+      </p>
+
+      <form class="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+        <input
+          type="email"
+          placeholder="Enter your email"
+          class="flex-1 px-6 py-4 rounded-2xl bg-white/10 border border-white/10 outline-none placeholder:text-slate-400"
+        />
+
+        <button
+          type="submit"
+          class="bg-white text-black px-8 py-4 rounded-2xl font-semibold hover:scale-[1.02] transition"
+        >
+          Join Waitlist
+        </button>
+      </form>
+
+      <p class="text-slate-500 text-sm mt-5">
+        No spam. Just launch updates.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      © 2026 GoPeek
+    </div>
+
+    <div class="flex items-center gap-5">
+      <a href="#" class="hover:text-white transition">Twitter</a>
+      <a href="#" class="hover:text-white transition">GitHub</a>
+      <a href="#" class="hover:text-white transition">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>
