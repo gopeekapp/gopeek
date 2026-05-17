@@ -81,23 +81,29 @@
       </div>
 
       <div>
-        <h2 class="text-xl font-bold mb-2">How It Works</h2>
+        <h2 class="text-xl font-bold mb-2">How It Works (Local Processing)</h2>
         <p class="text-slate-600 leading-relaxed">
-          When you preview a link, the page is loaded locally inside your browser using an embedded frame. All processing happens on your device.
+          When you preview a link, the page is loaded locally inside your browser using an embedded frame. All processing happens on your device. Your custom settings (like window size and UI preferences) are saved locally on your machine using Chrome's built-in local storage and are never synced externally.
         </p>
       </div>
 
       <div>
-        <h2 class="text-xl font-bold mb-2">Permissions</h2>
-        <p class="text-slate-600 leading-relaxed">
-          The extension may request access to all websites to enable instant link previews. These permissions are used only for rendering preview windows and not for collecting data.
-        </p>
-      </div>
+  <h2 class="text-xl font-bold mb-2">Permissions Justification</h2>
+  <p class="text-slate-600 leading-relaxed">
+    To provide instant link previews, GoPeek requires limited browser permissions:
+  </p>
+
+  <ul class="list-disc ml-5 mt-2 text-slate-600 space-y-1">
+    <li><strong>All Websites:</strong> Required to enable link preview functionality across websites the user actively browses.</li>
+
+    <li><strong>Declarative Net Request:</strong> Required to enable embedding of websites that otherwise block iframe display using standard browser security headers (including X-Frame-Options and frame-ancestors). This is applied only to previewed links and does not monitor browsing activity.</li>
+  </ul>
+</div>
 
       <div>
         <h2 class="text-xl font-bold mb-2">Third-Party Websites</h2>
         <p class="text-slate-600 leading-relaxed">
-          GoPeek displays third-party websites inside a preview window. We are not responsible for the content or privacy practices of those external sites.
+          GoPeek securely displays third-party websites inside its preview window. We are not responsible for the content, cookies, or privacy practices of the external sites you choose to preview.
         </p>
       </div>
 
