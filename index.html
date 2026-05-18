@@ -2,796 +2,965 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GoPeek — Preview Links Instantly</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoPeek — Preview Links Instantly</title>
 
-    <meta name="description"
-        content="Preview links instantly without opening new tabs. Reduce tab chaos and browse faster without losing your place." />
-        
-    <!-- Added Favicon -->
-    <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <meta name="description"
+    content="Open links in interactive mini browser windows without creating new tabs. Browse, compare, and multitask without losing context." />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Privacy-friendly analytics by Plausible -->
-    <script async src="https://plausible.io/js/pa-EOrq04ta7jd37GbjefEoD.js"></script>
-    <script>
-      window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-      plausible.init()
-    </script>
+  <!-- Added Favicon -->
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
 
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script async src="https://plausible.io/js/pa-EOrq04ta7jd37GbjefEoD.js"></script>
+  <script>
+    window.plausible = window.plausible || function () { (plausible.q = plausible.q || []).push(arguments) }, plausible.init = plausible.init || function (i) { plausible.o = i || {} };
+    plausible.init()
+  </script>
 
-        body {
-            background: #f8fafc;
-            overflow-x: hidden;
-        }
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-        }
+    body {
+      background: #f8fafc;
+      overflow-x: hidden;
+    }
 
-        .gradient-text {
-            background: linear-gradient(to right, #0f172a, #2563eb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
 
-        .carousel-button {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        .carousel-button:hover {
-            background: rgba(255, 255, 255, 1);
-            transform: scale(1.05);
-        }
+    .carousel-button {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
 
-        .feature-image {
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.06);
-            margin-bottom: 18px;
-            background: #f1f5f9;
-        }
+    .carousel-button:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.05);
+    }
 
-        .feature-image img {
-            width: 100%;
-            height: 200px; /* Fixed height for cards */
-            object-fit: cover; /* Cover total image properly for small cards */
-            display: block;
-            cursor: pointer;
-            transition: opacity 0.2s ease, transform 0.3s ease;
-        }
+    .feature-image {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      margin-bottom: 18px;
+      background: #f1f5f9;
+    }
 
-        .feature-image img:hover {
-            opacity: 0.9;
-        }
+    .feature-image img {
+      width: 100%;
+      height: 200px;
+      /* Fixed height for cards */
+      object-fit: cover;
+      /* Cover total image properly for small cards */
+      display: block;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.3s ease;
+    }
 
-        /* Modal specific */
-        #mediaModal video, #mediaModal img {
-            max-height: 85vh;
-            max-width: 90vw;
-        }
+    .feature-image img:hover {
+      opacity: 0.9;
+    }
 
-        /* --- INTEGRATED 3D MOCKUP CSS --- */
-        .mockup-wrapper {
-            display: flex;
-            justify-content: center;
-            perspective: 1200px;
-            margin: 3rem auto 5rem auto;
-            transform: scale(0.95);
-        }
-        @media (max-width: 768px) {
-            .mockup-wrapper { transform: scale(0.65); margin: 0rem auto -2rem auto; }
-        }
-        @media (max-width: 480px) {
-            .mockup-wrapper { transform: scale(0.45); margin: -3rem auto -5rem auto; }
-        }
+    /* Modal specific */
+    #mediaModal video,
+    #mediaModal img {
+      max-height: 85vh;
+      max-width: 90vw;
+    }
 
-        .mock-window {
-            width: 650px;
-            height: 480px;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 40px 80px -10px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transform: rotateY(-6deg) rotateX(4deg);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
-        }
+    /* --- INTEGRATED 3D MOCKUP CSS --- */
+    .mockup-wrapper {
+      display: flex;
+      justify-content: center;
+      perspective: 1200px;
+      margin: 3rem auto 5rem auto;
+      transform: scale(0.95);
+    }
 
-        .mock-window:hover {
-            transform: rotateY(0deg) rotateX(0deg) scale(1.02);
-            box-shadow: 0 50px 100px -10px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05);
-        }
+    @media (max-width: 768px) {
+      .mockup-wrapper {
+        transform: scale(0.65);
+        margin: 0rem auto -2rem auto;
+      }
+    }
 
-        .mock-header {
-            height: 42px;
-            background: #f5f5f7;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            border-bottom: 1px solid #e5e5ea;
-        }
+    @media (max-width: 480px) {
+      .mockup-wrapper {
+        transform: scale(0.45);
+        margin: -3rem auto -5rem auto;
+      }
+    }
 
-        .traffic-lights { display: flex; gap: 8px; margin-right: 12px; }
-        .light { width: 12px; height: 12px; border-radius: 50%; }
-        .close-btn { background: #ff5f56; }
-        .expand-btn { background: #28c940; }
-        .pin-btn { background: #d1d1d6; }
+    .mock-window {
+      width: 650px;
+      height: 480px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 40px 80px -10px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: rotateY(-6deg) rotateX(4deg);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+    }
 
-        .nav-btns { display: flex; align-items: center; gap: 4px; margin-right: 12px; opacity: 0.5; }
+    .mock-window:hover {
+      transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+      box-shadow: 0 50px 100px -10px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    }
 
-        .mock-url {
-            flex-grow: 1;
-            background: #e9e9eb;
-            height: 24px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #86868b;
-            font-weight: 500;
-        }
+    .mock-header {
+      height: 42px;
+      background: #f5f5f7;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid #e5e5ea;
+    }
 
-        .mock-body { flex-grow: 1; background: #ffffff; padding: 30px; }
+    .traffic-lights {
+      display: flex;
+      gap: 8px;
+      margin-right: 12px;
+    }
 
-        .sk-title { width: 70%; height: 24px; background: #e2e8f0; border-radius: 4px; margin-bottom: 20px; }
-        .sk-text { width: 100%; height: 12px; background: #f1f5f9; border-radius: 4px; margin-bottom: 12px; }
-        .sk-text-short { width: 85%; height: 12px; background: #f1f5f9; border-radius: 4px; margin-bottom: 30px; }
-        .sk-img { width: 100%; height: 200px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9;}
-    </style>
+    .light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .close-btn {
+      background: #ff5f56;
+    }
+
+    .expand-btn {
+      background: #28c940;
+    }
+
+    .pin-btn {
+      background: #d1d1d6;
+    }
+
+    .nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-right: 12px;
+      opacity: 0.5;
+    }
+
+    .mock-url {
+      flex-grow: 1;
+      background: #e9e9eb;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #86868b;
+      font-weight: 500;
+    }
+
+    .mock-body {
+      flex-grow: 1;
+      background: #ffffff;
+      padding: 30px;
+    }
+
+    .sk-title {
+      width: 70%;
+      height: 24px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .sk-text {
+      width: 100%;
+      height: 12px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .sk-text-short {
+      width: 85%;
+      height: 12px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      margin-bottom: 30px;
+    }
+
+    .sk-img {
+      width: 100%;
+      height: 200px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+    }
+  </style>
 </head>
 
 <body class="text-slate-900 min-h-screen font-sans">
 
-    <!-- Background -->
-    <div class="absolute inset-0 -z-10 overflow-hidden">
-        <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
-        <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  <!-- Background -->
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div
+      class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full">
+    </div>
+    <div
+      class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full">
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between relative z-10">
+
+    <div class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">
+        GoPeek
+      </span>
     </div>
 
-    <!-- Header -->
-    <header class="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between relative z-10">
+    <a href="#install"
+      class="glass text-slate-800 font-medium px-4 md:px-5 py-2 rounded-xl hover:bg-white transition text-sm md:text-base">
+      Get GoPeek
+    </a>
 
-        <div class="flex items-center gap-3">
-            <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
-            <span class="text-xl font-bold text-slate-800">
-                GoPeek
-            </span>
-        </div>
+  </header>
 
-        <a href="#install" class="glass text-slate-800 font-medium px-4 md:px-5 py-2 rounded-xl hover:bg-white transition text-sm md:text-base">
-            Get GoPeek
+  <main class="max-w-6xl mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-24 relative z-10">
+
+    <!-- Hero -->
+    <section class="text-center max-w-4xl mx-auto relative z-20">
+
+      <div
+        class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full text-xs md:text-sm text-blue-700 font-medium mb-6 md:mb-8">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+        </span>
+        Coming Soon to Chrome Web Store & Edge
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6 gradient-text">
+        Open links instantly in live mini browser windows—no new tabs, no context loss.
+      </h1>
+
+      <p class="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto mb-8 md:mb-10 px-2">
+        GoPeek lets you open links in fully interactive mini windows without leaving your current page.
+        Research faster, reduce tab chaos, and multitask way smoother.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#install"
+          class="w-full sm:w-auto bg-slate-900 text-white shadow-lg shadow-slate-300 px-8 py-4 rounded-2xl font-semibold hover:scale-[1.02] transition">
+          View Install Options
         </a>
-
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-24 relative z-10">
-
-        <!-- Hero -->
-        <section class="text-center max-w-4xl mx-auto relative z-20">
-
-            <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full text-xs md:text-sm text-blue-700 font-medium mb-6 md:mb-8">
-                <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                </span>
-                Coming Soon to Chrome Web Store & Edge
-            </div>
-
-            <h1 class="text-4xl sm:text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6 gradient-text">
-                Preview links instantly in mini windows—no new tabs, no context loss.
-            </h1>
-
-            <p class="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto mb-8 md:mb-10 px-2">
-                GoPeek lets you open links in fully interactive mini windows without leaving your current page.
-                Research faster, reduce tab chaos, and stay focused while browsing.
-            </p>
-
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#install" class="w-full sm:w-auto bg-slate-900 text-white shadow-lg shadow-slate-300 px-8 py-4 rounded-2xl font-semibold hover:scale-[1.02] transition">
-                    View Install Options
-                </a>
-                <a href="#demo" class="w-full sm:w-auto glass text-slate-800 px-8 py-4 rounded-2xl font-semibold hover:bg-white transition">
-                    Watch Demo
-                </a>
-            </div>
-
-        </section>
-
-        <!-- INTEGRATED 3D MOCKUP HERO VISUAL -->
-        <div class="mockup-wrapper relative z-10">
-            <!-- Hint Tooltip -->
-            <div class="absolute -left-12 md:-left-24 bottom-20 md:bottom-32 flex items-center gap-3 opacity-80 z-20 transform -rotate-6">
-                <div class="px-3 py-1.5 bg-white border border-slate-300 shadow-lg rounded-md text-slate-700 font-bold text-sm">SHIFT</div>
-                <span class="text-slate-600 font-semibold text-sm drop-shadow-md">+ Hover over link</span>
-            </div>
-
-            <div class="mock-window">
-                <div class="mock-header">
-                    <div class="traffic-lights">
-                        <div class="light close-btn"></div>
-                        <div class="light expand-btn"></div>
-                        <div class="light pin-btn"></div>
-                    </div>
-                    <div class="nav-btns">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-                    <div class="mock-url">
-                        <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        en.wikipedia.org
-                    </div>
-                </div>
-                <div class="mock-body">
-                    <div class="sk-title"></div>
-                    <div class="sk-text"></div>
-                    <div class="sk-text"></div>
-                    <div class="sk-text-short"></div>
-                    <div class="sk-img"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PRODUCT DESCRIPTION -->
-        <section class="mb-20 md:mb-28 max-w-5xl mx-auto px-2">
-
-            <div class="text-center mb-10 md:mb-14">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-blue-700 text-xs md:text-sm font-semibold mb-6">
-                    What is GoPeek?
-                </div>
-
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-6 text-slate-900 leading-tight">
-                    Your browser shouldn’t explode into 47 tabs just to check a few links.
-                </h2>
-
-                <p class="text-base md:text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto mb-4 md:mb-6">
-                    GoPeek replaces the annoying “open in new tab → check → close tab” workflow
-                    with instant interactive mini windows that feel native to your browser.
-                </p>
-
-                <p class="text-base md:text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto mb-4 md:mb-6">
-                    Instead of constantly losing context, you can inspect links,
-                    compare pages side-by-side, minimize previews into bubbles,
-                    and continue browsing without interruption.
-                </p>
-
-                <p class="text-base md:text-lg text-slate-800 leading-relaxed font-semibold max-w-3xl mx-auto">
-                    Most links are just curiosity clicks. GoPeek lets you satisfy them instantly without destroying your flow.
-                </p>
-            </div>
-<!-- IMAGE SLIDESHOW -->
-        <section id="showcase" class="mb-20 md:mb-28 max-w-5xl mx-auto">
-
-            <div class="glass rounded-3xl p-3 md:p-6 relative group">
-
-                <div class="overflow-hidden w-full rounded-2xl">
-
-                    <div id="image-track" class="flex transition-transform duration-500 ease-in-out w-full">
-
-                        <!-- Slide 1 -->
-                        <div class="w-full shrink-0 flex flex-col group/slide relative">
-                            <div class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
-                                <img src="GoPeekDemo1.png" alt="GoPeek Main" class="w-full h-full object-contain" />
-                            </div>
-                            <button onclick="openMediaModal('image', 'GoPeekDemo1.png')" class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
-                            </button>
-                            <div class="mt-4 md:mt-6 text-center px-4">
-                                <p class="text-lg md:text-xl font-bold text-slate-900">Instant Previewing</p>
-                                <p class="text-sm md:text-base text-slate-600 mt-2"> Hold Shift (or Alt / Ctrl) and hover any link to instantly open a preview without leaving your current page.</p>
-                            </div>
-                        </div>
-
-                        <!-- Slide 2 -->
-                        <div class="w-full shrink-0 flex flex-col group/slide relative">
-                            <div class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
-                                <img src="GoPeek_Sidebar.png" alt="Sidebar Mode" class="w-full h-full object-contain" />
-                            </div>
-                            <button onclick="openMediaModal('image', 'GoPeek_Sidebar.png')" class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
-                            </button>
-                            <div class="mt-4 md:mt-6 text-center px-4">
-                                <p class="text-lg md:text-xl font-bold text-slate-900">Sidebar Mode</p>
-                                <p class="text-sm md:text-base text-slate-600 mt-2">Snap previews into a clean split-screen layout for deeper browsing sessions.</p>
-                            </div>
-                        </div>
-
-                        <!-- Slide 3 -->
-                        <div class="w-full shrink-0 flex flex-col group/slide relative">
-                            <div class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
-                                <img src="GoPeek_MultiPeek.png" alt="Multi Peek" class="w-full h-full object-contain" />
-                            </div>
-                            <button onclick="openMediaModal('image', 'GoPeek_MultiPeek.png')" class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
-                            </button>
-                            <div class="mt-4 md:mt-6 text-center px-4">
-                                <p class="text-lg md:text-xl font-bold text-slate-900">Multi-Peek</p>
-                                <p class="text-sm md:text-base text-slate-600 mt-2">Open multiple previews side-by-side to compare docs, repos, articles, and references.</p>
-                            </div>
-                        </div>
-
-                        <!-- Slide 4 (BUBBLE SLIDE) -->
-                        <div class="w-full shrink-0 flex flex-col group/slide relative">
-                            <div class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
-                                <img src="GoPeek_Bubble.png" alt="Bubble Mode" class="w-full h-full object-contain" />
-                            </div>
-                            <button onclick="openMediaModal('image', 'GoPeek_Bubble.png')" class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
-                            </button>
-                            <div class="mt-4 md:mt-6 text-center px-4">
-                                <p class="text-lg md:text-xl font-bold text-slate-900">Bubble Minimize</p>
-                                <p class="text-sm md:text-base text-slate-600 mt-2">Double-click the header to collapse any preview into a floating bubble for later.</p>
-                            </div>
-                        </div>
-
-                        <!-- Slide 5 -->
-                        <div class="w-full shrink-0 flex flex-col group/slide relative">
-                            <div class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
-                                <img src="GoPeek_DynamicTheme.png" alt="Dynamic Theme" class="w-full h-full object-contain" />
-                            </div>
-                            <button onclick="openMediaModal('image', 'GoPeek_DynamicTheme.png')" class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
-                            </button>
-                            <div class="mt-4 md:mt-6 text-center px-4">
-                                <p class="text-lg md:text-xl font-bold text-slate-900">Dynamic Theme</p>
-                                <p class="text-sm md:text-base text-slate-600 mt-2">GoPeek adapts visually to the website you are browsing for a native-feeling experience.</p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- Arrows -->
-                <button onclick="prevImg()" class="carousel-button absolute left-2 md:left-8 top-[35%] md:top-[40%] -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-                </button>
-
-                <button onclick="nextImg()" class="carousel-button absolute right-2 md:right-8 top-[35%] md:top-[40%] -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
-                </button>
-
-            </div>
-
-            <!-- Dots -->
-            <div class="flex justify-center gap-3 mt-4 md:mt-6 mb-1">
-                <button onclick="goToImg(0)" class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-800 transition-colors"></button>
-                <button onclick="goToImg(1)" class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
-                <button onclick="goToImg(2)" class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
-                <button onclick="goToImg(3)" class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
-                <!-- 5th Dot -->
-                <button onclick="goToImg(4)" class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
-            </div>
-
-        </section>
-            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-
-                <div class="glass rounded-3xl p-6 md:p-8 hover:scale-[1.02] transition-transform duration-300">
-                    <div class="text-3xl mb-4 md:mb-5">⚡</div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-3">Faster Browsing</h3>
-                    <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                        Open links instantly in floating previews instead of constantly creating and closing tabs.
-                    </p>
-                </div>
-
-                <div class="glass rounded-3xl p-6 md:p-8 hover:scale-[1.02] transition-transform duration-300">
-                    <div class="text-3xl mb-4 md:mb-5">🧠</div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-3">Stay In Context</h3>
-                    <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                        Research naturally without losing your current page or breaking your focus flow.
-                    </p>
-                </div>
-
-                <div class="glass rounded-3xl p-6 md:p-8 sm:col-span-2 md:col-span-1 hover:scale-[1.02] transition-transform duration-300">
-                    <div class="text-3xl mb-4 md:mb-5">🖥️</div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-3">For Multi-Tab Minds</h3>
-                    <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                        Great for developers, researchers, students, and anyone who’s tired of juggling endless tabs.
-                    </p>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- VIDEO SECTION -->
-        <section id="demo" class="mb-20 md:mb-28 max-w-5xl mx-auto">
-
-            <div class="text-center mb-8">
-                <h2 class="text-3xl md:text-4xl font-black mb-2 text-slate-900">
-                    See GoPeek in Action
-                </h2>
-                <p class="text-slate-500 text-base md:text-lg">
-                    Real browsing. No tab chaos.
-                </p>
-            </div>
-
-            <div class="glass rounded-3xl p-3 md:p-6 relative group">
-
-                <div class="overflow-hidden w-full rounded-2xl border border-slate-200">
-
-                    <div id="video-track" class="flex transition-transform duration-500 ease-in-out w-full">
-
-                        <!-- Video Slide 1 -->
-                        <div class="w-full shrink-0 bg-black relative group/slide">
-                            <video controls autoplay muted loop class="w-full rounded-2xl aspect-video object-cover">
-                                <source src="GoPeek Demo Reddit 1.4.mp4" type="video/mp4" />
-                            </video>
-                            <button onclick="openMediaModal('video', 'GoPeek Demo Reddit 1.4.mp4')" class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
-                            </button>
-                        </div>
-
-                        <!-- Video Slide 2 -->
-                        <div class="w-full shrink-0 bg-black relative group/slide">
-                            <video controls muted loop class="w-full rounded-2xl aspect-video object-cover">
-                                <source src="gopeak_demo_long.mp4" type="video/mp4" />
-                            </video>
-                            <button onclick="openMediaModal('video', 'gopeak_demo_long.mp4')" class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>
-                            </button>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <button onclick="prevVideo()" class="carousel-button absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-                </button>
-
-                <button onclick="nextVideo()" class="carousel-button absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
-                </button>
-
-            </div>
-
-            <div class="flex justify-center gap-3 mt-4 md:mt-6">
-                <button onclick="goToVideo(0)" class="vid-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-800 transition-colors"></button>
-                <button onclick="goToVideo(1)" class="vid-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
-            </div>
-
-        </section>
-
-        <!-- FEATURES -->
-        <section class="mb-20 md:mb-28 max-w-5xl mx-auto">
-
-            <div class="text-center mb-10 md:mb-12">
-                <h2 class="text-3xl md:text-4xl font-black mb-4 text-slate-900">
-                    Features
-                </h2>
-                <p class="text-slate-500 text-base md:text-lg">
-                    Built to feel native to your browser.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <!-- Sidebar -->
-                <div class="glass rounded-3xl p-6 md:p-7">
-                    <div class="feature-image">
-                        <img src="GoPeek_Sidebar.png" alt="Sidebar Mode" onclick="openMediaModal('image', this.src)">
-                    </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Sidebar Split-Screen</h3>
-                    <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                        Snap previews into a clean sidebar and continue browsing without context switching.
-                    </p>
-                </div>
-
-                <!-- Bubble -->
-                <div class="glass rounded-3xl p-6 md:p-7">
-                    <div class="feature-image">
-                        <img src="GoPeek_Bubble.png" alt="Bubble Mode" onclick="openMediaModal('image', this.src)">
-                    </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Bubble Minimize</h3>
-                    <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                        Double-click header to turn previews into floating bubbles and reopen them anytime during your session.
-                    </p>
-                </div>
-
-                <!-- Multi Peek -->
-                <div class="glass rounded-3xl p-6 md:p-7">
-                    <div class="feature-image">
-                        <img src="GoPeek_MultiPeek.png" alt="Multi Peek" onclick="openMediaModal('image', this.src)">
-                    </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Multi-Peek</h3>
-                    <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                        Compare multiple links side-by-side without opening dozens of tabs.
-                    </p>
-                </div>
-
-                <!-- Dynamic Theme -->
-                <div class="glass rounded-3xl p-6 md:p-7">
-                    <div class="feature-image">
-                        <img src="GoPeek_DynamicTheme.png" alt="Dynamic Theme" onclick="openMediaModal('image', this.src)">
-                    </div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Dynamic Theme</h3>
-                    <p class="text-sm md:text-base text-slate-600 leading-relaxed">
-                        GoPeek adapts visually to the current website for a seamless browsing experience.
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- PERFECT FOR -->
-        <section class="mb-20 md:mb-28">
-
-            <div class="text-center mb-8 md:mb-10">
-                <h2 class="text-3xl md:text-4xl font-black mb-4 text-slate-900">
-                    Perfect For
-                </h2>
-                <p class="text-slate-500 text-base md:text-lg">
-                    The people who practically live inside their browser.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-
-                <div class="glass rounded-2xl p-5 md:p-6 text-center">
-                    <div class="text-2xl md:text-3xl mb-2 md:mb-3">💻</div>
-                    <div class="font-bold text-base md:text-lg text-slate-900">Developers</div>
-                </div>
-
-                <div class="glass rounded-2xl p-5 md:p-6 text-center">
-                    <div class="text-2xl md:text-3xl mb-2 md:mb-3">📚</div>
-                    <div class="font-bold text-base md:text-lg text-slate-900">Researchers</div>
-                </div>
-
-                <div class="glass rounded-2xl p-5 md:p-6 text-center">
-                    <div class="text-2xl md:text-3xl mb-2 md:mb-3">🎓</div>
-                    <div class="font-bold text-base md:text-lg text-slate-900">Students</div>
-                </div>
-
-                <div class="glass rounded-2xl p-5 md:p-6 text-center">
-                    <div class="text-2xl md:text-3xl mb-2 md:mb-3">🧭</div>
-                    <div class="font-bold text-base md:text-lg text-slate-900">Tab Explorers</div>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- STORE INSTALL SECTION -->
-        <section id="install" class="glass rounded-[2rem] p-8 md:p-14 max-w-4xl mx-auto mb-10 border-t-4 border-t-blue-500">
-
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-5xl font-black mb-4 md:mb-5 text-slate-900">
-                    Get GoPeek
-                </h2>
-                <p class="text-slate-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-                    GoPeek is coming soon to official stores. You can check back later, or install the developer preview right now.
-                </p>
-            </div>
-
-            <!-- Store Buttons -->
-            <div class="grid md:grid-cols-2 gap-6 mb-12">
-                <!-- Chrome -->
-                <div class="bg-white/80 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center text-center">
-                    
-                    <h3 class="font-bold text-slate-800 mb-1">Chrome Web Store</h3>
-                    <p class="text-sm text-amber-600 font-medium mb-4 flex items-center gap-1">
-                        <svg class="w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        Coming Soon
-                    </p>
-                    <button disabled class="w-full bg-slate-100 text-slate-400 py-3 rounded-xl font-semibold cursor-not-allowed border border-slate-200">
-                        Coming Soon
-                    </button>
-                </div>
-
-                <!-- Edge -->
-                <div class="bg-white/80 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center text-center">
-                    
-                    <h3 class="font-bold text-slate-800 mb-1">Edge Add-ons</h3>
-                    <p class="text-sm text-amber-600 font-medium mb-4 flex items-center gap-1">
-                        <svg class="w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        Coming Soon
-                    </p>
-                    <button disabled class="w-full bg-slate-100 text-slate-400 py-3 rounded-xl font-semibold cursor-not-allowed border border-slate-200">
-                        Coming Soon
-                    </button>
-                </div>
-            </div>
-
-            <!-- Manual ZIP Fallback -->
-            <div class="relative">
-                <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div class="w-full border-t border-slate-300"></div>
-                </div>
-                <div class="relative flex justify-center mb-8">
-                    <span class="px-4 bg-[#f1f5f9] text-sm text-slate-500 font-medium rounded-full">Don't want to wait?</span>
-                </div>
-            </div>
-
-            <div class="text-left bg-white/60 p-6 md:p-8 rounded-2xl border border-slate-200 max-w-2xl mx-auto shadow-inner">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 gap-4 border-b border-slate-200 pb-4">
-                    <h3 class="text-lg md:text-xl font-bold text-slate-900">Install Developer Beta</h3>
-                    <a href="GoPeek1.0.zip"
-                       download
-                       onclick="plausible('zip-download')"
-                       class="inline-block bg-slate-900 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition text-sm whitespace-nowrap">
-                        Download ZIP
-                    </a>
-                </div>
-                <ol class="list-decimal list-inside space-y-3 text-sm md:text-base text-slate-700 font-medium">
-                    <li><span class="text-slate-900 font-bold">Extract</span> the downloaded ZIP file to your computer.</li>
-                    <li>Open <code class="bg-slate-200 px-2 py-1 rounded text-slate-800 font-mono text-xs md:text-sm select-all">chrome://extensions</code> (or <code class="bg-slate-200 px-2 py-1 rounded text-slate-800 font-mono text-xs md:text-sm select-all">edge://extensions</code>).</li>
-                    <li>Turn on <strong class="text-slate-900">Developer Mode</strong>.</li>
-                    <li>Click <strong class="text-slate-900">"Load unpacked"</strong>.</li>
-                    <li>Select the extracted <strong class="text-slate-900">GoPeek folder</strong> to install.</li>
-                </ol>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="max-w-6xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 relative z-10 border-t border-slate-200/50">
-        <div>
-            © 2026 GoPeek
-        </div>
-        <div class="flex items-center gap-5">
-            <a href="privacy.html" class="hover:text-slate-900 transition">Privacy Policy</a>    
-            <a href="mailto:gopeekapp@gmail.com" class="hover:text-slate-900 transition">Contact</a>
-        </div>
-    </footer>
-
-    <!-- UNIFIED MEDIA EXPANSION MODAL -->
-    <div id="mediaModal" class="fixed inset-0 z-[9999] bg-slate-900/95 hidden items-center justify-center p-4 md:p-10 opacity-0 transition-opacity duration-300 backdrop-blur-md">
-        <button onclick="closeMediaModal()" class="absolute top-4 right-4 md:top-6 md:right-6 text-white/70 hover:text-white z-50 transition-colors bg-black/20 hover:bg-black/40 rounded-full p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 md:w-10 md:h-10">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        <a href="#demo"
+          class="w-full sm:w-auto glass text-slate-800 px-8 py-4 rounded-2xl font-semibold hover:bg-white transition">
+          Watch Demo
+        </a>
+      </div>
+
+    </section>
+
+    <!-- INTEGRATED 3D MOCKUP HERO VISUAL -->
+    <div class="mockup-wrapper relative z-10">
+      <!-- Hint Tooltip -->
+      <div
+        class="absolute -left-12 md:-left-24 bottom-20 md:bottom-32 flex items-center gap-3 opacity-80 z-20 transform -rotate-6">
+        <div class="px-3 py-1.5 bg-white border border-slate-300 shadow-lg rounded-md text-slate-700 font-bold text-sm">
+          SHIFT</div>
+        <span class="text-slate-600 font-semibold text-sm drop-shadow-md">+ Hover over link</span>
+      </div>
+
+      <div class="mock-window">
+        <div class="mock-header">
+          <div class="traffic-lights">
+            <div class="light close-btn"></div>
+            <div class="light expand-btn"></div>
+            <div class="light pin-btn"></div>
+          </div>
+          <div class="nav-btns">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
-        </button>
-        
-        <!-- Image placeholder -->
-        <img id="modalImg" src="" class="hidden rounded-xl shadow-2xl object-contain cursor-default" />
-        
-        <!-- Video placeholder -->
-        <video id="modalVideo" controls class="hidden rounded-xl shadow-2xl object-contain bg-black">
-            <source id="modalVideoSource" src="" type="video/mp4" />
-        </video>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <div class="mock-url">
+            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            en.wikipedia.org
+          </div>
+        </div>
+        <div class="mock-body">
+          <div class="sk-title"></div>
+          <div class="sk-text"></div>
+          <div class="sk-text"></div>
+          <div class="sk-text-short"></div>
+          <div class="sk-img"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- JS LOGIC -->
-    <script>
+    <!-- PRODUCT DESCRIPTION -->
+    <section class="mb-20 md:mb-28 max-w-5xl mx-auto px-2">
 
-        // --- Image Slider Logic ---
-        let currentImage = 0;
-        // UPDATED: Now expecting 5 images
-        const totalImages = 5;
-        const imageTrack = document.getElementById('image-track');
-        const imageDots = document.querySelectorAll('.img-dot');
+      <div class="text-center mb-10 md:mb-14">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-blue-700 text-xs md:text-sm font-semibold mb-6">
+          What is GoPeek?
+        </div>
 
-        function updateImageSlider() {
-            imageTrack.style.transform = `translateX(-${currentImage * 100}%)`;
-            imageDots.forEach((dot, index) => {
-                if (index === currentImage) {
-                    dot.classList.replace('bg-slate-300', 'bg-slate-800');
-                } else {
-                    dot.classList.replace('bg-slate-800', 'bg-slate-300');
-                }
-            });
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-6 text-slate-900 leading-tight">
+          Your browser shouldn’t explode into 47 tabs just to check a few links.
+        </h2>
+
+        <p class="text-base md:text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto mb-4 md:mb-6">
+          GoPeek replaces the exhausting “open in new tab → wait → check → close tab” workflow
+          with live interactive browser windows—Peeks—that open directly inside your current page.
+        </p>
+
+        <p class="text-base md:text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto mb-4 md:mb-6">
+          Instead of constantly losing context, you can browse links, compare active pages side-by-side, minimize sessions into floating bubbles, and continue navigating without interruption.
+        </p>
+
+        <p class="text-base md:text-lg text-slate-800 leading-relaxed font-semibold max-w-3xl mx-auto">
+          Most links are just curiosity clicks. GoPeek lets you satisfy them instantly without destroying your flow.
+        </p>
+      </div>
+      <!-- IMAGE SLIDESHOW -->
+      <section id="showcase" class="mb-20 md:mb-28 max-w-5xl mx-auto">
+
+        <div class="glass rounded-3xl p-3 md:p-6 relative group">
+
+          <div class="overflow-hidden w-full rounded-2xl">
+
+            <div id="image-track" class="flex transition-transform duration-500 ease-in-out w-full">
+
+              <!-- Slide 1 -->
+              <div class="w-full shrink-0 flex flex-col group/slide relative">
+                <div
+                  class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
+                  <img src="GoPeekDemo1.png" alt="GoPeek Main" class="w-full h-full object-contain" />
+                </div>
+                <button onclick="openMediaModal('image', 'GoPeekDemo1.png')"
+                  class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  </svg>
+                </button>
+                <div class="mt-4 md:mt-6 text-center px-4">
+                  <p class="text-lg md:text-xl font-bold text-slate-900">Instant Previewing</p>
+                  <p class="text-sm md:text-base text-slate-600 mt-2"> Hold Shift (or Alt / Ctrl) and hover any link to instantly open a live interactive browser window without leaving your current tab.</p>
+                </div>
+              </div>
+
+              <!-- Slide 2 -->
+              <div class="w-full shrink-0 flex flex-col group/slide relative">
+                <div
+                  class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
+                  <img src="GoPeek_Sidebar.png" alt="Sidebar Mode" class="w-full h-full object-contain" />
+                </div>
+                <button onclick="openMediaModal('image', 'GoPeek_Sidebar.png')"
+                  class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  </svg>
+                </button>
+                <div class="mt-4 md:mt-6 text-center px-4">
+                  <p class="text-lg md:text-xl font-bold text-slate-900">Sidebar Mode</p>
+                  <p class="text-sm md:text-base text-slate-600 mt-2">Snap Peeks into a clean split-screen layout for deeper browsing sessions.</p>
+                </div>
+              </div>
+
+              <!-- Slide 3 -->
+              <div class="w-full shrink-0 flex flex-col group/slide relative">
+                <div
+                  class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
+                  <img src="GoPeek_MultiPeek.png" alt="Multi Peek" class="w-full h-full object-contain" />
+                </div>
+                <button onclick="openMediaModal('image', 'GoPeek_MultiPeek.png')"
+                  class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  </svg>
+                </button>
+                <div class="mt-4 md:mt-6 text-center px-4">
+                  <p class="text-lg md:text-xl font-bold text-slate-900">Multi-Peek</p>
+                  <p class="text-sm md:text-base text-slate-600 mt-2">Run multiple windows side-by-side to compare docs, repos, articles, and references.</p>
+                </div>
+              </div>
+
+              <!-- Slide 4 (BUBBLE SLIDE) -->
+              <div class="w-full shrink-0 flex flex-col group/slide relative">
+                <div
+                  class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
+                  <img src="GoPeek_Bubble.png" alt="Bubble Mode" class="w-full h-full object-contain" />
+                </div>
+                <button onclick="openMediaModal('image', 'GoPeek_Bubble.png')"
+                  class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  </svg>
+                </button>
+                <div class="mt-4 md:mt-6 text-center px-4">
+                  <p class="text-lg md:text-xl font-bold text-slate-900">Bubble Minimize</p>
+                  <p class="text-sm md:text-base text-slate-600 mt-2">Double-click the header to collapse any active GoPeek session into a floating bubble for later.</p>
+                </div>
+              </div>
+
+              <!-- Slide 5 -->
+              <div class="w-full shrink-0 flex flex-col group/slide relative">
+                <div
+                  class="w-full rounded-2xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200 relative">
+                  <img src="GoPeek_DynamicTheme.png" alt="Dynamic Theme" class="w-full h-full object-contain" />
+                </div>
+                <button onclick="openMediaModal('image', 'GoPeek_DynamicTheme.png')"
+                  class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                  </svg>
+                </button>
+                <div class="mt-4 md:mt-6 text-center px-4">
+                  <p class="text-lg md:text-xl font-bold text-slate-900">Dynamic Theme</p>
+                  <p class="text-sm md:text-base text-slate-600 mt-2">GoPeek adapts visually to the website you are
+                    browsing for a native-feeling experience.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Arrows -->
+          <button onclick="prevImg()"
+            class="carousel-button absolute left-2 md:left-8 top-[35%] md:top-[40%] -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+              stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          <button onclick="nextImg()"
+            class="carousel-button absolute right-2 md:right-8 top-[35%] md:top-[40%] -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+              stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+
+        </div>
+
+        <!-- Dots -->
+        <div class="flex justify-center gap-3 mt-4 md:mt-6 mb-1">
+          <button onclick="goToImg(0)"
+            class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-800 transition-colors"></button>
+          <button onclick="goToImg(1)"
+            class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
+          <button onclick="goToImg(2)"
+            class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
+          <button onclick="goToImg(3)"
+            class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
+          <!-- 5th Dot -->
+          <button onclick="goToImg(4)"
+            class="img-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
+        </div>
+
+      </section>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+        <div class="glass rounded-3xl p-6 md:p-8 hover:scale-[1.02] transition-transform duration-300">
+          <div class="text-3xl mb-4 md:mb-5">⚡</div>
+          <h3 class="text-xl md:text-2xl font-bold mb-3">Faster Browsing</h3>
+          <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+            Open and interact with links instantly instead of constantly creating and closing tabs.
+          </p>
+        </div>
+
+        <div class="glass rounded-3xl p-6 md:p-8 hover:scale-[1.02] transition-transform duration-300">
+          <div class="text-3xl mb-4 md:mb-5">🧠</div>
+          <h3 class="text-xl md:text-2xl font-bold mb-3">Stay In Context</h3>
+          <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+            Research naturally without losing your current page or breaking your focus flow.
+          </p>
+        </div>
+
+        <div
+          class="glass rounded-3xl p-6 md:p-8 sm:col-span-2 md:col-span-1 hover:scale-[1.02] transition-transform duration-300">
+          <div class="text-3xl mb-4 md:mb-5">🖥️</div>
+          <h3 class="text-xl md:text-2xl font-bold mb-3">For Multi-Tab Minds</h3>
+          <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+            Great for developers, researchers, students, and anyone who’s tired of juggling endless tabs.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIDEO SECTION -->
+    <section id="demo" class="mb-20 md:mb-28 max-w-5xl mx-auto">
+
+      <div class="text-center mb-8">
+        <h2 class="text-3xl md:text-4xl font-black mb-2 text-slate-900">
+          See GoPeek in Action
+        </h2>
+        <p class="text-slate-500 text-base md:text-lg">
+          Real browsing. No tab chaos.
+        </p>
+      </div>
+
+      <div class="glass rounded-3xl p-3 md:p-6 relative group">
+
+        <div class="overflow-hidden w-full rounded-2xl border border-slate-200">
+
+          <div id="video-track" class="flex transition-transform duration-500 ease-in-out w-full">
+
+            <!-- Video Slide 1 -->
+            <div class="w-full shrink-0 bg-black relative group/slide">
+              <video controls autoplay muted loop class="w-full rounded-2xl aspect-video object-cover">
+                <source src="GoPeek Demo Reddit 1.4.mp4" type="video/mp4" />
+              </video>
+              <button onclick="openMediaModal('video', 'GoPeek Demo Reddit 1.4.mp4')"
+                class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                  stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Video Slide 2 -->
+            <div class="w-full shrink-0 bg-black relative group/slide">
+              <video controls muted loop class="w-full rounded-2xl aspect-video object-cover">
+                <source src="gopeak_demo_long.mp4" type="video/mp4" />
+              </video>
+              <button onclick="openMediaModal('video', 'gopeak_demo_long.mp4')"
+                class="absolute top-4 right-4 bg-slate-900/60 text-white p-2.5 rounded-full opacity-0 group-hover/slide:opacity-100 transition-all hover:bg-slate-900 hover:scale-105 z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                  stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                </svg>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <button onclick="prevVideo()"
+          class="carousel-button absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+            stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+
+        <button onclick="nextVideo()"
+          class="carousel-button absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-slate-800 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden sm:flex">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+            stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+
+      </div>
+
+      <div class="flex justify-center gap-3 mt-4 md:mt-6">
+        <button onclick="goToVideo(0)"
+          class="vid-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-800 transition-colors"></button>
+        <button onclick="goToVideo(1)"
+          class="vid-dot w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-slate-300 transition-colors"></button>
+      </div>
+
+    </section>
+
+    <!-- FEATURES -->
+    <section class="mb-20 md:mb-28 max-w-5xl mx-auto">
+
+      <div class="text-center mb-10 md:mb-12">
+        <h2 class="text-3xl md:text-4xl font-black mb-4 text-slate-900">
+          Features
+        </h2>
+        <p class="text-slate-500 text-base md:text-lg">
+          Built to feel native to your browser.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Sidebar -->
+        <div class="glass rounded-3xl p-6 md:p-7">
+          <div class="feature-image">
+            <img src="GoPeek_Sidebar.png" alt="Sidebar Mode" onclick="openMediaModal('image', this.src)">
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Sidebar Split-Screen</h3>
+          <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+            Snap GoPeek windows into a clean sidebar and continue browsing without context switching.
+          </p>
+        </div>
+
+        <!-- Bubble -->
+        <div class="glass rounded-3xl p-6 md:p-7">
+          <div class="feature-image">
+            <img src="GoPeek_Bubble.png" alt="Bubble Mode" onclick="openMediaModal('image', this.src)">
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Bubble Minimize</h3>
+          <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+            Double-click the header to turn Peeks into floating bubbles and reopen them anytime during your session.
+          </p>
+        </div>
+
+        <!-- Multi Peek -->
+        <div class="glass rounded-3xl p-6 md:p-7">
+          <div class="feature-image">
+            <img src="GoPeek_MultiPeek.png" alt="Multi Peek" onclick="openMediaModal('image', this.src)">
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Multi-Peek</h3>
+          <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+            Compare multiple links side-by-side without opening dozens of tabs.
+          </p>
+        </div>
+
+        <!-- Dynamic Theme -->
+        <div class="glass rounded-3xl p-6 md:p-7">
+          <div class="feature-image">
+            <img src="GoPeek_DynamicTheme.png" alt="Dynamic Theme" onclick="openMediaModal('image', this.src)">
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-900">Dynamic Theme</h3>
+          <p class="text-sm md:text-base text-slate-600 leading-relaxed">
+            GoPeek adapts visually to the current website for a seamless browsing experience.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- PERFECT FOR -->
+    <section class="mb-20 md:mb-28">
+
+      <div class="text-center mb-8 md:mb-10">
+        <h2 class="text-3xl md:text-4xl font-black mb-4 text-slate-900">
+          Perfect For
+        </h2>
+        <p class="text-slate-500 text-base md:text-lg">
+          The people who practically live inside their browser.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+
+        <div class="glass rounded-2xl p-5 md:p-6 text-center">
+          <div class="text-2xl md:text-3xl mb-2 md:mb-3">💻</div>
+          <div class="font-bold text-base md:text-lg text-slate-900">Developers</div>
+        </div>
+
+        <div class="glass rounded-2xl p-5 md:p-6 text-center">
+          <div class="text-2xl md:text-3xl mb-2 md:mb-3">📚</div>
+          <div class="font-bold text-base md:text-lg text-slate-900">Researchers</div>
+        </div>
+
+        <div class="glass rounded-2xl p-5 md:p-6 text-center">
+          <div class="text-2xl md:text-3xl mb-2 md:mb-3">🎓</div>
+          <div class="font-bold text-base md:text-lg text-slate-900">Students</div>
+        </div>
+
+        <div class="glass rounded-2xl p-5 md:p-6 text-center">
+          <div class="text-2xl md:text-3xl mb-2 md:mb-3">🧭</div>
+          <div class="font-bold text-base md:text-lg text-slate-900">Tab Explorers</div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- STORE INSTALL SECTION -->
+    <section id="install" class="glass rounded-[2rem] p-8 md:p-14 max-w-4xl mx-auto mb-10 border-t-4 border-t-blue-500">
+
+      <div class="text-center mb-10">
+        <h2 class="text-3xl md:text-5xl font-black mb-4 md:mb-5 text-slate-900">
+          Get GoPeek
+        </h2>
+        <p class="text-slate-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+          GoPeek is coming soon to official stores. You can check back later, or install the developer preview right
+          now.
+        </p>
+      </div>
+
+      <!-- Store Buttons -->
+      <div class="grid md:grid-cols-2 gap-6 mb-12">
+        <!-- Chrome -->
+        <div
+          class="bg-white/80 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center text-center">
+
+          <h3 class="font-bold text-slate-800 mb-1">Chrome Web Store</h3>
+          <p class="text-sm text-amber-600 font-medium mb-4 flex items-center gap-1">
+            <svg class="w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+              </path>
+            </svg>
+            Coming Soon
+          </p>
+          <button disabled
+            class="w-full bg-slate-100 text-slate-400 py-3 rounded-xl font-semibold cursor-not-allowed border border-slate-200">
+            Coming Soon
+          </button>
+        </div>
+
+        <!-- Edge -->
+        <div
+          class="bg-white/80 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center text-center">
+
+          <h3 class="font-bold text-slate-800 mb-1">Edge Add-ons</h3>
+          <p class="text-sm text-amber-600 font-medium mb-4 flex items-center gap-1">
+            <svg class="w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+              </path>
+            </svg>
+            Coming Soon
+          </p>
+          <button disabled
+            class="w-full bg-slate-100 text-slate-400 py-3 rounded-xl font-semibold cursor-not-allowed border border-slate-200">
+            Coming Soon
+          </button>
+        </div>
+      </div>
+
+      <!-- Manual ZIP Fallback -->
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+          <div class="w-full border-t border-slate-300"></div>
+        </div>
+        <div class="relative flex justify-center mb-8">
+          <span class="px-4 bg-[#f1f5f9] text-sm text-slate-500 font-medium rounded-full">Don't want to wait?</span>
+        </div>
+      </div>
+
+      <div class="text-left bg-white/60 p-6 md:p-8 rounded-2xl border border-slate-200 max-w-2xl mx-auto shadow-inner">
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 gap-4 border-b border-slate-200 pb-4">
+          <h3 class="text-lg md:text-xl font-bold text-slate-900">Install Developer Beta</h3>
+          <a href="GoPeek1.0.zip" download onclick="plausible('zip-download')"
+            class="inline-block bg-slate-900 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition text-sm whitespace-nowrap">
+            Download ZIP
+          </a>
+        </div>
+        <ol class="list-decimal list-inside space-y-3 text-sm md:text-base text-slate-700 font-medium">
+          <li><span class="text-slate-900 font-bold">Extract</span> the downloaded ZIP file to your computer.</li>
+          <li>Open <code
+              class="bg-slate-200 px-2 py-1 rounded text-slate-800 font-mono text-xs md:text-sm select-all">chrome://extensions</code>
+            (or <code
+              class="bg-slate-200 px-2 py-1 rounded text-slate-800 font-mono text-xs md:text-sm select-all">edge://extensions</code>).
+          </li>
+          <li>Turn on <strong class="text-slate-900">Developer Mode</strong>.</li>
+          <li>Click <strong class="text-slate-900">"Load unpacked"</strong>.</li>
+          <li>Select the extracted <strong class="text-slate-900">GoPeek folder</strong> to install.</li>
+        </ol>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer
+    class="max-w-6xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 relative z-10 border-t border-slate-200/50">
+    <div>
+      © 2026 GoPeek
+    </div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy Policy</a>
+      <a href="mailto:gopeekapp@gmail.com" class="hover:text-slate-900 transition">Contact</a>
+    </div>
+  </footer>
+
+  <!-- UNIFIED MEDIA EXPANSION MODAL -->
+  <div id="mediaModal"
+    class="fixed inset-0 z-[9999] bg-slate-900/95 hidden items-center justify-center p-4 md:p-10 opacity-0 transition-opacity duration-300 backdrop-blur-md">
+    <button onclick="closeMediaModal()"
+      class="absolute top-4 right-4 md:top-6 md:right-6 text-white/70 hover:text-white z-50 transition-colors bg-black/20 hover:bg-black/40 rounded-full p-2">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+        class="w-8 h-8 md:w-10 md:h-10">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- Image placeholder -->
+    <img id="modalImg" src="" class="hidden rounded-xl shadow-2xl object-contain cursor-default" />
+
+    <!-- Video placeholder -->
+    <video id="modalVideo" controls class="hidden rounded-xl shadow-2xl object-contain bg-black">
+      <source id="modalVideoSource" src="" type="video/mp4" />
+    </video>
+  </div>
+
+  <!-- JS LOGIC -->
+  <script>
+
+    // --- Image Slider Logic ---
+    let currentImage = 0;
+    // UPDATED: Now expecting 5 images
+    const totalImages = 5;
+    const imageTrack = document.getElementById('image-track');
+    const imageDots = document.querySelectorAll('.img-dot');
+
+    function updateImageSlider() {
+      imageTrack.style.transform = `translateX(-${currentImage * 100}%)`;
+      imageDots.forEach((dot, index) => {
+        if (index === currentImage) {
+          dot.classList.replace('bg-slate-300', 'bg-slate-800');
+        } else {
+          dot.classList.replace('bg-slate-800', 'bg-slate-300');
         }
+      });
+    }
 
-        function nextImg() {
-            currentImage = (currentImage + 1) % totalImages;
-            updateImageSlider();
+    function nextImg() {
+      currentImage = (currentImage + 1) % totalImages;
+      updateImageSlider();
+    }
+
+    function prevImg() {
+      currentImage = (currentImage - 1 + totalImages) % totalImages;
+      updateImageSlider();
+    }
+
+    function goToImg(index) {
+      currentImage = index;
+      updateImageSlider();
+    }
+
+    // --- Video Slider Logic ---
+    let currentVideo = 0;
+    const totalVideos = 2;
+    const videoTrack = document.getElementById('video-track');
+    const videoDots = document.querySelectorAll('.vid-dot');
+
+    function updateVideoSlider() {
+      videoTrack.style.transform = `translateX(-${currentVideo * 100}%)`;
+      videoDots.forEach((dot, index) => {
+        if (index === currentVideo) {
+          dot.classList.replace('bg-slate-300', 'bg-slate-800');
+        } else {
+          dot.classList.replace('bg-slate-800', 'bg-slate-300');
         }
+      });
+    }
 
-        function prevImg() {
-            currentImage = (currentImage - 1 + totalImages) % totalImages;
-            updateImageSlider();
-        }
+    function nextVideo() {
+      currentVideo = (currentVideo + 1) % totalVideos;
+      updateVideoSlider();
+    }
 
-        function goToImg(index) {
-            currentImage = index;
-            updateImageSlider();
-        }
+    function prevVideo() {
+      currentVideo = (currentVideo - 1 + totalVideos) % totalVideos;
+      updateVideoSlider();
+    }
 
-        // --- Video Slider Logic ---
-        let currentVideo = 0;
-        const totalVideos = 2;
-        const videoTrack = document.getElementById('video-track');
-        const videoDots = document.querySelectorAll('.vid-dot');
+    function goToVideo(index) {
+      currentVideo = index;
+      updateVideoSlider();
+    }
 
-        function updateVideoSlider() {
-            videoTrack.style.transform = `translateX(-${currentVideo * 100}%)`;
-            videoDots.forEach((dot, index) => {
-                if (index === currentVideo) {
-                    dot.classList.replace('bg-slate-300', 'bg-slate-800');
-                } else {
-                    dot.classList.replace('bg-slate-800', 'bg-slate-300');
-                }
-            });
-        }
+    // --- Unified Media Modal Logic ---
+    const mediaModal = document.getElementById('mediaModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalVideo = document.getElementById('modalVideo');
+    const modalVideoSource = document.getElementById('modalVideoSource');
 
-        function nextVideo() {
-            currentVideo = (currentVideo + 1) % totalVideos;
-            updateVideoSlider();
-        }
+    function openMediaModal(type, src) {
+      if (type === 'image') {
+        modalImg.src = src;
+        modalImg.classList.remove('hidden');
+        modalVideo.classList.add('hidden');
+        modalVideo.pause(); // Stop video if playing
+      } else if (type === 'video') {
+        modalVideoSource.src = src;
+        modalVideo.load(); // Reload video with new source
+        modalVideo.classList.remove('hidden');
+        modalImg.classList.add('hidden');
+        modalVideo.play();
+      }
 
-        function prevVideo() {
-            currentVideo = (currentVideo - 1 + totalVideos) % totalVideos;
-            updateVideoSlider();
-        }
+      mediaModal.classList.remove('hidden');
+      mediaModal.classList.add('flex');
 
-        function goToVideo(index) {
-            currentVideo = index;
-            updateVideoSlider();
-        }
+      // Allow CSS transition
+      setTimeout(() => {
+        mediaModal.classList.remove('opacity-0');
+      }, 10);
+    }
 
-        // --- Unified Media Modal Logic ---
-        const mediaModal = document.getElementById('mediaModal');
-        const modalImg = document.getElementById('modalImg');
-        const modalVideo = document.getElementById('modalVideo');
-        const modalVideoSource = document.getElementById('modalVideoSource');
+    function closeMediaModal() {
+      mediaModal.classList.add('opacity-0');
+      setTimeout(() => {
+        mediaModal.classList.add('hidden');
+        mediaModal.classList.remove('flex');
 
-        function openMediaModal(type, src) {
-            if (type === 'image') {
-                modalImg.src = src;
-                modalImg.classList.remove('hidden');
-                modalVideo.classList.add('hidden');
-                modalVideo.pause(); // Stop video if playing
-            } else if (type === 'video') {
-                modalVideoSource.src = src;
-                modalVideo.load(); // Reload video with new source
-                modalVideo.classList.remove('hidden');
-                modalImg.classList.add('hidden');
-                modalVideo.play();
-            }
+        // Clear sources
+        modalImg.src = '';
+        modalVideo.pause();
+        modalVideoSource.src = '';
+      }, 300);
+    }
 
-            mediaModal.classList.remove('hidden');
-            mediaModal.classList.add('flex');
-            
-            // Allow CSS transition
-            setTimeout(() => {
-                mediaModal.classList.remove('opacity-0');
-            }, 10);
-        }
+    // Close modal when clicking outside the media
+    mediaModal.addEventListener('click', (e) => {
+      if (e.target === mediaModal) {
+        closeMediaModal();
+      }
+    });
 
-        function closeMediaModal() {
-            mediaModal.classList.add('opacity-0');
-            setTimeout(() => {
-                mediaModal.classList.add('hidden');
-                mediaModal.classList.remove('flex');
-                
-                // Clear sources
-                modalImg.src = '';
-                modalVideo.pause();
-                modalVideoSource.src = '';
-            }, 300);
-        }
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mediaModal.classList.contains('hidden')) {
+        closeMediaModal();
+      }
+    });
 
-        // Close modal when clicking outside the media
-        mediaModal.addEventListener('click', (e) => {
-            if (e.target === mediaModal) {
-                closeMediaModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !mediaModal.classList.contains('hidden')) {
-                closeMediaModal();
-            }
-        });
-
-    </script>
+  </script>
 
 </body>
 
