@@ -88,16 +88,16 @@
       </div>
 
       <div>
-  <h2 class="text-xl font-bold mb-2">Permissions:</h2>
-  <p class="text-slate-600 leading-relaxed">
-    To provide instant link previews, GoPeek requires limited browser permissions:
-  </p>
+  <h2 class="text-xl font-bold mb-2">Permissions</h2>
+<p class="text-slate-600 leading-relaxed">
+  To provide instant link previews, GoPeek requires limited browser permissions:
+</p>
 
-  <ul class="list-disc ml-5 mt-2 text-slate-600 space-y-1">
-    <li><strong>All Websites:</strong> Required to detect links on webpages and enable preview functionality when the user interacts with them.</li>
+<ul class="list-disc ml-5 mt-2 text-slate-600 space-y-1">
+  <li><strong>&lt;all_urls&gt; host permission:</strong> Required to load user-requested URLs in the GoPeek iframe, regardless of destination.</li>
 
-    <li><strong>Declarative Net Request:</strong> Required to enable embedding of websites that otherwise block iframe display using standard browser security headers (including X-Frame-Options and frame-ancestors). This is applied only to previewed links and does not monitor browsing activity.</li>
-  </ul>
+  <li><strong>declarativeNetRequest + declarativeNetRequestWithHostAccess:</strong> Required to temporarily remove anti-embedding response headers (X-Frame-Options, Content-Security-Policy frame-ancestors) for the specific tab requesting a Peek. Rules are scoped per-tab, limited to sub_frame resources, and automatically cleaned up when the Peek closes or the tab is removed.</li>
+</ul>
 </div>
 
       <div>
