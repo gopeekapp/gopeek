@@ -786,7 +786,7 @@
 <a 
   href="https://microsoftedge.microsoft.com/addons/detail/gopeek/ffaeanmhghmohbponokefmbhfkkomnmk"
   target="_blank"
-  onclick="plausible('install_click', {props: {source: 'edge'}})"
+  onclick="trackInstall('edge')"
   class="w-full bg-[#0078D4] hover:bg-[#106EBE] text-white py-3 rounded-xl font-semibold transition-all duration-200 text-center">
   Install on Edge
 </a>
@@ -810,15 +810,15 @@
     </p>
 
     <a
-        href="https://addons.mozilla.org/en-US/firefox/addon/gopeek/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="w-full"
-    >
-        <button class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold transition-all duration-200">
-            Install on Firefox
-        </button>
-    </a>
+  href="https://addons.mozilla.org/en-US/firefox/addon/gopeek/"
+  target="_blank"
+  rel="noopener noreferrer"
+  onclick="trackInstall('firefox')"
+  class="w-full">
+  <button class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold transition-all duration-200">
+    Install on Firefox
+  </button>
+</a>
 </div>
       </div>
 
@@ -836,10 +836,11 @@
         <div
           class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 gap-4 border-b border-slate-200 pb-4">
           <h3 class="text-lg md:text-xl font-bold text-slate-900">Install Early Access Build</h3>
-          <a href="GoPeekV1.1.zip" download onclick="plausible('zip-download')"
-            class="inline-block bg-slate-900 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition text-sm whitespace-nowrap">
-            Download ZIP
-          </a>
+          <a href="GoPeekV1.1.zip" download 
+   onclick="trackInstall('zip_download')"
+   class="inline-block bg-slate-900 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition text-sm whitespace-nowrap">
+  Download ZIP
+</a>
         </div>
         <ol class="list-decimal list-inside space-y-3 text-sm md:text-base text-slate-700 font-medium">
           <li><span class="text-slate-900 font-bold">Extract</span> the downloaded ZIP file to your computer.</li>
@@ -1015,6 +1016,25 @@
     });
 
   </script>
+
+   <script>
+      function trackInstall(source) {
+  // Plausible (your existing setup)
+  if (window.plausible) {
+    plausible('install_click', { props: { source: source } });
+  }
+  
+  // Google Analytics 4
+  if (typeof gtag === 'function') {
+    gtag('event', 'install_click', {
+      event_category: 'engagement',
+      event_label: source,
+      source: source,
+      transport_type: 'beacon'
+    });
+  }
+}
+   </script>
 
 </body>
 
