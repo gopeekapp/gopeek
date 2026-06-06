@@ -30,7 +30,7 @@
 
     try {
       Paddle.Initialize({ 
-        token: 'test_c683291bed2236d317eba3c8975',
+        token: 'test_bb4ca1cde3fa35741b955b529d4',
         eventCallback: function(event) {
           console.log('[GoPeek] Event:', event.name, event.data);
         }
