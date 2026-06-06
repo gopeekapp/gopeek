@@ -4,105 +4,148 @@
   <meta charset="UTF-8">
   <title>Paddle Sandbox Debug</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
-    button { padding: 12px 24px; font-size: 16px; cursor: pointer; margin: 8px; }
-    #log { background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap; font-family: monospace; font-size: 13px; max-height: 500px; overflow-y: auto; }
-    .error { color: #d32f2f; }
-    .success { color: #388e3c; }
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; }
+    button { padding: 12px 24px; font-size: 16px; cursor: pointer; margin: 8px; border-radius: 8px; border: 1px solid #ccc; }
+    button:hover { background: #f0f0f0; }
+    #log { background: #1a1a2e; color: #00ff88; padding: 16px; border-radius: 8px; white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; max-height: 600px; overflow-y: auto; line-height: 1.5; }
+    .error { color: #ff5555; }
+    .warn { color: #ffaa00; }
+    .info { color: #55aaff; }
+    h2 { margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 8px; }
   </style>
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-<base target="_blank">
 </head>
 <body>
-  <h1>🧪 Paddle Sandbox Test</h1>
-  <p>Open browser console (F12) before clicking buttons.</p>
-
-  <div>
-    <button onclick="testInit()">1. Test Initialize</button>
-    <button onclick="testCheckout('monthly')">2. Test Monthly ($3)</button>
-    <button onclick="testCheckout('yearly')">3. Test Yearly ($25)</button>
-    <button onclick="testCheckout('lifetime')">4. Test Lifetime ($30)</button>
-  </div>
-
-  <h3>Log:</h3>
-  <div id="log"></div>
+  <h1>🧪 Paddle Sandbox Debug</h1>
+  <p><strong>Step 1:</strong> Open browser console (F12 → Console) first.<br>
+     <strong>Step 2:</strong> Click "Initialize Paddle".<br>
+     <strong>Step 3:</strong> Try checkout buttons. If one fails, try the other.</p>
+  
+  <h2>1. Initialize</h2>
+  <button onclick="testInit()">Initialize Paddle</button>
+  
+  <h2>2. Price ID Checkout (Primary)</h2>
+  <button onclick="testCheckout('monthly')">Monthly ($3) - Price ID</button>
+  <button onclick="testCheckout('yearly')">Yearly ($25) - Price ID</button>
+  <button onclick="testCheckout('lifetime')">Lifetime ($30) - Price ID</button>
+  
+  <h2>3. Product ID Checkout (Fallback)</h2>
+  <button onclick="testProductCheckout('monthly')">Monthly - Product ID</button>
+  <button onclick="testProductCheckout('yearly')">Yearly - Product ID</button>
+  <button onclick="testProductCheckout('lifetime')">Lifetime - Product ID</button>
+  
+  <h2>Log:</h2>
+  <div id="log">Waiting for initialization...</div>
 
   <script>
+    const PRODUCT_ID = 'pro_01kte77tnzzc4zzygjtvkh8t1r';
     const PRICE_IDS = {
       monthly: 'pri_01kte7c5yjvxyf6en3229d5gba',
       yearly: 'pri_01kte7dbwfty5hhbe2jdrgst3p',
       lifetime: 'pri_01kte7fbbrg3mxhyt46gnt11y8'
     };
     const TOKEN = 'test_c683291bed2236d317eba3c8975';
-
+    
     function log(msg, type) {
       const el = document.getElementById('log');
       const time = new Date().toLocaleTimeString();
-      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
-      el.innerHTML += `<div class="${className}">[${time}] ${msg}</div>`;
+      const colorClass = type === 'error' ? 'error' : type === 'warn' ? 'warn' : type === 'info' ? 'info' : '';
+      const line = `[${time}] ${msg}`;
+      el.innerHTML += `<div class="${colorClass}">${line}</div>`;
       console.log('[PaddleTest]', msg);
+      el.scrollTop = el.scrollHeight;
     }
-
+    
     function testInit() {
-      log('Testing initialization...');
+      log('=== INITIALIZING PADDLE ===', 'info');
       try {
-        log('Paddle object exists: ' + (typeof Paddle !== 'undefined'));
-        log('Paddle.Environment exists: ' + (typeof Paddle.Environment !== 'undefined'));
-        log('Paddle.Initialize exists: ' + (typeof Paddle.Initialize !== 'undefined'));
-        log('Paddle.Checkout exists: ' + (typeof Paddle.Checkout !== 'undefined'));
-
+        log('Paddle object: ' + (typeof Paddle !== 'undefined' ? 'FOUND' : 'MISSING'));
+        log('Paddle.Environment: ' + (typeof Paddle.Environment !== 'undefined' ? 'FOUND' : 'MISSING'));
+        log('Paddle.Initialize: ' + (typeof Paddle.Initialize !== 'undefined' ? 'FOUND' : 'MISSING'));
+        log('Paddle.Checkout: ' + (typeof Paddle.Checkout !== 'undefined' ? 'FOUND' : 'MISSING'));
+        
         Paddle.Environment.set('sandbox');
-        log('Environment set to sandbox', 'success');
-
-        Paddle.Initialize({ token: TOKEN });
-        log('Initialized with token: ' + TOKEN.substring(0, 15) + '...', 'success');
-
-        // Check if Paddle is ready
+        log('✓ Environment set to sandbox', 'info');
+        
+        Paddle.Initialize({ 
+          token: TOKEN,
+          eventCallback: function(event) {
+            log('EVENT: ' + event.name + ' -> ' + JSON.stringify(event.data), 'info');
+          }
+        });
+        log('✓ Initialize() called with token: ' + TOKEN.substring(0, 20) + '...', 'info');
+        
         setTimeout(() => {
-          log('Paddle status after 1s: ' + (Paddle.Initialized ? 'Initialized' : 'Not initialized'));
-        }, 1000);
-
+          log('Status check - Paddle.Initialized: ' + (Paddle.Initialized || 'undefined'));
+        }, 1500);
+        
       } catch(e) {
-        log('INIT ERROR: ' + e.message, 'error');
+        log('✗ INIT ERROR: ' + e.message, 'error');
+        console.error(e);
       }
     }
-
+    
     function testCheckout(plan) {
       const priceId = PRICE_IDS[plan];
-      log('Opening checkout for plan: ' + plan + ' with priceId: ' + priceId);
-
+      log('=== PRICE ID CHECKOUT: ' + plan + ' ===', 'info');
+      log('Price ID: ' + priceId);
+      
       try {
-        Paddle.Checkout.open({
+        const config = {
           items: [{ priceId: priceId, quantity: 1 }],
           settings: {
-            theme: 'light',
             displayMode: 'overlay',
+            variant: 'one-page',
+            theme: 'light',
             locale: 'en'
           },
           successCallback: function(data) {
-            log('SUCCESS: ' + JSON.stringify(data), 'success');
+            log('✓ SUCCESS: ' + JSON.stringify(data), 'info');
           },
           errorCallback: function(error) {
-            log('CHECKOUT ERROR: ' + JSON.stringify(error), 'error');
+            log('✗ CHECKOUT ERROR: ' + JSON.stringify(error), 'error');
+            console.error('Full error:', error);
           },
           closeCallback: function() {
             log('Checkout closed');
           }
-        });
-        log('Checkout.open() called successfully');
+        };
+        log('Config: ' + JSON.stringify(config, null, 2), 'info');
+        Paddle.Checkout.open(config);
+        log('✓ Checkout.open() executed', 'info');
       } catch(e) {
-        log('OPEN ERROR: ' + e.message, 'error');
+        log('✗ OPEN ERROR: ' + e.message, 'error');
+        console.error(e);
       }
     }
-
-    // Auto-init on load
-    window.addEventListener('load', () => {
-      log('Page loaded. Paddle.js script loaded.');
-      if (typeof Paddle !== 'undefined') {
-        log('Paddle object available');
-      } else {
-        log('Paddle object NOT available - script may have failed to load', 'error');
+    
+    function testProductCheckout(plan) {
+      log('=== PRODUCT ID CHECKOUT: ' + plan + ' ===', 'warn');
+      log('Product ID: ' + PRODUCT_ID);
+      
+      try {
+        Paddle.Checkout.open({
+          items: [{ productId: PRODUCT_ID, quantity: 1 }],
+          settings: {
+            displayMode: 'overlay',
+            variant: 'one-page',
+            theme: 'light'
+          },
+          successCallback: function(data) {
+            log('✓ PRODUCT SUCCESS: ' + JSON.stringify(data), 'info');
+          },
+          errorCallback: function(error) {
+            log('✗ PRODUCT ERROR: ' + JSON.stringify(error), 'error');
+          }
+        });
+        log('✓ Product checkout executed', 'info');
+      } catch(e) {
+        log('✗ PRODUCT OPEN ERROR: ' + e.message, 'error');
       }
+    }
+    
+    window.addEventListener('load', () => {
+      log('Page loaded. Paddle.js status: ' + (typeof Paddle !== 'undefined' ? 'LOADED' : 'NOT LOADED'), 'warn');
     });
   </script>
 </body>
