@@ -7,44 +7,80 @@
     lifetime: 'pri_01kte7fbbrg3mxhyt46gnt11y8'
   };
 
+  console.log('[GoPeek] Paddle integration loaded');
+  console.log('[GoPeek] Price IDs:', PRICE_IDS);
+
   function initPaddle() {
+    console.log('[GoPeek] Initializing Paddle...');
+
     if (typeof Paddle === 'undefined') {
-      console.error('[GoPeek] Paddle.js not loaded');
+      console.error('[GoPeek] ERROR: Paddle.js not loaded! Check if script tag is present.');
       return;
     }
 
-    Paddle.Environment.set('sandbox');
-    Paddle.Initialize({ token: 'test_c683291bed2236d317eba3c8975' });
+    console.log('[GoPeek] Paddle object found:', typeof Paddle);
+    console.log('[GoPeek] Paddle.Environment:', typeof Paddle.Environment);
+    console.log('[GoPeek] Paddle.Initialize:', typeof Paddle.Initialize);
+
+    try {
+      Paddle.Environment.set('sandbox');
+      console.log('[GoPeek] Sandbox environment set');
+    } catch (e) {
+      console.error('[GoPeek] ERROR setting environment:', e);
+    }
+
+    try {
+      Paddle.Initialize({ token: 'test_c683291bed2236d317eba3c8975' });
+      console.log('[GoPeek] Paddle initialized successfully');
+    } catch (e) {
+      console.error('[GoPeek] ERROR initializing Paddle:', e);
+    }
   }
 
   window.openGoPeekCheckout = function(plan) {
     plan = plan || 'monthly';
+    console.log('[GoPeek] Checkout called for plan:', plan);
+
     if (typeof Paddle === 'undefined') {
-      console.error('[GoPeek] Paddle not available');
+      console.error('[GoPeek] ERROR: Paddle not available');
+      alert('Paddle.js not loaded. Please refresh the page.');
       return;
     }
 
     const priceId = PRICE_IDS[plan];
+    console.log('[GoPeek] Using price ID:', priceId);
+
     if (!priceId) {
-      console.error('[GoPeek] Invalid plan:', plan);
+      console.error('[GoPeek] ERROR: Invalid plan:', plan);
+      alert('Invalid plan selected');
       return;
     }
 
-    Paddle.Checkout.open({
-      items: [{ priceId: priceId, quantity: 1 }],
-      settings: {
-        theme: 'light',
-        displayMode: 'overlay',
-        locale: 'en'
-      },
-      successCallback: function(data) {
-        console.log('[GoPeek] Checkout success:', data);
-        handleCheckoutSuccess(data, plan);
-      },
-      closeCallback: function() {
-        console.log('[GoPeek] Checkout closed');
-      }
-    });
+    try {
+      Paddle.Checkout.open({
+        items: [{ priceId: priceId, quantity: 1 }],
+        settings: {
+          theme: 'light',
+          displayMode: 'overlay',
+          locale: 'en'
+        },
+        successCallback: function(data) {
+          console.log('[GoPeek] Checkout SUCCESS:', data);
+          handleCheckoutSuccess(data, plan);
+        },
+        errorCallback: function(error) {
+          console.error('[GoPeek] Checkout ERROR:', error);
+          alert('Checkout error: ' + JSON.stringify(error));
+        },
+        closeCallback: function() {
+          console.log('[GoPeek] Checkout closed');
+        }
+      });
+      console.log('[GoPeek] Checkout.open() called successfully');
+    } catch (e) {
+      console.error('[GoPeek] ERROR calling Checkout.open():', e);
+      alert('Error opening checkout: ' + e.message);
+    }
   };
 
   function handleCheckoutSuccess(data, plan) {
