@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Paddle Sandbox Debug</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+    button { padding: 12px 24px; font-size: 16px; cursor: pointer; margin: 8px; }
+    #log { background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap; font-family: monospace; font-size: 13px; max-height: 500px; overflow-y: auto; }
+    .error { color: #d32f2f; }
+    .success { color: #388e3c; }
+  </style>
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<base target="_blank">
+</head>
+<body>
+  <h1>🧪 Paddle Sandbox Test</h1>
+  <p>Open browser console (F12) before clicking buttons.</p>
+
+  <div>
+    <button onclick="testInit()">1. Test Initialize</button>
+    <button onclick="testCheckout('monthly')">2. Test Monthly ($3)</button>
+    <button onclick="testCheckout('yearly')">3. Test Yearly ($25)</button>
+    <button onclick="testCheckout('lifetime')">4. Test Lifetime ($30)</button>
+  </div>
+
+  <h3>Log:</h3>
+  <div id="log"></div>
+
+  <script>
+    const PRICE_IDS = {
+      monthly: 'pri_01kte7c5yjvxyf6en3229d5gba',
+      yearly: 'pri_01kte7dbwfty5hhbe2jdrgst3p',
+      lifetime: 'pri_01kte7fbbrg3mxhyt46gnt11y8'
+    };
+    const TOKEN = 'test_c683291bed2236d317eba3c8975';
+
+    function log(msg, type) {
+      const el = document.getElementById('log');
+      const time = new Date().toLocaleTimeString();
+      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+      el.innerHTML += `<div class="${className}">[${time}] ${msg}</div>`;
+      console.log('[PaddleTest]', msg);
+    }
+
+    function testInit() {
+      log('Testing initialization...');
+      try {
+        log('Paddle object exists: ' + (typeof Paddle !== 'undefined'));
+        log('Paddle.Environment exists: ' + (typeof Paddle.Environment !== 'undefined'));
+        log('Paddle.Initialize exists: ' + (typeof Paddle.Initialize !== 'undefined'));
+        log('Paddle.Checkout exists: ' + (typeof Paddle.Checkout !== 'undefined'));
+
+        Paddle.Environment.set('sandbox');
+        log('Environment set to sandbox', 'success');
+
+        Paddle.Initialize({ token: TOKEN });
+        log('Initialized with token: ' + TOKEN.substring(0, 15) + '...', 'success');
+
+        // Check if Paddle is ready
+        setTimeout(() => {
+          log('Paddle status after 1s: ' + (Paddle.Initialized ? 'Initialized' : 'Not initialized'));
+        }, 1000);
+
+      } catch(e) {
+        log('INIT ERROR: ' + e.message, 'error');
+      }
+    }
+
+    function testCheckout(plan) {
+      const priceId = PRICE_IDS[plan];
+      log('Opening checkout for plan: ' + plan + ' with priceId: ' + priceId);
+
+      try {
+        Paddle.Checkout.open({
+          items: [{ priceId: priceId, quantity: 1 }],
+          settings: {
+            theme: 'light',
+            displayMode: 'overlay',
+            locale: 'en'
+          },
+          successCallback: function(data) {
+            log('SUCCESS: ' + JSON.stringify(data), 'success');
+          },
+          errorCallback: function(error) {
+            log('CHECKOUT ERROR: ' + JSON.stringify(error), 'error');
+          },
+          closeCallback: function() {
+            log('Checkout closed');
+          }
+        });
+        log('Checkout.open() called successfully');
+      } catch(e) {
+        log('OPEN ERROR: ' + e.message, 'error');
+      }
+    }
+
+    // Auto-init on load
+    window.addEventListener('load', () => {
+      log('Page loaded. Paddle.js script loaded.');
+      if (typeof Paddle !== 'undefined') {
+        log('Paddle object available');
+      } else {
+        log('Paddle object NOT available - script may have failed to load', 'error');
+      }
+    });
+  </script>
+</body>
+</html>
