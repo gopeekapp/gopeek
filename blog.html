@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoPeek Blog — Browser Productivity & Tab Management Tips</title>
+
+  <meta name="description" content="Tips, guides, and insights on browser productivity, tab management, and smarter browsing. From the GoPeek team." />
+  <meta name="keywords" content="browser productivity, tab management, link preview, browser extensions, gopeek blog" />
+
+  <meta property="og:title" content="GoPeek Blog — Browser Productivity & Tab Management Tips" />
+  <meta property="og:description" content="Tips, guides, and insights on browser productivity, tab management, and smarter browsing." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gopeek-lovat.vercel.app/blog.html" />
+  <meta property="og:image" content="https://gopeek-lovat.vercel.app/GoPeek_Logo.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GoPeek Blog — Browser Productivity & Tab Management Tips" />
+  <meta name="twitter:description" content="Tips, guides, and insights on browser productivity, tab management, and smarter browsing." />
+  <meta name="twitter:image" content="https://gopeek-lovat.vercel.app/GoPeek_Logo.png" />
+
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog.html" />
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .blog-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .blog-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .featured-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      border-radius: 24px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .featured-card:hover {
+      transform: scale(1.01);
+    }
+
+    .featured-card h2 {
+      color: white;
+    }
+
+    .featured-card p {
+      color: #cbd5e1;
+    }
+
+    .search-box {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      max-width: 400px;
+      font-size: 0.95rem;
+      color: #475569;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-box::placeholder {
+      color: #94a3b8;
+    }
+
+    .category-pill {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #e2e8f0;
+      background: white;
+      color: #475569;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .category-pill:hover,
+    .category-pill.active {
+      background: #0f172a;
+      color: white;
+      border-color: #0f172a;
+    }
+
+    .read-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <!-- Background blobs -->
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <div class="flex items-center gap-4">
+      <a href="blog.html" class="text-slate-600 font-medium text-sm hover:text-slate-900 transition">Blog</a>
+      <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+        Get GoPeek
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 md:px-6 pt-8 md:pt-16 pb-24">
+
+    <!-- Blog Header -->
+    <section class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+      <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full text-xs md:text-sm text-blue-700 font-medium mb-6">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+        </span>
+        GoPeek Blog
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-black leading-tight mb-6 gradient-text">
+        Smarter Browsing,<br>Fewer Tabs
+      </h1>
+
+      <p class="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto mb-8">
+        Tips, guides, and insights on browser productivity, tab management, and the future of how we explore the web.
+      </p>
+
+      <!-- Search -->
+      <div class="flex justify-center mb-8">
+        <input type="text" class="search-box" placeholder="Search articles..." id="searchInput" onkeyup="filterPosts()" />
+      </div>
+
+      <!-- Categories -->
+      <div class="flex flex-wrap justify-center">
+        <button class="category-pill active" onclick="filterCategory('all')">All</button>
+        <button class="category-pill" onclick="filterCategory('productivity')">Productivity</button>
+        <button class="category-pill" onclick="filterCategory('browser-tips')">Browser Tips</button>
+        <button class="category-pill" onclick="filterCategory('tab-management')">Tab Management</button>
+        <button class="category-pill" onclick="filterCategory('extensions')">Extensions</button>
+      </div>
+    </section>
+
+    <!-- Featured Post -->
+    <section class="mb-12 md:mb-16" id="featured">
+      <a href="blog-preview-links-without-tabs.html" class="featured-card block">
+        <div class="grid md:grid-cols-2">
+          <div class="p-8 md:p-10 flex flex-col justify-center">
+            <div class="mb-4">
+              <span class="tag">Featured</span>
+              <span class="tag">Productivity</span>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-black mb-4 leading-tight">
+              How to Preview Links Without Opening 50 Tabs
+            </h2>
+            <p class="mb-6 leading-relaxed">
+              Stop drowning in browser tabs. Learn how GoPeek lets you preview links instantly — faster than opening a new tab — and discover why link previews are the future of browsing.
+            </p>
+            <div class="flex items-center gap-4 text-sm">
+              <span class="text-slate-400">June 8, 2026</span>
+              <span class="text-slate-500">·</span>
+              <span class="read-time">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 6v6l4 2"></path>
+                </svg>
+                6 min read
+              </span>
+            </div>
+          </div>
+          <div class="hidden md:block">
+            <img src="GoPeekDemo1.png" alt="GoPeek link preview" class="w-full h-full object-cover" style="min-height: 320px;" />
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <!-- All Posts Grid -->
+    <section>
+      <h2 class="text-2xl md:text-3xl font-bold mb-8 text-slate-900">All Articles</h2>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="postsGrid">
+
+        <!-- Post 1 -->
+        <article class="blog-card" data-category="productivity browser-tips tab-management">
+          <a href="blog-preview-links-without-tabs.html" class="block">
+            <div class="h-48 bg-slate-100 overflow-hidden">
+              <img src="GoPeekDemo1.png" alt="Preview links without opening tabs" class="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div class="p-6">
+              <div class="mb-3">
+                <span class="tag">Productivity</span>
+                <span class="tag">Browser Tips</span>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
+                How to Preview Links Without Opening 50 Tabs
+              </h3>
+              <p class="text-sm text-slate-600 mb-4 line-clamp-2">
+                GoPeek opens live mini-browser windows instantly — faster than a regular tab. Hold Shift, hover any link, and browse without the chaos.
+              </p>
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span>June 8, 2026</span>
+                <span class="read-time">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 6v6l4 2"></path>
+                  </svg>
+                  6 min
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Post 2 (Coming Soon) -->
+        <article class="blog-card opacity-60" data-category="productivity tab-management extensions">
+          <div class="h-48 bg-slate-100 flex items-center justify-center">
+            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
+          </div>
+          <div class="p-6">
+            <div class="mb-3">
+              <span class="tag">Tab Management</span>
+              <span class="tag">Extensions</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
+              The Best Tab Management Extensions for 2026
+            </h3>
+            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
+              A deep dive into the top tools for taming tab chaos — from session managers to link previewers like GoPeek.
+            </p>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>Coming Soon</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 3 (Coming Soon) -->
+        <article class="blog-card opacity-60" data-category="productivity tab-management">
+          <div class="h-48 bg-slate-100 flex items-center justify-center">
+            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
+          </div>
+          <div class="p-6">
+            <div class="mb-3">
+              <span class="tag">Productivity</span>
+              <span class="tag">Tab Management</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
+              Why "Tab Hoarding" Is Killing Your Productivity
+            </h3>
+            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
+              The psychology behind tab overload, why your brain craves those open tabs, and how to break the habit for good.
+            </p>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>Coming Soon</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 4 (Coming Soon) -->
+        <article class="blog-card opacity-60" data-category="browser-tips extensions">
+          <div class="h-48 bg-slate-100 flex items-center justify-center">
+            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
+          </div>
+          <div class="p-6">
+            <div class="mb-3">
+              <span class="tag">Browser Tips</span>
+              <span class="tag">Extensions</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
+              Hover Preview vs. Side Panel: What's the Best Way to Browse?
+            </h3>
+            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
+              Comparing link preview methods — from hover popups to split-screen sidebars. Which fits your workflow?
+            </p>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>Coming Soon</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 5 (Coming Soon) -->
+        <article class="blog-card opacity-60" data-category="productivity">
+          <div class="h-48 bg-slate-100 flex items-center justify-center">
+            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
+          </div>
+          <div class="p-6">
+            <div class="mb-3">
+              <span class="tag">Productivity</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
+              How I Reduced My Browser from 100 Tabs to 5 Without Losing Anything
+            </h3>
+            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
+              A real story of going from tab chaos to tab zen — the tools, habits, and mindset shift that made it stick.
+            </p>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>Coming Soon</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Post 6 (Coming Soon) -->
+        <article class="blog-card opacity-60" data-category="browser-tips">
+          <div class="h-48 bg-slate-100 flex items-center justify-center">
+            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
+          </div>
+          <div class="p-6">
+            <div class="mb-3">
+              <span class="tag">Browser Tips</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
+              From Tab Chaos to Tab Zen: A Minimalist's Guide to Browsing
+            </h3>
+            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
+              Minimalist browsing principles — how to consume information intentionally without drowning in open tabs.
+            </p>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>Coming Soon</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Newsletter / Stay Updated -->
+    <section class="mt-16 md:mt-20">
+      <div class="glass rounded-3xl p-8 md:p-12 text-center max-w-2xl mx-auto">
+        <div class="text-3xl mb-4">📬</div>
+        <h3 class="text-2xl font-bold text-slate-900 mb-3">New Posts Weekly</h3>
+        <p class="text-slate-600 mb-6">
+          Follow GoPeek for browser productivity tips, extension updates, and smarter browsing workflows.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="https://twitter.com/gopeekapp" target="_blank" rel="noopener noreferrer" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-slate-800 transition">
+            Follow on X/Twitter
+          </a>
+          <a href="index.html#install" class="glass text-slate-800 px-6 py-3 rounded-xl font-semibold hover:bg-white transition">
+            Try GoPeek
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-6xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+  <script>
+    function filterCategory(category) {
+      // Update active pill
+      document.querySelectorAll('.category-pill').forEach(pill => {
+        pill.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Filter posts
+      const posts = document.querySelectorAll('.blog-card');
+      posts.forEach(post => {
+        if (category === 'all') {
+          post.style.display = '';
+        } else {
+          const categories = post.getAttribute('data-category') || '';
+          if (categories.includes(category)) {
+            post.style.display = '';
+          } else {
+            post.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    function filterPosts() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const posts = document.querySelectorAll('.blog-card');
+
+      posts.forEach(post => {
+        const title = post.querySelector('h3').textContent.toLowerCase();
+        const excerpt = post.querySelector('p').textContent.toLowerCase();
+        const tags = Array.from(post.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase()).join(' ');
+
+        if (title.includes(searchTerm) || excerpt.includes(searchTerm) || tags.includes(searchTerm)) {
+          post.style.display = '';
+        } else {
+          post.style.display = 'none';
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
