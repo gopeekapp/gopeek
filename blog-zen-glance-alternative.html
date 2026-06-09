@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zen Browser Glance Alternative: Why I Switched to GoPeek | GoPeek</title>
+
+  <meta name="description" content="Zen Glance is built into Zen Browser. But it is buggy, limited, and locked to one browser. Here is why I switched to GoPeek — and why you might too." />
+  <meta name="keywords" content="zen glance alternative, better than zen glance, gopeek vs zen glance, zen browser link preview, zen glance problems" />
+
+  <meta property="og:title" content="Zen Browser Glance Alternative: Why I Switched to GoPeek | GoPeek" />
+  <meta property="og:description" content="Zen Glance is built into Zen Browser. But it is buggy, limited, and locked to one browser. Here is why I switched to GoPeek." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Zen Browser Glance Alternative: Why I Switched to GoPeek" />
+  <meta name="twitter:description" content="Zen Glance is buggy and limited. GoPeek works everywhere. Here is my story of switching." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-zen-glance-alternative.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .pain-point {
+      background: #fef2f2;
+      border-left: 4px solid #ef4444;
+      padding: 1.25rem 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1.5rem 0;
+    }
+
+    .pain-point h4 {
+      color: #991b1b;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .pain-point p {
+      color: #7f1d1d;
+      margin-bottom: 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .gopeek-win {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 600;
+    }
+
+    .comparison-table .zen-win {
+      background: #fef2f2;
+      color: #991b1b;
+      font-weight: 600;
+    }
+
+    .comparison-table .tie {
+      background: #f8fafc;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+
+    .switch-timeline {
+      position: relative;
+      padding-left: 2rem;
+      margin: 2rem 0;
+    }
+
+    .switch-timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.5rem;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e2e8f0;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.75rem;
+      top: 0.4rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #2563eb;
+      border: 2px solid white;
+      box-shadow: 0 0 0 2px #2563eb;
+    }
+
+    .timeline-item.pain::before {
+      background: #ef4444;
+      box-shadow: 0 0 0 2px #ef4444;
+    }
+
+    .timeline-item.win::before {
+      background: #22c55e;
+      box-shadow: 0 0 0 2px #22c55e;
+    }
+
+    .timeline-item h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-item p {
+      color: #475569;
+      margin-bottom: 0;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Zen Glance Alternative</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Zen Browser</span>
+      <span class="tag">Comparison</span>
+      <span class="tag">Switch Story</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      Zen Browser Glance Alternative: Why I Switched to GoPeek
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 9, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+      <span>·</span>
+      <span>By Rohit Mishra (GoPeek Team member)</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="Zen Glance alternative GoPeek comparison" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">Zen Glance is built-in but broken. GoPeek is the fix that works everywhere.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        I loved Zen Browser. The minimal interface, the vertical tabs, the calm aesthetic — it felt like the browser Firefox should have been. And when I discovered <strong>Zen Glance</strong>, the built-in link preview feature, I thought I had found the perfect setup.
+      </p>
+
+      <p>
+        Then reality set in.
+      </p>
+
+      <p>
+        Zen Glance is not just limited — it is <strong>fundamentally broken</strong> for anyone who actually needs to use it. After six months of frustration, I switched to GoPeek. Here is what went wrong, what I found instead, and why I am not going back.
+      </p>
+
+      <h2>What Zen Glance Promises</h2>
+
+      <p>
+        Zen Glance is Zen Browser's native link preview feature. The idea is simple and appealing: hover over a link (or use a keyboard shortcut) and a preview of the linked page appears in a panel. No new tab. No context switch. Just a quick look.
+      </p>
+
+      <p>
+        On paper, it sounds perfect for Zen's minimalist philosophy:
+      </p>
+
+      <ul>
+        <li>Built into the browser — no extensions needed</li>
+        <li>Matches Zen's clean aesthetic</li>
+        <li>No additional memory overhead from extensions</li>
+        <li>Native integration with Zen's vertical tab system</li>
+      </ul>
+
+      <p>
+        The problem? <strong>It does not actually work well enough to use.</strong>
+      </p>
+
+      <h2>The 5 Pain Points That Broke Zen Glance for Me</h2>
+
+      <div class="pain-point">
+        <h4>1. The Window Is Enormous</h4>
+        <p>Zen Glance opens a preview panel that takes up roughly 60% of your screen. On a 13-inch laptop, it covers almost everything. You cannot resize it. You cannot make it smaller. It is a full-page preview that behaves like a popup ad.</p>
+      </div>
+
+      <div class="pain-point">
+        <h4>2. No Side-by-Side Comparison</h4>
+        <p>You can only open one Glance at a time. Want to compare two papers? Two product pages? A dataset and its methodology? Impossible. Close the first, open the second, forget what the first said. Repeat.</p>
+      </div>
+
+      <div class="pain-point">
+        <h4>3. Keyboard Shortcut Conflicts</h4>
+        <p>Zen Glance uses Alt+Click to trigger. But Alt+Click is also how you download files in most browsers, how you select text in some apps, and how Zen itself handles certain tab actions. The conflict is constant and infuriating.</p>
+      </div>
+
+      <div class="pain-point">
+        <h4>4. The "Bump to Wrong Tab" Bug</h4>
+        <p>When you close a Glance, Zen sometimes bumps your focus to a completely different tab — not the one you were on, not the one you previewed, but some random tab from 20 minutes ago. This happens frequently enough that you start dreading closing Glances.</p>
+      </div>
+
+      <div class="pain-point">
+        <h4>5. Choppy Performance on Lower-End Hardware</h4>
+        <p>Zen Browser itself is lightweight. But Zen Glance renders full web pages in an overlay, and on machines with 8GB RAM or integrated graphics, it stutters, lags, and occasionally crashes the browser. The feature that was supposed to save resources ends up consuming them.</p>
+      </div>
+
+      <div class="quote-box">
+        "I wanted to love Zen Glance. I really did. But after the 47th time it sent me to the wrong tab, I started looking for alternatives. GoPeek was the first one that actually worked."
+        <cite>— Zen Browser user on Reddit r/zen_browser</cite>
+      </div>
+
+      <h2>My Switch Timeline</h2>
+
+      <div class="switch-timeline">
+        <div class="timeline-item pain">
+          <h4>Month 1: Excitement</h4>
+          <p>Discovered Zen Glance. Thought it was brilliant. Used it for quick reference checks.</p>
+        </div>
+        <div class="timeline-item pain">
+          <h4>Month 2: Annoyance</h4>
+          <p>The giant window started bothering me. Could not resize it. Started avoiding Glance for small checks.</p>
+        </div>
+        <div class="timeline-item pain">
+          <h4>Month 3: Frustration</h4>
+          <p>The wrong-tab bug hit me daily. Lost my place in research sessions multiple times. Started opening tabs instead — defeating the purpose.</p>
+        </div>
+        <div class="timeline-item pain">
+          <h4>Month 4: Search</h4>
+          <p>Looked for Zen Glance alternatives. Tried Hover Zoom+, Imagus, and a few others. None worked well in Zen.</p>
+        </div>
+        <div class="timeline-item win">
+          <h4>Month 5: Discovery</h4>
+          <p>Found GoPeek. Installed it in Zen Browser (via Firefox extension compatibility). Immediately noticed the difference.</p>
+        </div>
+        <div class="timeline-item win">
+          <h4>Month 6: Commitment</h4>
+          <p>Disabled Zen Glance entirely. GoPeek handles 100% of my link previews now. No crashes, no wrong tabs, no giant windows.</p>
+        </div>
+      </div>
+
+      <h2>What GoPeek Does Differently</h2>
+
+      <p>
+        GoPeek is not just "Zen Glance but better." It is a fundamentally different approach to link previews:
+      </p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Feature</th>
+            <th style="width: 35%;">Zen Glance</th>
+            <th style="width: 35%;">GoPeek</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Window size</strong></td>
+            <td class="zen-win">Fixed, enormous (~60% of screen)</td>
+            <td class="gopeek-win">Fully resizable (drag corner)</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-preview</strong></td>
+            <td class="zen-win">One at a time only</td>
+            <td class="gopeek-win">Multiple side-by-side (Multi-Peek)</td>
+          </tr>
+          <tr>
+            <td><strong>Trigger</strong></td>
+            <td class="zen-win">Alt+Click (conflicts with downloads)</td>
+            <td class="gopeek-win">Shift+Hover (customizable, no conflicts)</td>
+          </tr>
+          <tr>
+            <td><strong>Focus on close</strong></td>
+            <td class="zen-win">Often jumps to wrong tab (bug)</td>
+            <td class="gopeek-win">Returns to original tab reliably</td>
+          </tr>
+          <tr>
+            <td><strong>Performance</strong></td>
+            <td class="zen-win">Choppy on 8GB RAM / integrated graphics</td>
+            <td class="gopeek-win">Lightweight overlay, minimal resource use</td>
+          </tr>
+          <tr>
+            <td><strong>Interactivity</strong></td>
+            <td class="tie">Fully interactive</td>
+            <td class="tie">Fully interactive</td>
+          </tr>
+          <tr>
+            <td><strong>Persistence</strong></td>
+            <td class="zen-win">Closes when you click elsewhere</td>
+            <td class="gopeek-win">Stays open until manually closed; bubble minimize</td>
+          </tr>
+          <tr>
+            <td><strong>Browser lock-in</strong></td>
+            <td class="zen-win">Zen Browser only</td>
+            <td class="gopeek-win">Firefox, Edge, Chrome (cross-browser)</td>
+          </tr>
+          <tr>
+            <td><strong>Sidebar mode</strong></td>
+            <td class="zen-win">Not available</td>
+            <td class="gopeek-win">Draggable split-screen sidebar</td>
+          </tr>
+          <tr>
+            <td><strong>Dynamic theme</strong></td>
+            <td class="zen-win">Matches Zen's theme only</td>
+            <td class="gopeek-win">Adapts to the website being previewed</td>
+          </tr>
+          <tr>
+            <td><strong>Privacy</strong></td>
+            <td class="tie">Zen handles it</td>
+            <td class="gopeek-win">Zero data collection, local only</td>
+          </tr>
+          <tr>
+            <td><strong>Price</strong></td>
+            <td class="tie">Free (with Zen)</td>
+            <td class="tie">Free</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>The Specific Moments That Sealed the Switch</h2>
+
+      <p>
+        It is one thing to compare features. It is another to live with the tools. Here are three specific moments where GoPeek saved me and Zen Glance failed me:
+      </p>
+
+      <div class="scenario-box">
+        <h4>Moment 1: The Literature Review</h4>
+        <p style="margin-bottom: 0.75rem;">I was reviewing 15 papers for a project. With Zen Glance, I had to open and close each preview individually. By paper #8, I had lost track of which ones I had already checked. The wrong-tab bug sent me to a random Wikipedia page twice.</p>
+        <p style="margin-bottom: 0;"><strong>With GoPeek:</strong> I opened 5 previews side-by-side (Multi-Peek), compared abstracts simultaneously, minimized the promising ones into bubbles, and closed the rest. Total time: 12 minutes. With Zen Glance, the same task took 35 minutes and left me frustrated.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>Moment 2: The Product Comparison</h4>
+        <p style="margin-bottom: 0.75rem;">I was comparing two software tools for my team. Zen Glance let me preview one product page. To see the second, I had to close the first. I could not remember the pricing of the first when looking at the second. I ended up opening both in tabs — the exact thing Glance was supposed to prevent.</p>
+        <p style="margin-bottom: 0;"><strong>With GoPeek:</strong> Two preview windows, side-by-side, both fully interactive. I clicked through features on both pages simultaneously. No tabs opened. No context lost.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>Moment 3: The Late-Night Session</h4>
+        <p style="margin-bottom: 0.75rem;">Working on my laptop (8GB RAM, integrated graphics) at 11 PM. Zen Glance opened a preview of a data-heavy page. The browser froze for 4 seconds. The preview rendered at 10 FPS. I closed it and opened the page in a tab instead — which loaded faster than the Glance overlay.</p>
+        <p style="margin-bottom: 0;"><strong>With GoPeek:</strong> Same page, same machine, same time. Preview opened instantly. Scrolled smoothly. No lag. No freeze. I checked the data, closed the preview, and went to bed 20 minutes earlier.</p>
+      </div>
+
+      <h2>What I Miss About Zen Glance</h2>
+
+      <p>
+        I am not here to claim GoPeek is perfect or that Zen Glance is useless. There are two things I genuinely miss:
+      </p>
+
+      <ul>
+        <li><strong>Native aesthetic:</strong> Zen Glance matches Zen's design language perfectly. GoPeek looks good, but it is an extension — it does not blend in quite as seamlessly.</li>
+        <li><strong>No installation:</strong> Zen Glance works out of the box. GoPeek requires installing an extension. For non-technical users, this is a small barrier.</li>
+      </ul>
+
+      <p>
+        But these are trade-offs I will make every time for functionality that actually works.
+      </p>
+
+      <h2>The Broader Problem: Built-In vs. Extension</h2>
+
+      <p>
+        Zen Glance is not uniquely broken. It is an example of a broader pattern: <strong>built-in browser features are often good enough to demo, but not good enough to depend on.</strong>
+      </p>
+
+      <p>
+        Browser developers have to balance dozens of features. A built-in link preview gets attention during development, then stagnates. Bugs persist. Feature requests sit in GitHub issues for months. Users are left with a half-working tool that the browser team has moved on from.
+      </p>
+
+      <p>
+        Extensions, by contrast, live or die by user satisfaction. If GoPeek has a bug, it gets fixed or users leave. If a feature is missing, it gets added or a competitor does it first. The incentive structure produces better tools over time.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The lesson:</strong> Built-in features are demos. Extensions are products. Choose based on which one you need to actually get work done.
+      </div>
+
+      <h2>Should You Switch Too?</h2>
+
+      <p>
+        If you are a Zen Browser user and Zen Glance works for you — genuinely works, not "works enough" — you do not need to switch. Simplicity has value. Native integration has value. One less extension has value.
+      </p>
+
+      <p>
+        But if any of these sound familiar:
+      </p>
+
+      <ul>
+        <li>You avoid Glance because the window is too big</li>
+        <li>You open tabs instead of using Glance because you need to compare sources</li>
+        <li>You have lost your place because of the wrong-tab bug</li>
+        <li>Your machine stutters when Glance renders heavy pages</li>
+        <li>You wish you could resize, minimize, or multi-preview</li>
+      </ul>
+
+      <p>
+        Then GoPeek is worth trying. It takes 30 seconds to install. It works in Zen Browser (via Firefox extension support). And it solves every problem I described above.
+      </p>
+
+      <h2>The Bottom Line</h2>
+
+      <p>
+        I did not switch from Zen Glance to GoPeek because GoPeek is flashier. I switched because <strong>Zen Glance stopped me from working efficiently</strong> and GoPeek let me work the way I wanted to.
+      </p>
+
+      <p>
+        Zen Browser is still my daily driver. The vertical tabs, the minimal chrome, the calm aesthetic — I love all of it. But Zen Glance is the one feature I replaced. And I have zero regrets.
+      </p>
+
+      <div class="highlight-box">
+        <strong>My one-line advice:</strong> Keep Zen Browser. Ditch Zen Glance. Install GoPeek. Your research sessions will thank you.
+      </div>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Try GoPeek in Zen Browser</h3>
+      <p>Works in Zen Browser via Firefox extension support. Fully interactive previews. No giant windows. No wrong-tab bugs. No browser lock-in.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Install GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Zen Browser & Previews</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-gopeek-vs-zen-glance.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Zen Glance: Which Link Preview Wins?</p>
+        </a>
+        <a href="blog-gopeek-vs-opening-new-tabs.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Opening New Tabs: The Math on Time Saved</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
