@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arc Browser Peek vs GoPeek: Which Preview Is Better? | GoPeek</title>
+
+  <meta name="description" content="Arc Browser Peek is built-in. GoPeek works everywhere. Compare features, flexibility, and focus to see which link preview tool actually fits your workflow." />
+  <meta name="keywords" content="arc browser peek, arc peek alternative, gopeek vs arc peek, arc browser link preview, arc peek vs extension" />
+
+  <meta property="og:title" content="Arc Browser Peek vs GoPeek: Which Preview Is Better? | GoPeek" />
+  <meta property="og:description" content="Arc Browser Peek is built-in. GoPeek works everywhere. Compare features, flexibility, and focus to see which link preview tool actually fits your workflow." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Arc Browser Peek vs GoPeek: Which Preview Is Better?" />
+  <meta name="twitter:description" content="Arc Peek is elegant but limited. GoPeek is flexible and cross-browser. See which link preview tool wins for your workflow." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-arc-peek-vs-gopeek.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .gopeek-win {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 600;
+    }
+
+    .comparison-table .arc-win {
+      background: #fef2f2;
+      color: #991b1b;
+      font-weight: 600;
+    }
+
+    .comparison-table .tie {
+      background: #f8fafc;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Arc Browser Peek vs GoPeek</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Comparison</span>
+      <span class="tag">Arc Browser</span>
+      <span class="tag">Link Previews</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      Arc Browser Peek vs GoPeek: Which Preview Is Better?
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 9, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="Arc Browser Peek vs GoPeek comparison" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">Arc Peek is elegant but locked to one browser. GoPeek follows you everywhere.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        Arc Browser changed how people think about browsing. Its <strong>Peek</strong> feature — a quick preview that slides in from the right when you hover a link — is genuinely clever. It feels native, it looks beautiful, and it solves the same problem GoPeek does: <em>stop opening tabs for every curiosity click.</em>
+      </p>
+
+      <p>
+        But Arc Peek has a ceiling. It is built for Arc's specific design philosophy — minimal, opinionated, and locked to one browser. GoPeek takes a different approach: maximum flexibility, cross-browser support, and features that Arc simply does not offer.
+      </p>
+
+      <p>
+        If you are an Arc user wondering whether to stick with Peek or switch to GoPeek, this comparison is for you. We will look at what each tool does well, where each falls short, and which one actually fits your workflow.
+      </p>
+
+      <h2>What Is Arc Browser Peek?</h2>
+
+      <p>
+        Arc Peek is a native feature of Arc Browser (macOS and Windows). When you hover over a link in Arc, a small preview panel slides in from the right edge of the window. It shows the linked page in a constrained, read-only view. You can scroll, but you cannot interact deeply. It is designed for quick glances — not for actual browsing.
+      </p>
+
+      <p><strong>How it works:</strong></p>
+      <ul>
+        <li>Hover over any link in Arc</li>
+        <li>A preview panel slides in from the right</li>
+        <li>Scroll to read, move mouse away to dismiss</li>
+        <li>Click to open the page fully in a new tab</li>
+      </ul>
+
+      <p><strong>Arc's design philosophy:</strong></p>
+      <ul>
+        <li><strong>Minimal by default:</strong> Peek is intentionally limited — no navigation, no interaction</li>
+        <li><strong>Locked to Arc:</strong> Only works in Arc Browser. No Firefox, no Edge, no Chrome</li>
+        <li><strong>Read-only previews:</strong> You cannot click links inside a Peek, fill forms, or use interactive elements</li>
+        <li><strong>No persistence:</strong> Peek disappears the moment you move your mouse</li>
+      </ul>
+
+      <div class="quote-box">
+        "Arc Peek is beautiful. It is also a teaser, not a tool. It shows you enough to decide whether to open a tab — but it does not let you actually do anything with the content."
+        <cite>— Arc user on r/ArcBrowser</cite>
+      </div>
+
+      <h2>What Is GoPeek?</h2>
+
+      <p>
+        GoPeek is a browser extension that opens links in fully interactive mini-browser windows. Unlike Arc Peek, GoPeek windows are live, navigable, and persistent. You can click links inside them, fill forms, watch videos, and even minimize them into floating bubbles for later.
+      </p>
+
+      <p><strong>How it works:</strong></p>
+      <ul>
+        <li>Hold Shift (customizable) and hover over any link</li>
+        <li>A live, interactive browser window opens on your current page</li>
+        <li>Browse naturally — click links, scroll, interact with the page</li>
+        <li>Double-click the header to collapse into a floating bubble</li>
+        <li>Drag to sidebar mode for split-screen research</li>
+        <li>Open multiple Peeks side-by-side with Multi-Peek</li>
+      </ul>
+
+      <p><strong>GoPeek's design philosophy:</strong></p>
+      <ul>
+        <li><strong>Fully interactive:</strong> Peek windows are real browser instances, not read-only previews</li>
+        <li><strong>Cross-browser:</strong> Works in Firefox, Edge, and soon Chrome — not locked to one browser</li>
+        <li><strong>Persistent:</strong> Peeks stay open until you close them. Minimize into bubbles. Resume anytime</li>
+        <li><strong>Flexible layout:</strong> Free-floating, sidebar split-screen, or bubble mode — your choice</li>
+      </ul>
+
+      <h2>Head-to-Head Comparison</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Feature</th>
+            <th style="width: 35%;">Arc Browser Peek</th>
+            <th style="width: 35%;">GoPeek</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Trigger</strong></td>
+            <td class="tie">Hover (no modifier)</td>
+            <td class="gopeek-win">Shift + hover (customizable)</td>
+          </tr>
+          <tr>
+            <td><strong>Interactivity</strong></td>
+            <td class="arc-win">Read-only (scroll only)</td>
+            <td class="gopeek-win">Fully interactive (click, type, navigate)</td>
+          </tr>
+          <tr>
+            <td><strong>Browser support</strong></td>
+            <td class="arc-win">Arc only</td>
+            <td class="gopeek-win">Firefox, Edge, Chrome (soon)</td>
+          </tr>
+          <tr>
+            <td><strong>Persistence</strong></td>
+            <td class="arc-win">Disappears on mouse leave</td>
+            <td class="gopeek-win">Stays open until manually closed</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-preview</strong></td>
+            <td class="arc-win">One at a time</td>
+            <td class="gopeek-win">Multiple side-by-side (Multi-Peek)</td>
+          </tr>
+          <tr>
+            <td><strong>Sidebar mode</strong></td>
+            <td class="arc-win">Fixed right panel only</td>
+            <td class="gopeek-win">Draggable, resizable, any position</td>
+          </tr>
+          <tr>
+            <td><strong>Minimize / bubble</strong></td>
+            <td class="arc-win">Not available</td>
+            <td class="gopeek-win">Double-click header → floating bubble</td>
+          </tr>
+          <tr>
+            <td><strong>Window size control</strong></td>
+            <td class="arc-win">Fixed width</td>
+            <td class="gopeek-win">Fully resizable (drag corner)</td>
+          </tr>
+          <tr>
+            <td><strong>Dynamic theme</strong></td>
+            <td class="arc-win">Matches Arc's theme</td>
+            <td class="gopeek-win">Adapts to the website being previewed</td>
+          </tr>
+          <tr>
+            <td><strong>Works on all sites</strong></td>
+            <td class="tie">Most sites</td>
+            <td class="tie">Most sites (handles CSP automatically)</td>
+          </tr>
+          <tr>
+            <td><strong>Privacy</strong></td>
+            <td class="tie">Arc handles it</td>
+            <td class="gopeek-win">Zero data collection, local only</td>
+          </tr>
+          <tr>
+            <td><strong>Price</strong></td>
+            <td class="tie">Free (with Arc)</td>
+            <td class="tie">Free</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Where Arc Peek Wins</h2>
+
+      <p>
+        Arc Peek is not without merit. In fact, it excels in specific scenarios:
+      </p>
+
+      <div class="scenario-box">
+        <h4>1. Zero-Friction Glances</h4>
+        <p style="margin-bottom: 0;">If you just want to see the headline and first paragraph of a link before deciding to open it, Arc Peek is faster. No modifier key, no deliberate action. Just hover and glance. This is perfect for Twitter, Reddit, and news aggregators where 90% of links are not worth opening.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>2. Native Aesthetic</h4>
+        <p style="margin-bottom: 0;">Arc Peek looks like it belongs in Arc. The animation is smooth, the panel matches Arc's design language, and it feels like a native feature rather than an add-on. If you value visual polish and consistency, Arc Peek delivers.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>3. No Setup Required</h4>
+        <p style="margin-bottom: 0;">Peek works out of the box in Arc. No installation, no configuration, no learning curve. For casual users who do not want to think about their tools, this is a genuine advantage.</p>
+      </div>
+
+      <h2>Where GoPeek Wins</h2>
+
+      <p>
+        GoPeek wins wherever Arc Peek's limitations become friction:
+      </p>
+
+      <div class="scenario-box">
+        <h4>1. Actual Browsing Inside Previews</h4>
+        <p style="margin-bottom: 0;">Arc Peek is read-only. GoPeek is a real browser window. You can click links, fill search boxes, navigate menus, and interact with the page fully. This matters when you are researching — you do not just want to <em>see</em> a paper, you want to <em>use</em> it.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>2. Cross-Browser Freedom</h4>
+        <p style="margin-bottom: 0;">Arc is Mac-only (with a Windows beta). GoPeek works in Firefox, Edge, and soon Chrome — on Windows, macOS, and Linux. If you use multiple browsers, switch OSes, or work on shared machines, GoPeek follows you. Arc Peek does not.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>3. Persistent Previews</h4>
+        <p style="margin-bottom: 0;">Arc Peek vanishes when you move your mouse. GoPeek stays open. You can minimize it into a bubble, switch tabs, come back, and resume exactly where you left off. This is critical for multi-step research where you need to reference multiple sources over time.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>4. Multi-Peek for Comparison</h4>
+        <p style="margin-bottom: 0;">Arc Peek shows one preview at a time. GoPeek lets you open multiple previews side-by-side. Compare two papers, a dataset and a methodology, a product and a review — all without a single new tab. This is impossible in Arc.</p>
+      </div>
+
+      <div class="scenario-box">
+        <h4>5. Sidebar Split-Screen</h4>
+        <p style="margin-bottom: 0;">Arc Peek is a fixed right panel. GoPeek's sidebar mode is draggable, resizable, and can be positioned anywhere. Snap it to the left while writing in Google Docs. Expand it for deep reading. Collapse it when you need space. Arc Peek offers none of this flexibility.</p>
+      </div>
+
+      <h2>The "Arc Peek Paradox"</h2>
+
+      <p>
+        Here is the paradox of Arc Peek: <strong>it is designed to help you avoid opening tabs, but it is so limited that you often end up opening the tab anyway.</strong>
+      </p>
+
+      <p>
+        You hover a link. Peek shows you the first paragraph. You want to scroll down, click a citation, or check a figure. Peek does not let you. So you click to open the full page. Now you have a new tab. The exact thing Peek was supposed to prevent.
+      </p>
+
+      <p>
+        GoPeek breaks this cycle. Because the preview is fully interactive, you can do your entire research session inside Peeks. Scroll, click, navigate, compare. Only when you are done do you decide whether to open the page in a proper tab. Most of the time, you do not need to.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The difference:</strong> Arc Peek is a <em>teaser</em> — it shows you enough to decide whether to open a tab. GoPeek is a <em>tool</em> — it lets you do the work without ever needing a tab.
+      </div>
+
+      <h2>Who Should Use What</h2>
+
+      <p>
+        Neither tool is universally better. They serve different users:
+      </p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">You are...</th>
+            <th style="width: 37.5%;">Use Arc Peek if...</th>
+            <th style="width: 37.5%;">Use GoPeek if...</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>A casual browser</strong></td>
+            <td>You just want quick glances at links on social media and news sites</td>
+            <td>You want to actually interact with previewed content</td>
+          </tr>
+          <tr>
+            <td><strong>A researcher</strong></td>
+            <td>You only use Arc and your research is light ( occasional reference checks)</td>
+            <td>You need persistent, interactive previews for deep research</td>
+          </tr>
+          <tr>
+            <td><strong>A multi-browser user</strong></td>
+            <td>You live entirely in Arc and never switch</td>
+            <td>You use Firefox, Edge, or Chrome at work and Arc at home</td>
+          </tr>
+          <tr>
+            <td><strong>A developer</strong></td>
+            <td>You want minimal distraction and do not need to interact with docs</td>
+            <td>You need to browse docs, GitHub repos, and Stack Overflow without tab chaos</td>
+          </tr>
+          <tr>
+            <td><strong>A student</strong></td>
+            <td>You write papers in Arc's native tools and rarely need external sources</td>
+            <td>You juggle Google Docs, JSTOR, Wikipedia, and lecture notes simultaneously</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>The Portability Problem</h2>
+
+      <p>
+        There is one more factor Arc users rarely consider until it is too late: <strong>what happens when you leave Arc?</strong>
+      </p>
+
+      <p>
+        Arc is a venture-backed startup. It has raised $17M+ in funding. It is beautiful, innovative, and beloved by its users. But it is also a single product from a single company. If Arc changes direction, sunsets features, or shifts business models, Peek could change or disappear overnight.
+      </p>
+
+      <p>
+        GoPeek is an extension. It works in standard browsers that have existed for decades. Your workflow is not tied to one company's roadmap. If you switch from Edge to Firefox to Chrome, GoPeek comes with you. Your muscle memory, your settings, your habits — all portable.
+      </p>
+
+      <div class="quote-box">
+        "I loved Arc Peek until I had to use Firefox for work. Suddenly I had no preview tool at all. GoPeek gave me Arc-like previews in every browser I use."
+        <cite>— Former Arc user, now GoPeek user</cite>
+      </div>
+
+      <h2>The Bottom Line</h2>
+
+      <p>
+        Arc Peek is elegant, minimal, and perfectly suited to Arc's design philosophy. If you live entirely in Arc and your browsing is light — social media, news, occasional reference checks — Peek is enough.
+      </p>
+
+      <p>
+        But if you research, develop, write, or work across multiple browsers, GoPeek is the fuller solution. It is interactive where Peek is read-only. It is persistent where Peek is fleeting. It is flexible where Peek is fixed. And it is portable where Peek is locked to one browser.
+      </p>
+
+      <p>
+        The best preview tool is the one that actually lets you <em>work</em> without opening tabs. Not just glance. Not just peek. Actually work.
+      </p>
+
+      <div class="highlight-box">
+        <strong>One-line verdict:</strong> Arc Peek is a beautiful teaser. GoPeek is a working tool. Choose based on whether you browse casually or work deeply.
+      </div>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Get GoPeek in Your Browser</h3>
+      <p>Works in Firefox, Edge, and Chrome. Fully interactive previews. No tab chaos. No browser lock-in.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Install GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More Comparisons</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-gopeek-vs-zen-glance.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Zen Glance: Which Link Preview Wins?</p>
+        </a>
+        <a href="blog-gopeek-vs-tab-groups.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Tab Groups: Which Actually Keeps You Focused?</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
