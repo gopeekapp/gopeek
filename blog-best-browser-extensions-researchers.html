@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Best Browser Extensions for Researchers in 2026 | GoPeek</title>
+
+  <meta name="description" content="The best browser extensions for researchers in 2026 — from link previews to citation managers, PDF tools, and tab organizers. GoPeek makes the list." />
+  <meta name="keywords" content="best browser extensions researchers 2026, research productivity tools, browser extensions for academics, best extensions for students, gopeek research" />
+
+  <meta property="og:title" content="Best Browser Extensions for Researchers in 2026 | GoPeek" />
+  <meta property="og:description" content="The best browser extensions for researchers in 2026 — from link previews to citation managers, PDF tools, and tab organizers." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Best Browser Extensions for Researchers in 2026" />
+  <meta name="twitter:description" content="The 7 best browser extensions for researchers, academics, and students in 2026." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-best-browser-extensions-researchers.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .extension-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .extension-card.gopeek {
+      background: white;
+      border: 2px solid #2563eb;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .extension-card.gopeek .rank-badge {
+      background: #2563eb;
+    }
+
+    .extension-card.gopeek .badge {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .extension-card.gopeek h3 {
+      color: #0f172a;
+    }
+
+    .extension-card.gopeek p {
+      color: #475569;
+    }
+
+    .extension-card.gopeek li {
+      color: #475569;
+    }
+
+    .extension-card.gopeek a {
+      color: #2563eb;
+    }
+
+    .extension-card.gopeek strong {
+      color: #0f172a;
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #0f172a;
+      color: white;
+      font-weight: 800;
+      font-size: 1rem;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Best Browser Extensions for Researchers</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Research</span>
+      <span class="tag">Productivity</span>
+      <span class="tag">Extensions</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      Best Browser Extensions for Researchers in 2026
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 9, 2026</span>
+      <span>·</span>
+      <span>10 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="Best browser extensions for researchers 2026" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">The researcher's browser is their laboratory. These 7 extensions make it sharper.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        Research has changed. In 2026, the browser is not just a tool — it is where literature reviews happen, where datasets are explored, where papers are written, and where collaboration unfolds. The average researcher checks <strong>80+ sources per day</strong>, opens <strong>40+ tabs per session</strong>, and spends more time managing their browser than actually reading.
+      </p>
+
+      <p>
+        The right extensions do not just save clicks. They save <strong>cognitive bandwidth</strong> — the one resource researchers cannot buy more of.
+      </p>
+
+      <p>
+        Here are the 7 best browser extensions for researchers in 2026, ranked by impact on daily workflow. Each one solves a specific pain point that every academic, analyst, journalist, and student faces.
+      </p>
+
+      <!-- GoPeek -->
+      <div class="extension-card gopeek">
+        <div class="flex items-center mb-3">
+          <span class="rank-badge">1</span>
+          <div>
+            <h3 class="text-xl font-bold">GoPeek — Instant Link Previews</h3>
+            <span class="badge">Link Preview</span>
+            <span class="badge">Cross-Browser</span>
+            <span class="badge">Free</span>
+          </div>
+        </div>
+        <p>
+          The most underrated tool in a researcher's arsenal. GoPeek lets you preview any link — papers, datasets, references, citations — in a live interactive window without leaving your current page. Hold Shift, hover a link, and browse the source instantly.
+        </p>
+        <p><strong>Why researchers need it:</strong></p>
+        <ul>
+          <li><strong>No tab chaos:</strong> Check 50 references without opening 50 tabs</li>
+          <li><strong>Side-by-side comparison:</strong> Compare two papers or datasets simultaneously with Multi-Peek</li>
+          <li><strong>Sidebar mode:</strong> Snap a preview into split-screen while writing in Google Docs or Overleaf</li>
+          <li><strong>Bubble minimize:</strong> Collapse a preview into a floating bubble to return to it later</li>
+          <li><strong>Preserves focus:</strong> No context switching means no 23-minute focus recovery penalty</li>
+        </ul>
+        <p>
+          <strong>Best for:</strong> Literature reviews, reference checking, multi-source analysis, fact-checking while writing.
+        </p>
+        <p>
+          <strong>Available on:</strong> Firefox, Edge (Chrome coming soon) — <a href="index.html#install">Get GoPeek</a>
+        </p>
+      </div>
+
+      <!-- Zotero Connector -->
+      <div class="extension-card">
+        <div class="flex items-center mb-3">
+          <span class="rank-badge">2</span>
+          <div>
+            <h3 class="text-xl font-bold">Zotero Connector</h3>
+            <span class="badge">Citation Manager</span>
+            <span class="badge">Free</span>
+            <span class="badge">Open Source</span>
+          </div>
+        </div>
+        <p>
+          Still the gold standard for reference management. One click saves any paper, article, or webpage to your Zotero library with full metadata, PDF, and citation info. In 2026, it supports 10,000+ citation styles and integrates with Google Docs, Word, and LaTeX.
+        </p>
+        <p><strong>Why researchers need it:</strong></p>
+        <ul>
+          <li><strong>One-click save:</strong> Capture papers from PubMed, arXiv, JSTOR, and 100+ databases</li>
+          <li><strong>Auto-metadata:</strong> Extracts authors, DOI, journal, and abstract automatically</li>
+          <li><strong>PDF annotation:</strong> Highlight and annotate directly in Zotero</li>
+          <li><strong>Collaboration:</strong> Shared group libraries for team research</li>
+        </ul>
+        <p>
+          <strong>Best for:</strong> Reference management, bibliography building, collaborative research.
+        </p>
+        <p>
+          <strong>Available on:</strong> Firefox, Chrome, Edge, Safari
+        </p>
+      </div>
+
+      <!-- Unpaywall -->
+      <div class="extension-card">
+        <div class="flex items-center mb-3">
+          <span class="rank-badge">3</span>
+          <div>
+            <h3 class="text-xl font-bold">Unpaywall</h3>
+            <span class="badge">Open Access</span>
+            <span class="badge">Free</span>
+            <span class="badge">Non-Profit</span>
+          </div>
+        </div>
+        <p>
+          Paywalls are the bane of every researcher. Unpaywall automatically finds legal open-access versions of paywalled papers. A small green tab appears on every article — click it, and the free PDF loads instantly.
+        </p>
+        <p><strong>Why researchers need it:</strong></p>
+        <ul>
+          <li><strong>30M+ free papers:</strong> Access to the largest database of legal open-access articles</li>
+          <li><strong>Zero friction:</strong> Works automatically on publisher sites, Google Scholar, and PubMed</li>
+          <li><strong>Legal:</strong> Only surfaces publisher-approved open-access versions</li>
+          <li><strong>API available:</strong> Integrates with institutional repositories</li>
+        </ul>
+        <p>
+          <strong>Best for:</strong> Accessing paywalled research, literature reviews on a budget, independent researchers without institutional access.
+        </p>
+        <p>
+          <strong>Available on:</strong> Firefox, Chrome, Edge
+        </p>
+      </div>
+
+      <!-- Grammarly -->
+      <div class="extension-card">
+        <div class="flex items-center mb-3">
+          <span class="rank-badge">4</span>
+          <div>
+            <h3 class="text-xl font-bold">Grammarly</h3>
+            <span class="badge">Writing Assistant</span>
+            <span class="badge">Freemium</span>
+          </div>
+        </div>
+        <p>
+          Writing is 50% of research. Grammarly catches grammar, clarity, and tone issues in real-time across Google Docs, Overleaf, email, and web forms. The 2026 version includes academic tone detection and citation formatting suggestions.
+        </p>
+        <p><strong>Why researchers need it:</strong></p>
+        <ul>
+          <li><strong>Academic tone:</strong> Detects informal language and suggests formal alternatives</li>
+          <li><strong>Clarity score:</strong> Flags overly complex sentences common in early drafts</li>
+          <li><strong>Plagiarism check:</strong> Premium tier includes similarity detection</li>
+          <li><strong>Citation awareness:</strong> Suggests when a claim needs a source</li>
+        </ul>
+        <p>
+          <strong>Best for:</strong> Paper writing, grant applications, email communication, thesis drafting.
+        </p>
+        <p>
+          <strong>Available on:</strong> Firefox, Chrome, Edge, Safari
+        </p>
+      </div>
+
+      <!-- OneTab -->
+      <div class="extension-card">
+        <div class="flex items-center mb-3">
+          <span class="rank-badge">5</span>
+          <div>
+            <h3 class="text-xl font-bold">OneTab</h3>
+            <span class="badge">Tab Management</span>
+            <span class="badge">Free</span>
+          </div>
+        </div>
+        <p>
+          When tabs spiral out of control, OneTab collapses all open tabs into a single organized list. It reduces memory usage by 95% and creates shareable lists of links — perfect for saving research sessions.
+        </p>
+        <p><strong>Why researchers need it:</strong></p>
+        <ul>
+          <li><strong>Memory saver:</strong> Reduces Chrome/Firefox RAM usage from 2GB to 100MB</li>
+          <li><strong>Session export:</strong> Save and name tab groups for later reference</li>
+          <li><strong>Shareable lists:</strong> Export URLs as a web page to share with collaborators</li>
+          <li><strong>Drag-to-organize:</strong> Reorder tabs within saved lists</li>
+        </ul>
+        <p>
+          <strong>Best for:</strong> Ending tab chaos, saving research sessions, sharing reference lists with teams.
+        </p>
+        <p>
+          <strong>Available on:</strong> Firefox, Chrome, Edge
+        </p>
+      </div>
+
+      <!-- Readwise Highlighter -->
+      <div class="extension-card">
+        <div class="flex items-center mb-3">
+          <span class="rank-badge">6</span>
+          <div>
+            <h3 class="text-xl font-bold">Readwise Highlighter</h3>
+            <span class="badge">Knowledge Management</span>
+            <span class="badge">Freemium</span>
+          </div>
+        </div>
+        <p>
+          Research is reading. Readwise lets you highlight any web article, PDF, or ebook and syncs those highlights to your knowledge base (Notion, Obsidian, Roam). It resurfaces highlights via spaced repetition so you actually remember what you read.
+        </p>
+        <p><strong>Why researchers need it:</strong></p>
+        <ul>
+          <li><strong>Universal highlighting:</strong> Works on any webpage, PDF, or Kindle book</li>
+          <li><strong>Sync to PKM:</strong> Auto-export to Notion, Obsidian, Roam Research</li>
+          <li><strong>Daily review:</strong> Spaced repetition of highlights to reinforce memory</li>
+          <li><strong>Tagging:</strong> Organize highlights by topic, project, or paper</li>
+        </ul>
+        <p>
+          <strong>Best for:</strong> Deep reading, building a personal knowledge base, long-term retention of research findings.
+        </p>
+        <p>
+          <strong>Available on:</strong> Firefox, Chrome, Edge
+        </p>
+      </div>
+
+      <!-- Dark Reader -->
+      <div class="extension-card">
+        <div class="flex items-center mb-3">
+          <span class="rank-badge">7</span>
+          <div>
+            <h3 class="text-xl font-bold">Dark Reader</h3>
+            <span class="badge">Accessibility</span>
+            <span class="badge">Free</span>
+            <span class="badge">Open Source</span>
+          </div>
+        </div>
+        <p>
+          Researchers spend 6-10 hours a day staring at screens. Dark Reader applies a dark theme to every website — including those without native dark mode (looking at you, Google Scholar). Reduces eye strain and improves focus during late-night sessions.
+        </p>
+        <p><strong>Why researchers need it:</strong></p>
+        <ul>
+          <li><strong>Universal dark mode:</strong> Works on every website, including academic databases</li>
+          <li><strong>Customizable:</strong> Adjust brightness, contrast, and sepia per site</li>
+          <li><strong>PDF support:</strong> Dark mode for PDFs in the browser</li>
+          <li><strong>Eye strain reduction:</strong> Clinical studies link dark mode to reduced digital eye strain</li>
+        </ul>
+        <p>
+          <strong>Best for:</strong> Late-night research, eye health, reading long-form content comfortably.
+        </p>
+        <p>
+          <strong>Available on:</strong> Firefox, Chrome, Edge, Safari
+        </p>
+      </div>
+
+      <h2>How These Extensions Work Together</h2>
+
+      <p>
+        The magic is not in any single tool. It is in the <strong>workflow</strong>:
+      </p>
+
+      <div class="highlight-box">
+        <strong>The Researcher's Stack (2026):</strong>
+        <ol style="margin-left: 1.5rem; margin-top: 0.75rem; color: #475569;">
+          <li><strong>Start with GoPeek</strong> — preview 20+ sources without opening a single tab</li>
+          <li><strong>Save the keepers</strong> — Zotero Connector captures papers with one click</li>
+          <li><strong>Access everything</strong> — Unpaywall finds free versions of paywalled articles</li>
+          <li><strong>Read deeply</strong> — Readwise highlights key passages and syncs to your PKM</li>
+          <li><strong>Write clearly</strong> — Grammarly polishes your draft in real-time</li>
+          <li><strong>Save sessions</strong> — OneTab archives tab groups for later reference</li>
+          <li><strong>Protect your eyes</strong> — Dark Reader keeps you comfortable through 10-hour sessions</li>
+        </ol>
+      </div>
+
+      <h2>The Comparison: Research With vs. Without Extensions</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 35%;">Task</th>
+            <th style="width: 32.5%;">Without Extensions</th>
+            <th style="width: 32.5%;">With Extensions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Check 20 references</strong></td>
+            <td>20 tabs, 7.6 hours lost to context switching</td>
+            <td>0 new tabs, 20 previews, focus preserved</td>
+          </tr>
+          <tr>
+            <td><strong>Save a paper</strong></td>
+            <td>Download PDF, rename, move to folder, add metadata manually</td>
+            <td>One click → auto-metadata → organized library</td>
+          </tr>
+          <tr>
+            <td><strong>Access paywalled article</strong></td>
+            <td>Email author, wait 3 days, or pay $35</td>
+            <td>Green tab → free PDF in 2 seconds</td>
+          </tr>
+          <tr>
+            <td><strong>Remember key findings</strong></td>
+            <td>Bookmark, forget, never revisit</td>
+            <td>Highlight, sync, daily spaced review</td>
+          </tr>
+          <tr>
+            <td><strong>Write a paper</strong></td>
+            <td>Write, proofread, find errors, rewrite</td>
+            <td>Real-time feedback, academic tone, citation suggestions</td>
+          </tr>
+          <tr>
+            <td><strong>End-of-session cleanup</strong></td>
+            <td>50 tabs, panic close, lose everything</td>
+            <td>One click → saved list → resume tomorrow</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Which Extension Should You Install First?</h2>
+
+      <p>
+        If you are just starting to build your research stack, prioritize by your biggest pain point:
+      </p>
+
+      <ul>
+        <li><strong>Tab chaos is killing you?</strong> → GoPeek first, then OneTab</li>
+        <li><strong>Citations are a nightmare?</strong> → Zotero Connector first</li>
+        <li><strong>Cannot access papers?</strong> → Unpaywall first</li>
+        <li><strong>Forget everything you read?</strong> → Readwise first</li>
+        <li><strong>Writing takes forever?</strong> → Grammarly first</li>
+        <li><strong>Headaches from screen time?</strong> → Dark Reader first</li>
+      </ul>
+
+      <h2>The Bottom Line</h2>
+
+      <p>
+        Research in 2026 is not about working harder. It is about <strong>reducing friction</strong>. The best researchers are not the ones who read the most papers — they are the ones who can access, evaluate, and synthesize information fastest without losing focus.
+      </p>
+
+      <p>
+        These 7 extensions remove the mechanical overhead of research: the tab switching, the paywall hunting, the citation formatting, the memory management. They let you focus on what actually matters — thinking, analyzing, and creating knowledge.
+      </p>
+
+      <div class="highlight-box">
+        <strong>Pro tip:</strong> Start with GoPeek + Zotero. That pair alone will transform how you do literature reviews. Add the others as your workflow matures.
+      </div>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Start Your Research Stack with GoPeek</h3>
+      <p>Open links without tabs. Preserve your focus. Research faster than ever.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Get GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Research Productivity</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-gopeek-vs-opening-new-tabs.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Opening New Tabs: The Math on Time Saved</p>
+        </a>
+        <a href="blog-gopeek-vs-tab-groups.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Tab Groups: Which Actually Keeps You Focused?</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
