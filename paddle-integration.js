@@ -7,67 +7,127 @@
     lifetime: 'pri_01kte7fbbrg3mxhyt46gnt11y8'
   };
 
-  // Try to detect extension ID from URL param (fallback), or use hardcoded
+  // Get extension ID from URL or hardcode
   const urlParams = new URLSearchParams(window.location.search);
   const EXT_ID_FROM_URL = urlParams.get('ext_id');
-  
-  // Hardcode your extension ID here after first load:
-  const EXTENSION_ID = EXT_ID_FROM_URL || 'hniacbcjlnahjakodklkkpdopicfcpkj'; // <-- SWAP AFTER FIRST TEST
+  const EXTENSION_ID = EXT_ID_FROM_URL || 'hniacbcjlnahjakodklkkpdopicfcpkj';
 
   let paddleReady = false;
 
   function initPaddle() {
+    console.log('[GoPeek] Checking Paddle...');
+
     if (typeof window.Paddle === 'undefined') {
-      console.error('[GoPeek] Paddle.js not loaded');
+      console.error('[GoPeek] ❌ Paddle.js not loaded! Make sure the script tag is above this file.');
+      showError('Paddle.js not loaded. Check script order in HTML.');
       return;
     }
 
+    console.log('[GoPeek] Paddle object found:', typeof Paddle);
+    console.log('[GoPeek] Paddle.Environment:', typeof Paddle.Environment);
+    console.log('[GoPeek] Paddle.Initialize:', typeof Paddle.Initialize);
+    console.log('[GoPeek] Paddle.Checkout:', typeof Paddle.Checkout);
+
     try {
-      window.Paddle.Environment.set('sandbox');
-      window.Paddle.Initialize({ token: 'test_c683291bed2236d317eba3c8975' });
-      paddleReady = true;
-      console.log('[GoPeek] ✅ Paddle ready');
+      // Set sandbox environment
+      if (Paddle.Environment && Paddle.Environment.set) {
+        Paddle.Environment.set('sandbox');
+        console.log('[GoPeek] ✅ Sandbox environment set');
+      } else {
+        console.warn('[GoPeek] ⚠️ Paddle.Environment.set not available');
+      }
     } catch (e) {
-      console.error('[GoPeek] ❌ Paddle init failed:', e);
+      console.error('[GoPeek] ❌ Environment set failed:', e);
     }
+
+    // Wait a bit then initialize
+    setTimeout(() => {
+      try {
+        if (Paddle.Initialize) {
+          Paddle.Initialize({ 
+            token: 'test_c683291bed2236d317eba3c8975',
+            eventCallback: function(event) {
+              console.log('[GoPeek] Paddle event:', event.name, event.data);
+            }
+          });
+          paddleReady = true;
+          console.log('[GoPeek] ✅ Paddle initialized successfully');
+        } else {
+          console.error('[GoPeek] ❌ Paddle.Initialize not available');
+          showError('Paddle.Initialize not available. Token may be invalid.');
+        }
+      } catch (e) {
+        console.error('[GoPeek] ❌ Initialize failed:', e.message);
+        showError('Paddle init failed: ' + e.message);
+      }
+    }, 500);
+  }
+
+  function showError(msg) {
+    const div = document.createElement('div');
+    div.style.cssText = 'position:fixed;bottom:20px;left:20px;right:20px;z-index:99999;background:#ff3b30;color:#fff;padding:16px;border-radius:12px;font-family:system-ui,sans-serif;font-size:14px;';
+    div.textContent = '🔴 ' + msg;
+    document.body.appendChild(div);
   }
 
   window.openGoPeekCheckout = function(plan) {
     plan = plan || 'monthly';
+    console.log('[GoPeek] Checkout called for:', plan);
+
     if (!paddleReady) {
-      alert('Payment system not ready. Please refresh.');
+      alert('Payment system initializing... Please wait 2 seconds and try again.');
+      return;
+    }
+
+    if (typeof window.Paddle === 'undefined' || !Paddle.Checkout || !Paddle.Checkout.open) {
+      alert('Paddle checkout not available. Please refresh the page.');
       return;
     }
 
     const priceId = PRICE_IDS[plan];
     if (!priceId) {
-      alert('Invalid plan');
+      alert('Invalid plan selected');
       return;
     }
 
-    window.Paddle.Checkout.open({
-      items: [{ priceId: priceId, quantity: 1 }],
-      settings: {
-        theme: 'light',
-        displayMode: 'overlay',
-        locale: 'en'
-      },
-      successCallback: function(data) {
-        console.log('[GoPeek] ✅ Checkout success:', data);
-        activatePro(data, plan);
-      },
-      errorCallback: function(error) {
-        console.error('[GoPeek] ❌ Checkout error:', error);
-      }
-    });
+    console.log('[GoPeek] Opening checkout with priceId:', priceId);
+
+    try {
+      Paddle.Checkout.open({
+        items: [{ priceId: priceId, quantity: 1 }],
+        settings: {
+          theme: 'light',
+          displayMode: 'overlay',
+          locale: 'en'
+        },
+        successCallback: function(data) {
+          console.log('[GoPeek] ✅ SUCCESS:', JSON.stringify(data, null, 2));
+          activatePro(data, plan);
+        },
+        errorCallback: function(error) {
+          console.error('[GoPeek] ❌ Checkout error:', JSON.stringify(error, null, 2));
+          // Paddle shows its own error UI
+        },
+        closeCallback: function() {
+          console.log('[GoPeek] Checkout closed');
+        }
+      });
+    } catch (e) {
+      console.error('[GoPeek] ❌ Checkout.open() crashed:', e);
+      alert('Checkout error: ' + e.message);
+    }
   };
 
   function activatePro(data, plan) {
-    const transactionId = data?.transaction?.id || data?.order?.id || 'txn-' + Date.now();
+    const transactionId = data?.transaction?.id || data?.order?.id || data?.checkout?.id || 'txn-' + Date.now();
     const planName = plan === 'monthly' ? 'Monthly' : plan === 'yearly' ? 'Yearly' : 'Lifetime';
+
+    console.log('[GoPeek] Activating Pro with transaction:', transactionId);
 
     // Try auto-activation via externally_connectable
     if (EXTENSION_ID && EXTENSION_ID !== 'YOUR_EXTENSION_ID_HERE') {
+      console.log('[GoPeek] Messaging extension:', EXTENSION_ID);
+      
       try {
         chrome.runtime.sendMessage(EXTENSION_ID, {
           action: 'paddle_success',
@@ -78,8 +138,10 @@
             console.log('[GoPeek] Extension not reachable:', chrome.runtime.lastError.message);
             showSuccessManual(planName, transactionId);
           } else if (response && response.success) {
+            console.log('[GoPeek] ✅ Auto-activated:', response);
             showSuccessAuto(planName);
           } else {
+            console.log('[GoPeek] Extension rejected:', response);
             showSuccessManual(planName, transactionId);
           }
         });
@@ -88,7 +150,7 @@
         showSuccessManual(planName, transactionId);
       }
     } else {
-      // No extension ID configured — show manual activation
+      console.log('[GoPeek] No extension ID, showing manual');
       showSuccessManual(planName, transactionId);
     }
   }
@@ -138,6 +200,7 @@
     document.getElementById('gopeek-close-modal').addEventListener('click', () => modal.remove());
   }
 
+  // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initPaddle);
   } else {
