@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoPeek — Feedback Dashboard</title>
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .star-filled { color: #fbbf24; }
+    .star-empty { color: #e2e8f0; }
+
+    .feedback-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feedback-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-bug { background: #fef2f2; color: #dc2626; }
+    .badge-feature { background: #eff6ff; color: #2563eb; }
+    .badge-general { background: #f0fdf4; color: #16a34a; }
+    .badge-other { background: #f5f5f4; color: #78716c; }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    #loginScreen, #dashboardScreen { min-height: 100vh; }
+
+    .hidden { display: none !important; }
+
+    .password-input {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 16px;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .password-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .shake {
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+      border: 1px solid #e2e8f0;
+      background: white;
+      color: #64748b;
+      cursor: pointer;
+    }
+    .filter-btn:hover { background: #f1f5f9; }
+    .filter-btn.active { background: #0f172a; color: white; border-color: #0f172a; }
+
+    .search-input {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      width: 100%;
+      outline: none;
+    }
+    .search-input:focus { border-color: #3b82f6; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #94a3b8;
+    }
+
+    .csv-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0f172a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+    }
+    .csv-btn:hover { background: #1e293b; }
+  </style>
+<base target="_blank">
+</head>
+<body class="text-slate-900">
+
+  <!-- Background -->
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[400px] h-[400px] bg-blue-400/15 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[420px] h-[420px] bg-indigo-400/15 blur-3xl rounded-full"></div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-6 shadow-lg">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black mb-2 gradient-text">GoPeek</h1>
+        <p class="text-slate-500">Feedback Dashboard</p>
+      </div>
+
+      <div class="glass rounded-3xl p-8">
+        <label class="block text-sm font-semibold text-slate-700 mb-2">Enter Password</label>
+        <input 
+          type="password" 
+          id="passwordInput" 
+          class="password-input mb-4" 
+          placeholder="Password..."
+          autocomplete="off"
+        >
+        <button 
+          onclick="checkPassword()" 
+          id="loginBtn"
+          class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl hover:bg-slate-800 transition-all"
+        >
+          Unlock Dashboard
+        </button>
+        <p id="loginError" class="text-red-500 text-sm mt-3 text-center hidden">Incorrect password</p>
+        <p class="text-xs text-slate-400 mt-4 text-center">Default: <code class="bg-slate-100 px-1.5 py-0.5 rounded">gopeek2024</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SCREEN -->
+  <div id="dashboardScreen" class="hidden">
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50 border-b border-slate-200/50">
+      <div class="max-w-6xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img src="GoPeek_Logo.png" alt="GoPeek" class="w-10 h-10 object-contain rounded-xl">
+          <div>
+            <h1 class="text-lg font-bold text-slate-800">Feedback Dashboard</h1>
+            <p class="text-xs text-slate-500" id="lastUpdated">Loading...</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="loadFeedback()" class="p-2.5 rounded-xl hover:bg-slate-100 transition" title="Refresh">
+            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+          </button>
+          <button onclick="logout()" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">
+            Log Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-6 py-8">
+      <!-- Stats Row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="stat-card">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Total</p>
+          <p class="text-3xl font-black text-slate-900" id="statTotal">0</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Avg Rating</p>
+          <p class="text-3xl font-black text-slate-900" id="statAvg">0.0</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Bug Reports</p>
+          <p class="text-3xl font-black text-red-600" id="statBugs">0</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Features</p>
+          <p class="text-3xl font-black text-blue-600" id="statFeatures">0</p>
+        </div>
+      </div>
+
+      <!-- Filters & Actions -->
+      <div class="flex flex-col md:flex-row gap-4 mb-6 items-start md:items-center justify-between">
+        <div class="flex flex-wrap gap-2">
+          <button class="filter-btn active" onclick="filterType('all')">All</button>
+          <button class="filter-btn" onclick="filterType('Bug Report')">Bugs</button>
+          <button class="filter-btn" onclick="filterType('Feature Request')">Features</button>
+          <button class="filter-btn" onclick="filterType('General Feedback')">General</button>
+          <button class="filter-btn" onclick="filterType('Other')">Other</button>
+        </div>
+        <div class="flex gap-3 w-full md:w-auto">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search feedback..." oninput="searchFeedback()">
+          <button onclick="exportCSV()" class="csv-btn whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback List -->
+      <div id="feedbackList" class="space-y-4">
+        <div class="empty-state">
+          <div class="text-4xl mb-4">📭</div>
+          <p class="text-lg font-semibold">No feedback yet</p>
+          <p class="text-sm">Submissions will appear here once users start sending feedback.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ─── CONFIG ───
+    const PASSWORD = 'gopeek5035@';          // ← CHANGE THIS TO YOUR DESIRED PASSWORD
+    const CSV_URL = 'https://raw.githubusercontent.com/gopeekapp/gopeek/main/feedback.csv';
+    // Replace gopeekapp/gopeek-lovat with your actual owner/repo if different
+
+    let allFeedback = [];
+    let currentFilter = 'all';
+
+    // ─── AUTH ───
+    function checkPassword() {
+      const input = document.getElementById('passwordInput');
+      const btn = document.getElementById('loginBtn');
+      const error = document.getElementById('loginError');
+
+      if (input.value === PASSWORD) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboardScreen').classList.remove('hidden');
+        document.getElementById('dashboardScreen').classList.add('fade-in');
+        loadFeedback();
+      } else {
+        error.classList.remove('hidden');
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 500);
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    function logout() {
+      document.getElementById('dashboardScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('passwordInput').value = '';
+      document.getElementById('loginError').classList.add('hidden');
+    }
+
+    // Allow Enter key to submit
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkPassword();
+    });
+
+    // ─── DATA LOADING ───
+    async function loadFeedback() {
+      const list = document.getElementById('feedbackList');
+      list.innerHTML = '<div class="text-center py-12 text-slate-400">Loading feedback...</div>';
+
+      try {
+        const res = await fetch(CSV_URL + '?t=' + Date.now()); // cache-bust
+        if (!res.ok) throw new Error('Failed to fetch CSV');
+
+        const text = await res.text();
+        allFeedback = parseCSV(text);
+
+        document.getElementById('lastUpdated').textContent = 
+          'Last updated: ' + new Date().toLocaleString();
+
+        updateStats();
+        renderFeedback();
+      } catch (err) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="text-4xl mb-4">⚠️</div>
+            <p class="text-lg font-semibold text-red-500">Could not load feedback</p>
+            <p class="text-sm">${err.message}</p>
+            <p class="text-xs mt-2 text-slate-400">Make sure feedback.csv exists in your repo and is public.</p>
+          </div>
+        `;
+      }
+    }
+
+    function parseCSV(text) {
+      const lines = text.trim().split('\n');
+      if (lines.length < 2) return [];
+
+      const headers = parseCSVLine(lines[0]);
+      const rows = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const values = parseCSVLine(lines[i]);
+        const row = {};
+        headers.forEach((h, idx) => row[h] = values[idx] || '');
+        rows.push(row);
+      }
+
+      // Sort newest first
+      return rows.reverse();
+    }
+
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    // ─── STATS ───
+    function updateStats() {
+      const total = allFeedback.length;
+      const ratings = allFeedback.map(f => parseFloat(f.rating) || 0).filter(r => r > 0);
+      const avg = ratings.length ? (ratings.reduce((a,b) => a+b, 0) / ratings.length).toFixed(1) : '0.0';
+      const bugs = allFeedback.filter(f => f.type === 'Bug Report').length;
+      const features = allFeedback.filter(f => f.type === 'Feature Request').length;
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statAvg').textContent = avg;
+      document.getElementById('statBugs').textContent = bugs;
+      document.getElementById('statFeatures').textContent = features;
+    }
+
+    // ─── RENDERING ───
+    function renderFeedback() {
+      const list = document.getElementById('feedbackList');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      let filtered = allFeedback;
+
+      // Type filter
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(f => f.type === currentFilter);
+      }
+
+      // Search filter
+      if (search) {
+        filtered = filtered.filter(f => 
+          (f.message || '').toLowerCase().includes(search) ||
+          (f.name || '').toLowerCase().includes(search) ||
+          (f.email || '').toLowerCase().includes(search)
+        );
+      }
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="text-4xl mb-4">🔍</div>
+            <p class="text-lg font-semibold">No matching feedback</p>
+            <p class="text-sm">Try adjusting your filters or search query.</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = filtered.map((f, i) => `
+        <div class="feedback-card fade-in" style="animation-delay: ${i * 0.05}s">
+          <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-3">
+            <div class="flex items-center gap-3">
+              <span class="badge badge-${getBadgeClass(f.type)}">${f.type || 'Unknown'}</span>
+              <div class="flex items-center gap-0.5">
+                ${renderStars(f.rating)}
+              </div>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">${formatDate(f.timestamp)}</span>
+          </div>
+
+          <p class="text-slate-800 leading-relaxed mb-3">${escapeHtml(f.message)}</p>
+
+          ${(f.name || f.email) ? `
+            <div class="flex items-center gap-2 text-sm text-slate-500 pt-3 border-t border-slate-100">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+              <span>${f.name || 'Anonymous'}${f.email ? ' · ' + f.email : ''}</span>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function getBadgeClass(type) {
+      const map = {
+        'Bug Report': 'bug',
+        'Feature Request': 'feature',
+        'General Feedback': 'general',
+        'Other': 'other'
+      };
+      return map[type] || 'other';
+    }
+
+    function renderStars(rating) {
+      const num = parseInt(rating) || 0;
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        html += `<span class="${i <= num ? 'star-filled' : 'star-empty'}">★</span>`;
+      }
+      return html;
+    }
+
+    function formatDate(ts) {
+      if (!ts) return 'Unknown date';
+      try {
+        const d = new Date(ts);
+        return d.toLocaleDateString('en-US', { 
+          month: 'short', day: 'numeric', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+      } catch { return ts; }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ─── FILTERS & SEARCH ───
+    function filterType(type) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', 
+          (type === 'all' && btn.textContent === 'All') ||
+          (type === 'Bug Report' && btn.textContent === 'Bugs') ||
+          (type === 'Feature Request' && btn.textContent === 'Features') ||
+          (type === 'General Feedback' && btn.textContent === 'General') ||
+          (type === 'Other' && btn.textContent === 'Other')
+        );
+      });
+      renderFeedback();
+    }
+
+    function searchFeedback() {
+      renderFeedback();
+    }
+
+    // ─── EXPORT ───
+    function exportCSV() {
+      const headers = 'timestamp,type,rating,name,email,message\n';
+      const rows = allFeedback.map(f => 
+        `"${f.timestamp}","${f.type}","${f.rating}","${f.name}","${f.email}","${f.message}"`
+      ).join('\n');
+
+      const blob = new Blob([headers + rows], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gopeek-feedback-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
