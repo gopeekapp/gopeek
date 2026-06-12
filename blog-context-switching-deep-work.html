@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Context Switching Is Killing Your Deep Work. Here Is the Browser Fix. | GoPeek</title>
+
+  <meta name="description" content="Every time you open a new tab, you lose 23 minutes of focus. Discover how attention residue destroys deep work and how link previews can fix your browser workflow." />
+  <meta name="keywords" content="context switching, deep work browser, attention residue, tab management, deep work tools, focus browser extension, stop context switching, gopeek" />
+
+  <meta property="og:title" content="Context Switching Is Killing Your Deep Work. Here Is the Browser Fix. | GoPeek" />
+  <meta property="og:description" content="Every time you open a new tab, you lose 23 minutes of focus. Here is the browser fix." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Context Switching Is Killing Your Deep Work. Here Is the Browser Fix." />
+  <meta name="twitter:description" content="How browser tabs destroy deep work, and the exact workflow to fix it." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-context-switching-deep-work.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .math-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .math-box .big-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #60a5fa;
+      display: block;
+      line-height: 1;
+    }
+
+    .math-box .math-label {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Context Switching Is Killing Your Deep Work</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Deep Work</span>
+      <span class="tag">Focus</span>
+      <span class="tag">Workflow</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      Context Switching Is Killing Your Deep Work. Here Is the Browser Fix.
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 12, 2026</span>
+      <span>·</span>
+      <span>7 min read</span>
+      <span>·</span>
+      <span>By Anish Jha (GoPeek Team)</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <!-- Placeholder for hero image showing split screen vs chaotic tabs -->
+        <img src="GoPeekDemo1.png" alt="Illustration of Deep Work vs Context Switching via Browser Tabs" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">You sit down to write. You open a tab to check a fact. 45 minutes later, you are scrolling Reddit. Here is why that happens.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        "Deep Work," a term coined by productivity expert Cal Newport, is the ability to focus without distraction on a cognitively demanding task. It is the state where you write your best code, craft your best essays, and solve the hardest problems.
+      </p>
+
+      <p>
+        It is also incredibly fragile.
+      </p>
+
+      <p>
+        You can block off three hours on your calendar, turn your phone on Do Not Disturb, and put on noise-canceling headphones. But the moment you command-click a link and open a new browser tab, your deep work session shatters. 
+      </p>
+
+      <p>
+        Why? Because browser tabs are not just digital pages. They are <strong>context switches.</strong> And context switching is the silent killer of modern knowledge work.
+      </p>
+
+      <div class="math-box">
+        <span class="big-number">23m 15s</span>
+        <span class="math-label">The average time it takes to regain deep focus after a single interruption.</span>
+      </div>
+
+      <h2>The Science of "Attention Residue"</h2>
+
+      <p>
+        When you switch from your primary task (Task A) to look at a new tab (Task B), your brain has to physically and chemically reorganize itself. 
+      </p>
+
+      <p>
+        Dr. Sophie Leroy, a business professor at the University of Washington, introduced the concept of <strong>Attention Residue</strong>. Her research shows that when you switch to a new task, your attention doesn't immediately follow you. A "residue" of your attention remains stuck on the original task.
+      </p>
+
+      <p>
+        Conversely, when you try to return to Task A, you carry residue from Task B. 
+      </p>
+
+      <div class="highlight-box">
+        <strong>What this looks like in the browser:</strong> You are writing a blog post. You open a new tab to find a Wikipedia stat. In that new tab, your brain completely unloads the "writing" context and loads the "searching" context. When you click back to your Google Doc, you stare at the blinking cursor, totally blank. You have to re-read your last three sentences just to remember what you were trying to say.
+      </div>
+
+      <h2>Why Tab Groups and Bookmarks Do Not Fix It</h2>
+
+      <p>
+        Most people try to solve tab-induced context switching with <em>organization</em>. They use tab groups, vertical tab bars, or session managers like OneTab.
+      </p>
+
+      <p>
+        These tools solve <strong>clutter</strong>, but they do absolutely nothing to solve <strong>context switching</strong>.
+      </p>
+
+      <p>
+        Whether your tabs are color-coded into beautiful groups or scattered in a massive row, <em>you still have to leave the page you are working on</em>. Your eyes still leave the document. The UI still shifts completely. The cognitive load of unloading and reloading your working memory remains exactly the same.
+      </p>
+
+      <h2>The Browser Fix: Spatial Anchoring</h2>
+
+      <p>
+        If the problem is leaving your visual environment, the solution is simple: <strong>Don't leave.</strong>
+      </p>
+
+      <p>
+        This is the psychological principle behind <strong>GoPeek</strong>. Instead of routing your curiosity to a separate digital room (a new tab), GoPeek brings the information directly to where your eyes already are. We call this <em>Spatial Anchoring</em>.
+      </p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">The Action</th>
+            <th style="width: 35%;" class="loser">Traditional Tab Workflow</th>
+            <th style="width: 35%;" class="winner">GoPeek Workflow</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Visual Shift</strong></td>
+            <td class="loser">Total screen change. Original work vanishes.</td>
+            <td class="winner">Preview floats over original work. Periphery remains anchored.</td>
+          </tr>
+          <tr>
+            <td><strong>Motor Action</strong></td>
+            <td class="loser">Move mouse to top of screen, find tab, click.</td>
+            <td class="winner">Hold Shift + Hover (or Long-Press). Minimal movement.</td>
+          </tr>
+          <tr>
+            <td><strong>Attention Residue</strong></td>
+            <td class="loser">High. Brain unloads Task A to process Task B.</td>
+            <td class="winner">Zero. Brain processes Task B as a subset of Task A.</td>
+          </tr>
+          <tr>
+            <td><strong>Cleanup</strong></td>
+            <td class="loser">Must actively close tab or it stays in memory forever.</td>
+            <td class="winner">Move mouse away or release click. Preview vanishes instantly.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>3 Workflows to Reclaim Your Deep Work</h2>
+
+      <p>
+        Here is how replacing tabs with GoPeek link previews actually looks in practice for deep work sessions:
+      </p>
+
+      <h3>1. The Writer's "Glance and Go"</h3>
+      <p>
+        You are typing in Google Docs or Notion. You need to reference an article. Instead of opening it in a tab, you use GoPeek's <strong>Long-Press</strong> feature. Click and hold the link. The article pops up. You read the quote, release your mouse, and you are immediately typing again. Your hands barely left the home row. 
+      </p>
+
+      <h3>2. The Developer's Split-Screen</h3>
+      <p>
+        You are deep in a complex code block and need to check API documentation. If you open a new tab, you lose sight of your code structure. With GoPeek, you open the docs and drag the preview to the right side of your screen. It snaps into <strong>Sidebar Mode</strong>. You now have your code and the docs side-by-side in the same tab. Your context is unified.
+      </p>
+
+      <h3>3. The Researcher's "Search Selection"</h3>
+      <p>
+        You encounter a term you don't understand. Usually, you would highlight it, open a new tab, and Google it. With GoPeek, you highlight the text, hold <code>Shift</code>, and release your mouse. A preview window immediately loads the Google Search results. You read the definition, close the bubble, and keep reading your paper.
+      </p>
+
+      <div class="warning-box">
+        <strong>The "Aha" Moment:</strong> The first time you use a link preview instead of a tab, it feels like a neat trick. The 50th time you do it, you realize you haven't lost your train of thought once in the last two hours. That is when it clicks.
+      </div>
+
+      <h2>The Bottom Line</h2>
+
+      <p>
+        Deep work is not just about blocking out colleagues, Slack messages, and social media. It is about protecting the micro-environment of your screen.
+      </p>
+
+      <p>
+        Every new tab is a trapdoor that drops you out of flow state. If you want to do your best work, you have to stop jumping through trapdoors. Keep your eyes on the page. Keep your context anchored. 
+      </p>
+
+      <p>
+        Stop switching tabs, and start peeking.
+      </p>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Protect Your Flow State</h3>
+      <p>Download GoPeek to preview links instantly without leaving your current page. Reclaim your 23 minutes.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Add GoPeek to Your Browser
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Focus & Productivity</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-gopeek-vs-opening-new-tabs.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Opening New Tabs: The Math on Time Saved</p>
+        </a>
+        <a href="blog-why-i-stopped-using-tab-groups.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Why I Stopped Using Tab Groups (And What I Use Instead)</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
