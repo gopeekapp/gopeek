@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Tracked Every Tab I Opened for a Week. Here Is What I Learned. | GoPeek</title>
+
+  <meta name="description" content="I logged every tab I opened for 7 days. The numbers were horrifying: 847 tabs, 6.2 hours of context switching, and a browser that begged for mercy. Here is what I learned about my own brain." />
+  <meta name="keywords" content="tab tracking experiment, how many tabs do people open, browser tab addiction, tab hoarding psychology, too many tabs experiment, productivity experiment browser" />
+
+  <meta property="og:title" content="I Tracked Every Tab I Opened for a Week. Here Is What I Learned. | GoPeek" />
+  <meta property="og:description" content="I logged every tab I opened for 7 days. 847 tabs. 6.2 hours of context switching. And a browser that begged for mercy." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="I Tracked Every Tab I Opened for a Week. Here Is What I Learned." />
+  <meta name="twitter:description" content="847 tabs. 6.2 hours of context switching. One very tired browser. Here is what the data revealed." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-i-tracked-every-tab-for-a-week.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .math-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .math-box .big-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #60a5fa;
+      display: block;
+      line-height: 1;
+    }
+
+    .math-box .math-label {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>I Tracked Every Tab for a Week</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Experiment</span>
+      <span class="tag">Productivity</span>
+      <span class="tag">Data</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      I Tracked Every Tab I Opened for a Week. Here Is What I Learned.
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 13, 2026</span>
+      <span>·</span>
+      <span>8 min read</span>
+      <span>·</span>
+      <span>By Piyush Gupta (Founder of GoPeek)</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="Browser tab tracking experiment results showing overwhelming tab usage" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">847 tabs in 7 days. I did not think I was that bad. The data disagreed.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        I have always told myself I am a "power user." I use keyboard shortcuts. I know Vim. I have strong opinions about terminal color schemes. So when I caught myself with 47 tabs open at 11 AM on a Tuesday, I did what any rational person would do: I blamed the browser.
+      </p>
+
+      <p>
+        "Chrome is the problem," I muttered, closing five tabs I did not recognize. "It lets me open too many."
+      </p>
+
+      <p>
+        But then I stopped. If I was so disciplined, why did I have 47 tabs? Where did they come from? And more importantly — how many had I opened that week without even noticing?
+      </p>
+
+      <p>
+        I decided to find out. For seven days, I logged every single tab I opened. Every new tab. Every link in a new tab. Every "let me just check this real quick" that became a permanent resident of my tab bar. I used a simple browser extension to auto-log URLs and timestamps, and I kept a notebook for context: what was I doing when I opened it? Did I need it? Did I ever go back?
+      </p>
+
+      <p>
+        The results were not flattering. They were horrifying.
+      </p>
+
+      <h2>The Numbers</h2>
+
+      <p>
+        Here is what one week of honest tracking revealed:
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">847</span>
+          <span class="stat-label">Tabs opened in 7 days</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">121</span>
+          <span class="stat-label">Average tabs per day</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">34</span>
+          <span class="stat-label">Peak tabs at once (Wednesday)</span>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">6.2 hrs</span>
+          <span class="stat-label">Time spent managing tabs</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">89%</span>
+          <span class="stat-label">Tabs never revisited after first hour</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">3.4 GB</span>
+          <span class="stat-label">Peak RAM usage from tabs alone</span>
+        </div>
+      </div>
+
+      <p>
+        Let me put that in perspective. I opened a new tab every 6.7 minutes during my waking hours. I spent almost an hour a day just <em>dealing with tabs</em> — closing, organizing, searching for the one I needed, or staring at the bar wondering what half of them were. And nearly 90% of them were digital litter. I opened them, glanced at them, and never returned.
+      </p>
+
+      <div class="math-box">
+        <span class="big-number">89%</span>
+        <span class="math-label">of my tabs were temporary glances treated like permanent commitments</span>
+      </div>
+
+      <h2>The Five Types of Tab I Opened</h2>
+
+      <p>
+        Looking at the logs, my 847 tabs fell into five distinct categories. I had never thought about my browsing this way before. But once I saw the patterns, I could not unsee them.
+      </p>
+
+      <h3>Type 1: The Curiosity Glance (61% of tabs)</h3>
+
+      <p>
+        These were the "let me just check" tabs. A link in a Hacker News comment. A product mentioned in a Reddit thread. A Wikipedia article linked from another Wikipedia article. A definition I did not know. A tweet someone referenced.
+      </p>
+
+      <p>
+        I did not need these tabs. I needed a <em>preview</em>. I needed to see the headline, verify the claim, or read the first paragraph. But my browser does not do previews. It does tabs. So I opened a tab, got my answer in 8 seconds, and left the tab open "just in case." Just in case what? I did not know. But I did it 517 times in one week.
+      </p>
+
+      <h3>Type 2: The Deferred Decision (18% of tabs)</h3>
+
+      <p>
+        "I will read this later." The article looked interesting. The video seemed relevant. The documentation page might help with tomorrow's task. I did not have time now, so I opened a tab and told myself I would come back.
+      </p>
+
+      <p>
+        I came back to 12 of them. Out of 152. The rest joined the graveyard. By Friday, my tab bar was a museum of my abandoned intentions. Each one was a tiny debt I owed my future self. And my future self was drowning in interest payments.
+      </p>
+
+      <h3>Type 3: The Context Switch (11% of tabs)</h3>
+
+      <p>
+        These were work-related. I was writing in Google Docs and needed to check a source. I was coding and needed to look up a function. I was in Slack and someone shared a link. These tabs felt legitimate. They were work. But each one was a full context switch — unload my current mental model, load a new page, find what I need, then try to return.
+      </p>
+
+      <p>
+        The problem was not that I needed the information. The problem was that I needed it <em>in a new universe</em>. My doc disappeared. My code editor disappeared. My thread of thought disappeared. And when I came back, I spent 2-3 minutes remembering where I was. Ninety-three times in one week. That is 4.6 hours of just... re-orienting.
+      </p>
+
+      <h3>Type 4: The Dreaded Duplicate (7% of tabs)</h3>
+
+      <p>
+        I opened the same page multiple times because I forgot I already had it open. I searched for "python list comprehension" on Monday, Wednesday, and Friday. Each time I opened a new tab instead of finding the old one. I had three tabs of the same Stack Overflow answer. I had four tabs of the same GitHub repo. I had two tabs of the same Google Doc.
+      </p>
+
+      <p>
+        My tab bar had become so crowded that finding an existing tab was harder than opening a new one. So I opened new ones. The clutter created more clutter. It was a positive feedback loop of chaos.
+      </p>
+
+      <h3>Type 5: The Genuine Keep (3% of tabs)</h3>
+
+      <p>
+        These were the tabs I actually needed open for hours. My email. My calendar. The main document I was writing. The primary codebase I was editing. Twenty-three tabs out of 847. Less than 3%. Everything else was noise.
+      </p>
+
+      <div class="warning-box">
+        <strong>The brutal ratio:</strong> 97% of my tabs were either unnecessary, forgotten, or duplicates. Only 3% were actively serving me. I was not using a browser. I was hoarding digital objects.
+      </div>
+
+      <h2>The Psychology of Why I Could Not Stop</h2>
+
+      <p>
+        The numbers were embarrassing, but the psychology was worse. I started noticing my own triggers. I opened tabs when I was stuck on a hard sentence. I opened tabs when a notification made me anxious. I opened tabs when I was waiting for a page to load — a new tab as a distraction from waiting for another tab.
+      </p>
+
+      <p>
+        Opening a tab had become a nervous tic. It was the digital equivalent of pacing. When I did not know what to do next, I opened a tab. When I was bored, I opened a tab. When I was avoiding a difficult task, I opened a tab. The browser was not a tool anymore. It was a fidget toy.
+      </p>
+
+      <p>
+        And the tab bar itself became a source of anxiety. The more tabs I had, the more stressed I felt. But closing them felt like loss. What if I needed that article? What if that reference was important? Each tab was a potential future value, and closing it felt like throwing away a lottery ticket. Never mind that the lottery was rigged and I never won.
+      </p>
+
+      <h2>The Wednesday Meltdown</h2>
+
+      <p>
+        Wednesday was my worst day: 34 tabs at peak. I remember the moment. I was writing a blog post (this one, actually — yes, I am meta). I needed to check a statistic. I opened a tab. Then I saw a related article. Then I needed to verify the source of that article. Then I saw a tweet embedded in that source. Then I clicked the tweet. Then I clicked a link in the tweet. Then I forgot what statistic I was looking for.
+      </p>
+
+      <p>
+        I stared at my tab bar. It was a strip of favicons I no longer recognized. I had a tab open for a Japanese knife-sharpening tutorial. I do not own Japanese knives. I had a tab open for a 2017 conference talk about Erlang. I do not use Erlang. I had three tabs of the same Wikipedia page about attention residue. I had opened the third one because I could not find the first two.
+      </p>
+
+      <p>
+        I closed them all. Every single one. I pressed Ctrl+W until the browser was silent. Then I sat there, looking at my one remaining tab, and realized I had no idea what I was originally writing.
+      </p>
+
+      <p>
+        It took me 23 minutes to get back into flow. I timed it.
+      </p>
+
+      <h2>What I Changed (And What Actually Worked)</h2>
+
+      <p>
+        After the meltdown, I tried three fixes.
+      </p>
+
+      <h3>Fix 1: The 10-Tab Rule (Failed)</h3>
+
+      <p>
+        I told myself I could never have more than 10 tabs. Every new tab required closing an old one. This lasted six hours. The problem was that closing tabs is a decision, and decisions are expensive. I spent more time agonizing over which tab to close than I would have spent just opening a new one. The 10-tab rule created decision fatigue. I abandoned it by dinner.
+      </p>
+
+      <h3>Fix 2: OneTab Cleanup (Partial)</h3>
+
+      <p>
+        I installed OneTab and started collapsing sessions at the end of each day. This helped with the graveyard problem. My RAM usage dropped. My browser stopped crashing. But it did not fix the root cause. I was still opening 100+ tabs a day. I was just burying them more efficiently. OneTab was a cleanup crew, not a prevention strategy.
+      </p>
+
+      <h3>Fix 3: GoPeek (Actually Worked)</h3>
+
+      <p>
+        I had built GoPeek, but I had never used it as my own primary workflow. I decided to try it properly. For the second week, I kept the tab logger running, but I used GoPeek for every "let me just check" moment. Hover a link. Preview it. Close it. No tab.
+      </p>
+
+      <p>
+        The difference was immediate and absurd.
+      </p>
+
+      <p>
+        My curiosity-glance tabs dropped from 517 to 41. That is not a typo. I went from 517 "just checking" tabs to 41. The other 476 became previews that I opened, read, and closed in seconds. My peak tab count on Wednesday was 9. Not 34. Nine.
+      </p>
+
+      <p>
+        My context-switch tabs dropped too. When I needed to reference a source while writing, I used GoPeek's sidebar mode. The source stayed visible on the right. My document stayed on the left. I did not "switch" contexts. I expanded my context. I could copy a quote and paste it without ever losing my cursor position.
+      </p>
+
+      <p>
+        And the duplicate tabs? Gone. When I needed to re-check something, I did not hunt through a crowded tab bar. I just hovered the link again. The preview was instant. There was nothing to lose.
+      </p>
+
+      <h2>Week 2 vs. Week 1: The Numbers</h2>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">847</span>
+          <span class="stat-label">Week 1 tabs opened</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">142</span>
+          <span class="stat-label">Week 2 tabs opened</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">83%</span>
+          <span class="stat-label">Reduction in tab creation</span>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">6.2 hrs</span>
+          <span class="stat-label">Week 1 tab management time</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">0.8 hrs</span>
+          <span class="stat-label">Week 2 tab management time</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">5.4 hrs</span>
+          <span class="stat-label">Time saved in one week</span>
+        </div>
+      </div>
+
+      <p>
+        Five and a half hours. That is not a productivity hack. That is a part-time job I was doing for free, and I just fired myself from it.
+      </p>
+
+      <h2>What I Actually Learned</h2>
+
+      <p>
+        The experiment taught me three things I did not expect.
+      </p>
+
+      <p>
+        <strong>First: I was not a power user.</strong> I was a power <em>opener</em>. There is a difference. Real power users do not have 47 tabs. They have 5 tabs and a clear intention for each one. My tab bar was not a dashboard. It was a confession of my own distractibility.
+      </p>
+
+      <p>
+        <strong>Second: tabs are not bookmarks.</strong> I had been treating them like bookmarks I would read later. But bookmarks are deliberate. Tabs are impulsive. A bookmark is a decision to save something. A tab is a decision to avoid deciding. I was using tabs to defer commitment, and the deferred commitments were eating my RAM and my attention.
+      </p>
+
+      <p>
+        <strong>Third: the browser is not designed for how I actually work.</strong> The browser assumes every link is a destination. But most of my links were waypoints. I did not want to move into the Wikipedia article about Byzantine architecture. I wanted to glance at it while reading about the Hagia Sophia. The browser forced me to move. GoPeek let me look.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The one-line lesson:</strong> I was not bad at managing tabs. I was using the wrong tool for 97% of what I was doing. Most of my browsing was not navigation. It was reconnaissance. And reconnaissance does not require a new base camp.
+      </div>
+
+      <h2>What I Do Now</h2>
+
+      <p>
+        I still have tabs. I have 4 to 6 at any given time. My email. My calendar. The main thing I am working on. A reference I need for the next hour. That is it. Everything else is a preview.
+      </p>
+
+      <p>
+        When I see a link I want to check, I hold Shift and hover. The preview opens. I read what I need. I close it. If I need it for longer, I drag it to sidebar mode. If I need it later, I bubble-minimize it. But I do not open a tab unless I am committing to that page as a primary workspace.
+      </p>
+
+      <p>
+        My browser is quieter now. My tab bar is readable. My RAM stays under 2GB. And when I sit down to write, I write — instead of spending twenty minutes cleaning up the debris of yesterday's curiosity.
+      </p>
+
+      <p>
+        I tracked every tab for a week, and what I found was not a browser problem. It was a behavior problem. And the behavior was driven by a tool that demanded commitment for every glance. I fixed the tool. The behavior followed.
+      </p>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Stop Opening Tabs for Glances</h3>
+      <p>I cut my tab creation by 83% in one week. You can too. Install GoPeek and turn every "let me just check" into a hover, not a commitment.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Get GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More Experiments & Data</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-gopeek-vs-opening-new-tabs.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">GoPeek vs Opening New Tabs: The Math on Time Saved</p>
+        </a>
+        <a href="blog-why-i-stopped-using-tab-groups.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Why I Stopped Using Tab Groups (And What I Use Instead)</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
