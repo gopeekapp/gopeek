@@ -157,23 +157,64 @@
 
     /* Blog cards */
     .blog-card {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 1);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-      border-radius: 20px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
       overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .blog-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
     .blog-card:hover {
-      transform: translateY(-4px) scale(1.01);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+      border-color: #bfdbfe;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .blog-card:hover::before {
+      opacity: 1;
     }
     .blog-card img {
       width: 100%;
-      height: 200px;
+      height: 192px;
       object-fit: cover;
       display: block;
+      transition: transform 0.4s ease;
+    }
+    .blog-card:hover img {
+      transform: scale(1.03);
+    }
+    .tags-row {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow: hidden;
+      white-space: nowrap;
+      gap: 0;
+    }
+    .blog-card .p-6 {
+      padding: 1.25rem;
+    }
+    .blog-card h3 {
+      font-size: 1.0625rem;
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+    }
+    .blog-card p {
+      line-height: 1.6;
+    }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .tag {
       display: inline-block;
@@ -782,96 +823,13 @@
       </div>
 
       <!-- Posts Grid -->
-      <h3 class="text-2xl md:text-3xl font-bold mb-6 text-slate-900">Latest Articles</h3>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-
-        <article class="blog-card" data-category="productivity tab-management focus">
-  <a href="blog-gopeek-vs-tab-groups.html" class="block">
-    <div class="h-48 bg-slate-100 overflow-hidden">
-      <img src="GoPeekDemo1.png" alt="GoPeek vs Tab Groups comparison" class="w-full h-full object-cover" loading="lazy" />
-    </div>
-    <div class="p-6">
-      <div class="mb-3">
-        <span class="tag">Productivity</span>
-        <span class="tag">Tab Management</span>
-        <span class="tag">Focus</span>
+            <h3 class="text-2xl md:text-3xl font-bold mb-6 text-slate-900">Latest Articles</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="latestArticlesGrid">
+        <div class="col-span-full text-center py-12">
+          <div class="inline-block animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+          <p class="text-slate-500">Loading articles...</p>
+        </div>
       </div>
-      <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">GoPeek vs Tab Groups: Which Actually Keeps You Focused?</h3>
-      <p class="text-sm text-slate-600 mb-4 line-clamp-2">Tab groups organize your chaos. GoPeek does not organize your tabs. It eliminates the reason you have so many tabs.</p>
-      <div class="flex items-center justify-between text-xs text-slate-400">
-        <span>June 8, 2026</span>
-        <span class="read-time">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          7 min
-        </span>
-      </div>
-    </div>
-  </a>
-</article>
-
-        <!-- <article class="blog-card opacity-60">
-          <div class="h-48 bg-slate-100 flex items-center justify-center">
-            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
-          </div>
-          <div class="p-6">
-            <div class="mb-3">
-              <span class="tag">Tab Management</span>
-              <span class="tag">Extensions</span>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">The Best Tab Management Extensions for 2026</h3>
-            <p class="text-sm text-slate-600 mb-4 line-clamp-2">A deep dive into the top tools for taming tab chaos &mdash; from session managers to link previewers like GoPeek.</p>
-            <div class="flex items-center justify-between text-xs text-slate-400"><span>Coming Soon</span></div>
-          </div>
-        </article> -->
-
-        <article class="blog-card" data-category="comparison link-previews zen-browser">
-  <a href="blog-gopeek-vs-zen-glance.html" class="block">
-    <div class="h-48 bg-slate-100 overflow-hidden">
-      <img src="GoPeek-vs-Zen-Glance.png" alt="GoPeek vs Zen Glance comparison" class="w-full h-full object-cover" loading="lazy" />
-    </div>
-    <div class="p-6">
-      <div class="mb-3">
-        <span class="tag">Comparison</span>
-        <span class="tag">Zen Browser</span>
-      </div>
-      <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">GoPeek vs Zen Glance: Which Link Preview Wins?</h3>
-      <p class="text-sm text-slate-600 mb-4 line-clamp-2">Zen Glance is built into Zen Browser. GoPeek works everywhere. Compare features, flexibility, and focus to see which link preview tool actually fits your workflow.</p>
-      <div class="flex items-center justify-between text-xs text-slate-400">
-        <span>June 8, 2026</span>
-        <span class="read-time">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-          8 min
-        </span>
-      </div>
-    </div>
-  </a>
-</article>
-
-
-        <article class="blog-card">
-          <a href="blog-preview-links-without-tabs.html" class="block">
-            <div class="h-48 bg-slate-100 overflow-hidden">
-              <img src="GoPeekDemo1.png" alt="Preview links without opening tabs" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-6">
-              <div class="mb-3">
-                <span class="tag">Productivity</span>
-                <span class="tag">Browser Tips</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">How to Preview Links Without Opening 50 Tabs</h3>
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">GoPeek opens live mini-browser windows instantly &mdash; faster than a regular tab. Hold Shift, hover any link, and browse without the chaos.</p>
-              <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>June 8, 2026</span>
-                <span class="read-time">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                  6 min
-                </span>
-              </div>
-            </div>
-          </a>
-        </article>
-            </div>
     </section>
 
     <!-- Newsletter -->
@@ -1049,6 +1007,145 @@
       });
     }
 
+
+        /* ═══════════════════════════════════════════════
+       AUTO-FETCH 3 LATEST ARTICLES
+       ═══════════════════════════════════════════════ */
+    const BLOG_CONFIG = {
+      owner: 'gopeekapp',   // ← same values as blog.html
+      repo: 'gopeek',          // ← same values as blog.html
+      branch: 'main'                 // ← same values as blog.html
+    };
+    const BLOG_CACHE_KEY = 'gopeek_index_blog_cache';
+    const BLOG_CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+
+    async function loadLatestArticles() {
+      const grid = document.getElementById('latestArticlesGrid');
+      if (!grid) return;
+
+      const cached = localStorage.getItem(BLOG_CACHE_KEY);
+      if (cached) {
+        try {
+          const { timestamp, posts } = JSON.parse(cached);
+          if (Date.now() - timestamp < BLOG_CACHE_DURATION) {
+            renderLatestArticles(posts);
+            return;
+          }
+        } catch (e) { /* bad cache */ }
+      }
+
+      try {
+        const treeUrl = `https://api.github.com/repos/${BLOG_CONFIG.owner}/${BLOG_CONFIG.repo}/git/trees/${BLOG_CONFIG.branch}?recursive=1`;
+        const treeRes = await fetch(treeUrl);
+        if (!treeRes.ok) throw new Error(`GitHub API ${treeRes.status}`);
+        const treeData = await treeRes.json();
+
+        const blogFiles = treeData.tree.filter(item =>
+          item.path.startsWith('blog-') &&
+          item.path.endsWith('.html') &&
+          !item.path.includes('/')
+        );
+
+        if (!blogFiles.length) throw new Error('No blog posts found');
+
+        const posts = await Promise.all(blogFiles.map(async (file) => {
+          const rawUrl = `https://raw.githubusercontent.com/${BLOG_CONFIG.owner}/${BLOG_CONFIG.repo}/${BLOG_CONFIG.branch}/${file.path}`;
+          const html = await fetch(rawUrl).then(r => r.text());
+          return parseIndexPost(html, file.path);
+        }));
+
+        posts.sort((a, b) => b.dateObj - a.dateObj);
+
+        localStorage.setItem(BLOG_CACHE_KEY, JSON.stringify({
+          timestamp: Date.now(),
+          posts
+        }));
+
+        renderLatestArticles(posts);
+      } catch (err) {
+        console.error(err);
+        if (grid) grid.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-slate-400 text-sm">Unable to load latest articles.</p></div>';
+      }
+    }
+
+    function parseIndexPost(html, filename) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      let title = doc.querySelector('title')?.textContent?.trim() || 'Untitled';
+      title = title.replace(/\s*\|\s*GoPeek\s*$/, '').replace(/\s*\|\s*GoPeek Blog\s*$/, '');
+
+      const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+
+      const dateDiv = doc.querySelector('.flex.items-center.gap-4.text-sm.text-slate-500, .flex.items-center.gap-4.text-sm');
+      const spans = dateDiv ? Array.from(dateDiv.querySelectorAll('span')) : [];
+      const date = spans[0]?.textContent?.trim() || '';
+      let readTime = '';
+      spans.forEach(span => { if (span.textContent.includes('min')) readTime = span.textContent.trim(); });
+
+      const tags = Array.from(doc.querySelectorAll('.tag'))
+        .map(t => t.textContent.trim())
+        .filter(t => t && t.toLowerCase() !== 'featured');
+
+      let img = doc.querySelector('.glass.rounded-2xl img')?.getAttribute('src') ||
+                doc.querySelector('article img')?.getAttribute('src') ||
+                doc.querySelector('main img')?.getAttribute('src') ||
+                'GoPeek_Logo.png';
+
+      const slug = filename.replace('.html', '');
+      const dateObj = date ? new Date(date).getTime() : 0;
+
+      return { title, description, date, readTime, tags, img, slug, dateObj };
+    }
+
+    function renderLatestArticles(posts) {
+      const grid = document.getElementById('latestArticlesGrid');
+      if (!grid) return;
+
+      const featuredSlug = 'blog-gopeek-vs-opening-new-tabs'; // your static featured post
+      const latest = posts.filter(p => p.slug !== featuredSlug).slice(0, 3);
+
+      if (!latest.length) {
+        grid.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-slate-400 text-sm">No articles found.</p></div>';
+        return;
+      }
+
+      grid.innerHTML = latest.map(post => {
+        const categoryData = post.tags.map(t => t.toLowerCase().replace(/\s+/g, '-')).join(' ');
+        return `
+          <article class="blog-card" data-category="${escHtml(categoryData)}">
+            <a href="${post.slug}.html" class="block">
+              <div class="h-48 bg-slate-100 overflow-hidden">
+                <img src="${escHtml(post.img)}" alt="${escHtml(post.title)}" class="w-full h-full object-cover" loading="lazy" />
+              </div>
+              <div class="p-6">
+                <div class="mb-3 tags-row">
+                  ${post.tags.slice(0, 3).map(t => `<span class="tag">${escHtml(t)}</span>`).join('')}
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">${escHtml(post.title)}</h3>
+                <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escHtml(post.description)}</p>
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                  <span>${escHtml(post.date)}</span>
+                  <span class="read-time">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                    ${escHtml(post.readTime || '5 min')}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function escHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    document.addEventListener('DOMContentLoaded', loadLatestArticles);
   </script>
 </body>
 </html>
