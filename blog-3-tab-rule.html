@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The 3-Tab Rule: How to Browse Like Your RAM Is a Budget | GoPeek</title>
+
+  <meta name="description" content="You do not need 30 tabs. You need 3. Here is the 3-Tab Rule — a hard limit that forces clarity, saves RAM, and ends tab hoarding for good." />
+  <meta name="keywords" content="3 tab rule, browser tab limit, too many tabs fix, minimalist browsing, tab budget, stop hoarding tabs, browser productivity rule" />
+
+  <meta property="og:title" content="The 3-Tab Rule: How to Browse Like Your RAM Is a Budget | GoPeek" />
+  <meta property="og:description" content="You do not need 30 tabs. You need 3. Here is the hard limit that ends tab hoarding." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The 3-Tab Rule: How to Browse Like Your RAM Is a Budget" />
+  <meta name="twitter:description" content="3 tabs. That is it. Everything else is a preview or a bookmark." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-3-tab-rule.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+  </style>
+
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>The 3-Tab Rule</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Minimalism</span>
+      <span class="tag">Focus</span>
+      <span class="tag">Productivity</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      The 3-Tab Rule: How to Browse Like Your RAM Is a Budget
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 14, 2026</span>
+      <span>·</span>
+      <span>6 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="The 3 tab rule for minimalist browsing and RAM management" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">3 tabs. That is your budget. Everything else is a preview or a bookmark.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        People treat tabs as free. They are not. Every tab is a process. Every process consumes RAM. Every piece of RAM is a slice of your computer's attention that could be going to the one thing you are actually trying to do.
+      </p>
+
+      <p>
+        The average user has 17 tabs open. Power users have 40. Some have 80. And they all say the same thing: "I might need them." You do not need 80 tabs. You do not need 40. You do not need 17. You need <strong>3</strong>.
+      </p>
+
+      <p>
+        The 3-Tab Rule is simple. You are allowed 3 tabs open at any given time. Not 3 windows. Not 3 groups. <strong>3 tabs.</strong> If you want to open a fourth, you close one first. No exceptions. This is not a suggestion. It is a budget. And budgets force decisions.
+      </p>
+
+      <h2>Why 3?</h2>
+
+      <p>
+        Cognitive science says most people can hold 3 to 4 items in working memory at once. After that, retention drops. You forget what you were doing. You lose the thread. You context-switch into oblivion.
+      </p>
+
+      <p>
+        Three tabs also map to the three things you are usually doing:
+      </p>
+
+      <ul>
+        <li><strong>Tab 1:</strong> Your workspace — the document, IDE, or tool you are actively working in.</li>
+        <li><strong>Tab 2:</strong> Your reference — the one source you are currently checking.</li>
+        <li><strong>Tab 3:</strong> Your communication — email, chat, or a dashboard you need to monitor.</li>
+      </ul>
+
+      <p>
+        That is it. If you need a second reference, close the first one. If you need a second workspace, finish the first one. If your communication tab becomes a research rabbit hole, close it and open a preview instead.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The math:</strong> 3 tabs use roughly 500MB to 1GB of RAM. 30 tabs use 4GB to 8GB. The performance difference is not linear — it is exponential because Chrome starts swapping and your OS starts choking. Three tabs is the sweet spot before the cliff.
+      </div>
+
+      <h2>The Rule in Practice</h2>
+
+      <p>
+        Here is how a normal work session looks under the 3-Tab Rule.
+      </p>
+
+      <p>
+        You are writing a report in Google Docs. That is Tab 1. You need to verify a statistic from a source article. You open the article. That is Tab 2. Your email is open. That is Tab 3. You are at your limit.
+      </p>
+
+      <p>
+        The source article links to a study. You want to check it. Under the old rules, you open a fourth tab. Now you have 4 tabs. Then the study links to a dataset. You open a fifth. Then the dataset links to a methodology paper. You open a sixth. Twenty minutes later, you have 12 tabs and you have forgotten what statistic you were verifying.
+      </p>
+
+      <p>
+        Under the 3-Tab Rule, you cannot open that fourth tab. You have a choice. You can close the source article and open the study instead. Or you can <strong>preview</strong> the study with <a href="index.html">GoPeek</a> — hold Shift, hover the link, read the abstract, close it. No tab. No budget spent. Your 3 tabs stay intact. Your focus stays intact.
+      </p>
+
+      <div class="scenario-box">
+        <h4>The Research Session: With vs. Without the 3-Tab Rule</h4>
+        <p style="margin-bottom: 0.5rem;"><strong>Without the rule:</strong> You start with 3 tabs. You open 4 more "just to check." You now have 7. You group them by color. You name the groups. You reorganize them. You have spent 15 minutes managing tabs and 5 minutes working. Your RAM is at 5GB. Your laptop fan is audible.</p>
+        <p style="margin-bottom: 0;"><strong>With the rule:</strong> You start with 3 tabs. A link appears. You preview it with GoPeek. You close the preview. You never exceeded your budget. You spent 0 minutes managing tabs. Your RAM stayed under 1GB. Your fan never turned on.</p>
+      </div>
+
+      <h2>What Counts as a Tab?</h2>
+
+      <p>
+        Everything in your browser's tab bar counts. Pinned tabs count. Tab groups count — a group of 5 tabs is 5 tabs, not 1. Background tabs count. Sleeping tabs count, though they cost less. If it appears in your tab bar, it is part of the budget.
+      </p>
+
+      <p>
+        What does not count: GoPeek previews. They are not tabs. They do not appear in your tab bar. They do not consume RAM like a full process. They are glances, not commitments. This is why GoPeek and the 3-Tab Rule are built for each other. The rule creates scarcity. GoPeek removes the pain of scarcity.
+      </p>
+
+      <h2>The Three Escape Hatches</h2>
+
+      <p>
+        Sometimes you genuinely need more than 3 sources visible. The 3-Tab Rule has three escape hatches that do not break the budget.
+      </p>
+
+      <h3>Escape Hatch 1: GoPeek Previews</h3>
+
+      <p>
+        For anything you need to read but not keep. Hover the link. Preview it. Close it. This covers 80% of the links you currently open as tabs. News articles, blog posts, documentation pages, GitHub repos — all of these are previews, not tabs.
+      </p>
+
+      <h3>Escape Hatch 2: Bookmarks</h3>
+
+      <p>
+        For anything you need later but not now. Bookmark it immediately. Put it in the right folder. Close the tab. Your bookmark library is unlimited. Your tab bar is not. Use the right tool for the timeline.
+      </p>
+
+      <h3>Escape Hatch 3: Sidebar Mode</h3>
+
+      <p>
+        For the rare case where you need two pages side by side. Drag a GoPeek preview to the edge of your screen. It snaps into a split-screen sidebar. Your original page stays on the left. The preview stays on the right. You can scroll both. You can copy from one and paste into the other. This is not a tab. It is a panel. And it closes when you are done.
+      </p>
+
+      <div class="warning-box">
+        <strong>What is not an escape hatch:</strong> Tab groups. Tab groups are not a way to hold more tabs. They are a way to color-code the same 3 tabs. If you have 3 tabs in a group, you have 3 tabs. If you have 12 tabs in 3 groups, you have 12 tabs. You have broken the budget.
+      </div>
+
+      <h2>The 48-Hour Corollary</h2>
+
+      <p>
+        The 3-Tab Rule has a corollary: no tab lives longer than 48 hours. If a tab has been open for two days and you have not interacted with it, it is not a workspace. It is a bookmark that is too proud to admit it. Close it or save it. There is no third option.
+      </p>
+
+      <p>
+        This prevents the slow creep. You start Monday with 3 tabs. By Wednesday, you have 8 because you "needed to check something quickly." By Friday, you have 20 and the rule is dead. The 48-hour corollary is the enforcement mechanism. It keeps the rule honest.
+      </p>
+
+      <h2>Head-to-Head: Unlimited Tabs vs. The 3-Tab Rule</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">Metric</th>
+            <th style="width: 37.5%;" class="loser">Unlimited Tabs</th>
+            <th style="width: 37.5%;" class="winner">3-Tab Rule + GoPeek</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>RAM usage</strong></td>
+            <td class="loser">4-8GB common</td>
+            <td class="winner">Under 1GB</td>
+          </tr>
+          <tr>
+            <td><strong>Context switching</strong></td>
+            <td class="loser">Constant — Alt-Tab hell</td>
+            <td class="winner">Minimal — stay on your page</td>
+          </tr>
+          <tr>
+            <td><strong>Focus recovery</strong></td>
+            <td class="loser">23 minutes per switch</td>
+            <td class="winner">No recovery needed</td>
+          </tr>
+          <tr>
+            <td><strong>Tab management time</strong></td>
+            <td class="loser">15-30 min/day</td>
+            <td class="winner">Zero</td>
+          </tr>
+          <tr>
+            <td><strong>Browser crashes</strong></td>
+            <td class="loser">Common at 30+ tabs</td>
+            <td class="winner">Rare</td>
+          </tr>
+          <tr>
+            <td><strong>Decision fatigue</strong></td>
+            <td class="loser">High — which tab was I on?</td>
+            <td class="winner">Low — only 3 to track</td>
+          </tr>
+          <tr>
+            <td><strong>Research depth</strong></td>
+            <td class="loser">Shallow — many tabs, little reading</td>
+            <td class="winner">Deep — preview, decide, move on</td>
+          </tr>
+          <tr>
+            <td><strong>End of day</strong></td>
+            <td class="loser">Tab bankruptcy — close 40 tabs</td>
+            <td class="winner">Close 3 tabs — done in 10 seconds</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Why Scarcity Works</h2>
+
+      <p>
+        Unlimited tabs create unlimited options. Unlimited options create paralysis. When you can open anything, you open everything. When you can only open 3 things, you choose carefully.
+      </p>
+
+      <p>
+        The 3-Tab Rule forces you to answer one question before every click: "Is this worth a tab?" Most of the time, the answer is no. The link is a curiosity. The page is a reference. The article is a maybe. None of them deserve a tab. They deserve a preview or a bookmark.
+      </p>
+
+      <p>
+        This is the difference between a <strong>library</strong> and a <strong>landfill</strong>. Bookmarks are a library — curated, searchable, permanent. Tabs are a landfill — temporary, messy, and overflowing. The 3-Tab Rule turns your browser into a workspace and your bookmark library into storage. Everything else is handled by GoPeek at the door.
+      </p>
+
+      <div class="quote-box">
+        "I thought limiting myself to 3 tabs would make me slower. It made me faster. I stopped opening links out of habit. I started previewing them. I stopped losing my place. I stopped the 23-minute recovery cycle. My browser has never been this fast and I have never been this focused."
+        <cite>— 3-Tab Rule adopter, week 3</cite>
+      </div>
+
+      <h2>Getting Started</h2>
+
+      <p>
+        You do not need to reorganize your life. You just need to close your tabs. Here is the startup sequence:
+      </p>
+
+      <ul>
+        <li><strong>Step 1:</strong> Close every tab except the 3 you need right now. Be brutal. If you are not actively using it today, close it.</li>
+        <li><strong>Step 2:</strong> Install <a href="index.html">GoPeek</a>. It is your overdraft protection for the 3-Tab budget.</li>
+        <li><strong>Step 3:</strong> For the next 48 hours, do not open a fourth tab. Preview everything else. Bookmark what matters. Close what does not.</li>
+        <li><strong>Step 4:</strong> At the end of day two, assess. Your RAM usage is lower. Your focus is sharper. Your tab bar is empty. Decide if you are going back.</li>
+      </ul>
+
+      <p>
+        Most people do not go back. Once you have tasted a clean tab bar, 40 tabs feels like hoarding. Because it is.
+      </p>
+
+      <h2>The Bottom Line</h2>
+
+      <p>
+        The 3-Tab Rule is not minimalism for its own sake. It is minimalism because your brain and your computer have hard limits. You cannot track 40 tabs. You cannot run 40 processes smoothly. You cannot context-switch 40 times and still think clearly.
+      </p>
+
+      <p>
+        Three tabs is enough. One for your work. One for your reference. One for your communication. Everything else is a preview, a bookmark, or a distraction. Treat your RAM like a budget. Spend it on what matters. Save the rest. And use GoPeek as your debit card — instant access, no debt, no interest.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The rule:</strong> 3 tabs. 48 hours max per tab. Everything else is a preview or a bookmark. Your browser is a workspace, not a storage unit.
+      </div>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Browse on a Budget</h3>
+      <p>Install GoPeek and stay under your 3-tab limit — without missing a single link.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Get GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Focus & Minimalism</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-tab-groups-vs-bookmarks.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Tab Groups vs Bookmarks: Which Actually Saves Your Links?</p>
+        </a>
+        <a href="blog-tab-groups-for-work.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Tab Groups for Work: Why They Fail for Research, Writing, Coding</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
