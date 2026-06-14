@@ -12,11 +12,9 @@
   <meta property="og:description" content="Tips, guides, and insights on browser productivity, tab management, and smarter browsing." />
   <meta property="og:type" content="website" />
 
-
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GoPeek Blog — Browser Productivity & Tab Management Tips" />
   <meta name="twitter:description" content="Tips, guides, and insights on browser productivity, tab management, and smarter browsing." />
-
 
   <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
   <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog.html">
@@ -144,6 +142,13 @@
       font-size: 0.8rem;
       color: #94a3b8;
     }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
   </style>
 </head>
 
@@ -204,267 +209,24 @@
       </div>
     </section>
 
-    <!-- Featured Post -->
+    <!-- Featured Post (Auto-populated) -->
     <section class="mb-12 md:mb-16" id="featured">
-      <a href="blog-gopeek-vs-opening-new-tabs.html" class="featured-card block">
-        <div class="grid md:grid-cols-2">
-          <div class="p-8 md:p-10 flex flex-col justify-center">
-            <div class="mb-4">
-              <span class="tag">Featured</span>
-              <span class="tag">Productivity</span>
-              <span class="tag">Focus</span>
-            </div>
-            <h2 class="text-2xl md:text-3xl font-black mb-4 leading-tight">
-              GoPeek vs Opening New Tabs: The Math on Time Saved
-            </h2>
-            <p class="mb-6 leading-relaxed">
-              Every new tab costs you 23 minutes of focus. GoPeek previews links instantly without tabs. See the real math on time saved, context preserved, and productivity gained.
-            </p>
-            <div class="flex items-center gap-4 text-sm">
-              <span class="text-slate-400">June 9, 2026</span>
-              <span class="text-slate-500">·</span>
-              <span class="read-time">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 6v6l4 2"></path>
-                </svg>
-                6 min read
-              </span>
-            </div>
-          </div>
-          <div class="hidden md:block">
-            <img src="GoPeek_promo_tile.png" alt="GoPeek vs Opening New Tabs time saved math" class="w-full h-full object-cover" style="min-height: 320px;" />
-          </div>
+      <div id="featuredContainer">
+        <div class="glass rounded-2xl p-10 text-center">
+          <div class="inline-block animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+          <p class="text-slate-500">Loading featured post...</p>
         </div>
-      </a>
+      </div>
     </section>
 
-    <!-- All Posts Grid -->
+    <!-- All Posts Grid (Auto-populated) -->
     <section>
       <h2 class="text-2xl md:text-3xl font-bold mb-8 text-slate-900">All Articles</h2>
-
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="postsGrid">
-
-        
-
-        <!-- Post 2 (Live) -->
-        <article class="blog-card" data-category="productivity tab-management focus">
-          <a href="blog-gopeek-vs-tab-groups.html" class="block">
-            <div class="h-48 bg-slate-100 overflow-hidden">
-              <img src="GoPeekDemo1.png" alt="GoPeek vs Tab Groups comparison" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-6">
-              <div class="mb-3">
-                <span class="tag">Productivity</span>
-                <span class="tag">Tab Management</span>
-                <span class="tag">Focus</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">GoPeek vs Tab Groups: Which Actually Keeps You Focused?</h3>
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">Tab groups organize your chaos. GoPeek removes it. See why link previews beat color-coded folders for real focus.</p>
-              <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>June 8, 2026</span>
-                <span class="read-time">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                  7 min
-                </span>
-              </div>
-            </div>
-          </a>
-        </article>
-
-        <!-- Post 3 (Live) -->
-        <article class="blog-card" data-category="comparison link-previews zen-browser">
-          <a href="blog-gopeek-vs-zen-glance.html" class="block">
-            <div class="h-48 bg-slate-100 overflow-hidden">
-              <img src="GoPeek-vs-Zen-Glance.png" alt="GoPeek vs Zen Glance comparison" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-6">
-              <div class="mb-3">
-                <span class="tag">Comparison</span>
-                <span class="tag">Zen Browser</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">GoPeek vs Zen Glance: Which Link Preview Wins?</h3>
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">Zen Glance is built into Zen Browser. GoPeek works everywhere. Compare features, flexibility, and focus to see which link preview tool actually fits your workflow.</p>
-              <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>June 8, 2026</span>
-                <span class="read-time">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                  8 min
-                </span>
-              </div>
-            </div>
-          </a>
-        </article>
-
-        <!-- Post 4 (Coming Soon) -->
-        <!-- <article class="blog-card opacity-60" data-category="browser-tips extensions">
-          <div class="h-48 bg-slate-100 flex items-center justify-center">
-            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
-          </div>
-          <div class="p-6">
-            <div class="mb-3">
-              <span class="tag">Browser Tips</span>
-              <span class="tag">Extensions</span>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
-              Hover Preview vs. Side Panel: What's the Best Way to Browse?
-            </h3>
-            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
-              Comparing link preview methods — from hover popups to split-screen sidebars. Which fits your workflow?
-            </p>
-            <div class="flex items-center justify-between text-xs text-slate-400">
-              <span>Coming Soon</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Post 5 (Coming Soon) -->
-        <!-- <article class="blog-card opacity-60" data-category="productivity">
-          <div class="h-48 bg-slate-100 flex items-center justify-center">
-            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
-          </div>
-          <div class="p-6">
-            <div class="mb-3">
-              <span class="tag">Productivity</span>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
-              How I Reduced My Browser from 100 Tabs to 5 Without Losing Anything
-            </h3>
-            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
-              A real story of going from tab chaos to tab zen — the tools, habits, and mindset shift that made it stick.
-            </p>
-            <div class="flex items-center justify-between text-xs text-slate-400">
-              <span>Coming Soon</span>
-            </div>
-          </div>
-        </article> -->
-
-        <!-- Post 6 (Coming Soon) -->
-        <!-- <article class="blog-card opacity-60" data-category="browser-tips">
-          <div class="h-48 bg-slate-100 flex items-center justify-center">
-            <span class="text-slate-400 font-bold text-lg">Coming Soon</span>
-          </div>
-          <div class="p-6">
-            <div class="mb-3">
-              <span class="tag">Browser Tips</span>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
-              From Tab Chaos to Tab Zen: A Minimalist's Guide to Browsing
-            </h3>
-            <p class="text-sm text-slate-600 mb-4 line-clamp-2">
-              Minimalist browsing principles — how to consume information intentionally without drowning in open tabs.
-            </p>
-            <div class="flex items-center justify-between text-xs text-slate-400">
-              <span>Coming Soon</span>
-            </div>
-          </div>
-        </article> --> 
-
-
-
-<!-- Post 4 (Live) -->
-        <article class="blog-card" data-category="productivity browser-tips tab-management">
-          <a href="blog-preview-links-without-tabs.html" class="block">
-            <div class="h-48 bg-slate-100 overflow-hidden">
-              <img src="GoPeekDemo1.png" alt="Preview links without opening tabs" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-6">
-              <div class="mb-3">
-                <span class="tag">Productivity</span>
-                <span class="tag">Browser Tips</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
-                How to Preview Links Without Opening 50 Tabs
-              </h3>
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">
-                GoPeek opens live mini-browser windows instantly — faster than a regular tab. Hold Shift, hover any link, and browse without the chaos.
-              </p>
-              <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>June 8, 2026</span>
-                <span class="read-time">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 6v6l4 2"></path>
-                  </svg>
-                  6 min
-                </span>
-              </div>
-            </div>
-          </a>
-        </article>
-        <!-- Post 5 (Live) -->
-        <article class="blog-card" data-category="comparison arc-browser link-previews">
-          <a href="blog-arc-peek-vs-gopeek.html" class="block">
-            <div class="h-48 bg-slate-100 overflow-hidden">
-              <img src="GoPeekDemo1.png" alt="Arc Browser Peek vs GoPeek comparison" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-6">
-              <div class="mb-3">
-                <span class="tag">Comparison</span>
-                <span class="tag">Arc Browser</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">Arc Browser Peek vs GoPeek: Which Preview Is Better?</h3>
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">Arc Peek is elegant but locked to one browser. GoPeek works everywhere with fully interactive previews, multi-peek, and bubble minimize.</p>
-              <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>June 9, 2026</span>
-                <span class="read-time">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                  8 min
-                </span>
-              </div>
-            </div>
-          </a>
-        </article>
-
-        <!-- Post 6 (Live) -->
-        <article class="blog-card" data-category="research productivity extensions">
-          <a href="blog-best-browser-extensions-researchers.html" class="block">
-            <div class="h-48 bg-slate-100 overflow-hidden">
-              <img src="GoPeekDemo1.png" alt="Best browser extensions for researchers 2026" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-6">
-              <div class="mb-3">
-                <span class="tag">Research</span>
-                <span class="tag">Productivity</span>
-                <span class="tag">Extensions</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">Best Browser Extensions for Researchers in 2026</h3>
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">The 7 best browser extensions for researchers — from link previews to citation managers. GoPeek ranks #1 for literature reviews and multi-source analysis.</p>
-              <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>June 9, 2026</span>
-                <span class="read-time">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                  10 min
-                </span>
-              </div>
-            </div>
-          </a>
-        </article>
-
-        <!-- Post 7 (Live) -->
-        <article class="blog-card" data-category="comparison zen-browser link-previews">
-          <a href="blog-zen-glance-alternative.html" class="block">
-            <div class="h-48 bg-slate-100 overflow-hidden">
-              <img src="GoPeekDemo1.png" alt="Zen Glance alternative GoPeek" class="w-full h-full object-cover" loading="lazy" />
-            </div>
-            <div class="p-6">
-              <div class="mb-3">
-                <span class="tag">Zen Browser</span>
-                <span class="tag">Comparison</span>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">Zen Browser Glance Alternative: Why I Switched to GoPeek</h3>
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">Zen Glance is buggy, limited, and locked to one browser. Here is my 6-month journey from excitement to frustration to GoPeek — and why I am not going back.</p>
-              <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>June 9, 2026</span>
-                <span class="read-time">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                  8 min
-                </span>
-              </div>
-            </div>
-          </a>
-        </article>
-
+        <div class="col-span-full text-center py-12">
+          <div class="inline-block animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+          <p class="text-slate-500">Loading articles...</p>
+        </div>
       </div>
     </section>
 
@@ -481,45 +243,225 @@
   </footer>
 
   <script>
-    function filterCategory(category) {
-      // Update active pill
-      document.querySelectorAll('.category-pill').forEach(pill => {
-        pill.classList.remove('active');
+    /* ═══════════════════════════════════════════════
+       CONFIG — EDIT THESE 3 VALUES ONLY
+       ═══════════════════════════════════════════════ */
+    const CONFIG = {
+      owner: 'gopeekapp',   // ← Your GitHub username (e.g. 'johndoe')
+      repo: 'gopeek',          // ← Your repo name (e.g. 'gopeek-lovat' or 'johndoe.github.io')
+      branch: 'main'                   // ← Your default branch (usually 'main' or 'master')
+    };
+
+    const CACHE_KEY = 'gopeek_blog_cache';
+    const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+
+    async function loadBlogPosts() {
+      // Try cache first so repeat visitors don't hit API limits
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          const { timestamp, posts } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            renderPosts(posts);
+            return;
+          }
+        } catch (e) { /* bad cache — ignore */ }
+      }
+
+      try {
+        // 1. Ask GitHub for every file in the repo
+        const treeUrl = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/git/trees/${CONFIG.branch}?recursive=1`;
+        const treeRes = await fetch(treeUrl);
+
+        if (!treeRes.ok) {
+          throw new Error(`GitHub API returned ${treeRes.status}. Make sure the repo is public and the owner/name above are correct.`);
+        }
+
+        const treeData = await treeRes.json();
+
+        // 2. Keep only root-level blog-*.html files
+        const blogFiles = treeData.tree.filter(item =>
+          item.path.startsWith('blog-') &&
+          item.path.endsWith('.html') &&
+          !item.path.includes('/')
+        );
+
+        if (blogFiles.length === 0) {
+          throw new Error('No blog-*.html files found in the repo root.');
+        }
+
+        // 3. Download and parse each post
+        const posts = await Promise.all(blogFiles.map(async (file) => {
+          const rawUrl = `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/${file.path}`;
+          const html = await fetch(rawUrl).then(r => r.text());
+          return parsePost(html, file.path);
+        }));
+
+        // 4. Sort newest first
+        posts.sort((a, b) => b.dateObj - a.dateObj);
+
+        // 5. Cache locally
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          timestamp: Date.now(),
+          posts
+        }));
+
+        renderPosts(posts);
+
+      } catch (err) {
+        console.error('Auto-blog error:', err);
+        const msg = `<div class="col-span-full text-center py-12">
+          <p class="text-red-500 font-semibold mb-2">Could not load posts automatically.</p>
+          <p class="text-slate-500 text-sm">${escapeHtml(err.message)}</p>
+          <p class="text-slate-400 text-sm mt-2">Check the browser console (F12 → Console) for details.</p>
+        </div>`;
+        document.getElementById('postsGrid').innerHTML = msg;
+        document.getElementById('featuredContainer').innerHTML = msg;
+      }
+    }
+
+    function parsePost(html, filename) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Title
+      let title = doc.querySelector('title')?.textContent?.trim() || 'Untitled';
+      title = title.replace(/\s*\|\s*GoPeek\s*$/, '').replace(/\s*\|\s*GoPeek Blog\s*$/, '');
+
+      // Meta description
+      const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+
+      // Date & read time (first span in the date bar)
+      const dateDiv = doc.querySelector('.flex.items-center.gap-4.text-sm.text-slate-500, .flex.items-center.gap-4.text-sm');
+      const spans = dateDiv ? Array.from(dateDiv.querySelectorAll('span')) : [];
+      const date = spans[0]?.textContent?.trim() || '';
+
+      let readTime = '';
+      spans.forEach(span => {
+        if (span.textContent.includes('min')) readTime = span.textContent.trim();
       });
+
+      // Tags (ignore a "Featured" tag if present)
+      const tags = Array.from(doc.querySelectorAll('.tag'))
+        .map(t => t.textContent.trim())
+        .filter(t => t && t.toLowerCase() !== 'featured');
+
+      // Hero image
+      let img = doc.querySelector('.glass.rounded-2xl img')?.getAttribute('src') ||
+                doc.querySelector('article img')?.getAttribute('src') ||
+                doc.querySelector('main img')?.getAttribute('src') ||
+                'GoPeek_Logo.png';
+
+      const slug = filename.replace('.html', '');
+      const dateObj = date ? new Date(date).getTime() : 0;
+
+      return { title, description, date, readTime, tags, img, slug, filename, dateObj };
+    }
+
+    function renderPosts(posts) {
+      if (!posts.length) return;
+
+      // FEATURED = newest post
+      const featured = posts[0];
+      const rest = posts.slice(1);
+
+      document.getElementById('featuredContainer').innerHTML = `
+        <a href="${featured.slug}.html" class="featured-card block">
+          <div class="grid md:grid-cols-2">
+            <div class="p-8 md:p-10 flex flex-col justify-center">
+              <div class="mb-4">
+                <span class="tag">Featured</span>
+                ${featured.tags.slice(0, 2).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
+              </div>
+              <h2 class="text-2xl md:text-3xl font-black mb-4 leading-tight">${escapeHtml(featured.title)}</h2>
+              <p class="mb-6 leading-relaxed">${escapeHtml(featured.description)}</p>
+              <div class="flex items-center gap-4 text-sm">
+                <span class="text-slate-400">${escapeHtml(featured.date)}</span>
+                <span class="text-slate-500">·</span>
+                <span class="read-time">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 6v6l4 2"></path>
+                  </svg>
+                  ${escapeHtml(featured.readTime || '5 min read')}
+                </span>
+              </div>
+            </div>
+            <div class="hidden md:block">
+              <img src="${escapeHtml(featured.img)}" alt="${escapeHtml(featured.title)}" class="w-full h-full object-cover" style="min-height: 320px;" />
+            </div>
+          </div>
+        </a>
+      `;
+
+      // GRID = everything else
+      document.getElementById('postsGrid').innerHTML = rest.map(post => {
+        const categoryData = post.tags.map(t => t.toLowerCase().replace(/\s+/g, '-')).join(' ');
+        return `
+          <article class="blog-card" data-category="${escapeHtml(categoryData)}">
+            <a href="${post.slug}.html" class="block">
+              <div class="h-48 bg-slate-100 overflow-hidden">
+                <img src="${escapeHtml(post.img)}" alt="${escapeHtml(post.title)}" class="w-full h-full object-cover" loading="lazy" />
+              </div>
+              <div class="p-6">
+                <div class="mb-3">
+                  ${post.tags.slice(0, 3).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">${escapeHtml(post.title)}</h3>
+                <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escapeHtml(post.description)}</p>
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                  <span>${escapeHtml(post.date)}</span>
+                  <span class="read-time">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 6v6l4 2"></path>
+                    </svg>
+                    ${escapeHtml(post.readTime || '5 min')}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /* ═══════════════════════════════════════════════
+       Existing filter logic (works on rendered DOM)
+       ═══════════════════════════════════════════════ */
+    function filterCategory(category) {
+      document.querySelectorAll('.category-pill').forEach(pill => pill.classList.remove('active'));
       event.target.classList.add('active');
 
-      // Filter posts
-      const posts = document.querySelectorAll('.blog-card');
-      posts.forEach(post => {
+      document.querySelectorAll('.blog-card').forEach(post => {
         if (category === 'all') {
           post.style.display = '';
         } else {
           const categories = post.getAttribute('data-category') || '';
-          if (categories.includes(category)) {
-            post.style.display = '';
-          } else {
-            post.style.display = 'none';
-          }
+          post.style.display = categories.includes(category) ? '' : 'none';
         }
       });
     }
 
     function filterPosts() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const posts = document.querySelectorAll('.blog-card');
-
-      posts.forEach(post => {
+      const term = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.blog-card').forEach(post => {
         const title = post.querySelector('h3').textContent.toLowerCase();
         const excerpt = post.querySelector('p').textContent.toLowerCase();
         const tags = Array.from(post.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase()).join(' ');
-
-        if (title.includes(searchTerm) || excerpt.includes(searchTerm) || tags.includes(searchTerm)) {
-          post.style.display = '';
-        } else {
-          post.style.display = 'none';
-        }
+        post.style.display = (title.includes(term) || excerpt.includes(term) || tags.includes(term)) ? '' : 'none';
       });
     }
+
+    // Kick everything off
+    document.addEventListener('DOMContentLoaded', loadBlogPosts);
   </script>
 
 </body>
