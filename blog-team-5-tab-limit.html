@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Forced My Entire Engineering Team to Use a 5-Tab Limit for a Week | GoPeek</title>
+
+  <meta name="description" content="I forced 12 engineers to use a 5-tab limit for one week. Day 1: revolt. Day 5: 9 of 12 voted to keep it. Here is what happened — the data, the breakdowns, and the policy we adopted." />
+  <meta name="keywords" content="engineering team tab limit, browser tab policy team, 5 tab rule team, developer tab management, team productivity tabs, stop tab hoarding team" />
+
+  <meta property="og:title" content="I Forced My Entire Engineering Team to Use a 5-Tab Limit for a Week | GoPeek" />
+  <meta property="og:description" content="12 engineers. 5 tabs max. One week. Day 1: revolt. Day 5: 9 of 12 voted to keep it. Here is the data." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="I Forced My Entire Engineering Team to Use a 5-Tab Limit for a Week" />
+  <meta name="twitter:description" content="12 engineers. 5 tabs. One week. The results surprised everyone." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-team-5-tab-limit.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script async src="https://plausible.io/js/pa-NZKToabHlGg_-94kzWyXo.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Team 5-Tab Limit</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Team</span>
+      <span class="tag">Productivity</span>
+      <span class="tag">Experiment</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      I Forced My Entire Engineering Team to Use a 5-Tab Limit for a Week
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 18, 2026</span>
+      <span>·</span>
+      <span>7 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="Engineering team 5-tab limit experiment results" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">12 engineers. 5 tabs max. One week. The results surprised everyone.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        I manage a 12-person engineering team. We build a web platform. Every developer on the team had a tab problem. I decided to fix it with a rule: <strong>no more than 5 open tabs at any time</strong>. For one week. No exceptions. Here is what happened.
+      </p>
+
+      <h2>The Baseline</h2>
+
+      <p>
+        Before the experiment, I asked everyone to screenshot their browser at peak usage. The numbers:
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">28</span>
+          <span class="stat-label">Average peak tabs per engineer</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">47</span>
+          <span class="stat-label">Highest count (frontend lead)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">14</span>
+          <span class="stat-label">Lowest count (DevOps engineer)</span>
+        </div>
+      </div>
+
+      <p>
+        28 tabs average. The frontend lead had 47. The "light" user still had 14. Every engineer admitted they spent time each day hunting for the right tab, closing duplicates, or waiting for Chrome to unfreeze. The tab bar was a shared pain point nobody talked about.
+      </p>
+
+      <h2>Day 1: Revolt</h2>
+
+      <p>
+        I announced the rule at Monday standup. Reactions ranged from skeptical to hostile. The frontend lead said it was "impossible" to debug React with only 5 tabs. The backend lead called it "sadistic." Two junior engineers asked if this was a joke.
+      </p>
+
+      <p>
+        By 11 AM, the frontend lead had broken the limit three times. He was oscillating between MDN, Stack Overflow, a GitHub PR, a design mockup, and a local dev server. That was 5 tabs already, and he had not opened the component library or the API docs. He kept opening tabs out of reflex, catching himself, and closing them in frustration.
+      </p>
+
+      <div class="quote-box">
+        "I spent more mental energy tracking my tab count than writing code. This is worse than the tab problem."
+        <cite>— Frontend lead, Day 1</cite>
+      </div>
+
+      <p>
+        The backend lead had a different issue. He was debugging a database query. He needed the query log, the schema docs, a Stack Overflow thread, the ORM reference, and the actual code. Five tabs. Then he needed to check a migration file. He had to close something. He closed the schema docs. Ten minutes later he needed them again. He reopened them. Closed the ORM reference. Needed it again. The cycle continued.
+      </p>
+
+      <p>
+        Day 1 productivity was visibly lower. People were angry. I considered ending the experiment.
+      </p>
+
+      <h2>Day 2: Frustration</h2>
+
+      <p>
+        Day 2 was better than Day 1 but still rough. The team had stopped openly rebelling. They were trying to comply. But the muscle memory of opening tabs was still there.
+      </p>
+
+      <p>
+        Our designer logged 34 middle-clicks on Monday. On Tuesday, she dropped to 12. She was catching herself. But the 12 she missed were the reflexive ones — clicking a link in Slack, a reference in Figma, a color palette URL. Each one created a tab she had to close within minutes.
+      </p>
+
+      <p>
+        The QA engineer had the hardest time. Testing requires multiple environments: staging, production, the test runner, the bug tracker, the spec document. Five tabs was not enough. She started using two browser windows, keeping 5 tabs in each, technically complying with the rule while missing the point. I let it slide for Day 2. We would address it later.
+      </p>
+
+      <div class="quote-box">
+        "I keep reaching for CMD+T and stopping myself. It is like quitting smoking. I know it is good for me but I hate every second of it."
+        <cite>— Backend lead, Day 2</cite>
+      </div>
+
+      <h2>Day 3: Adjustment</h2>
+
+      <p>
+        Something shifted on Wednesday. The team stopped fighting the limit and started working around it. Not by cheating. By changing how they worked.
+      </p>
+
+      <p>
+        The frontend lead started using GoPeek to preview MDN and Stack Overflow links instead of opening them as tabs. He kept his IDE in one tab, the dev server in another, the PR in a third, and used previews for everything else. His tab count stayed under 5. His workflow actually got faster because he stopped losing track of tabs.
+      </p>
+
+      <p>
+        The backend lead started bookmarking reference pages he accessed repeatedly. The schema docs, the ORM reference, and the migration guide went into a "Current Project" bookmark folder. He clicked them when needed, read what he needed, and closed them. No tab. No decision. No clutter.
+      </p>
+
+      <p>
+        The debugging session that usually took him 90 minutes finished in 45. He said it was because he was not constantly switching between 12 tabs to find the right reference. He had the code, the logs, and one reference open. That was enough.
+      </p>
+
+      <p>
+        QA testing sessions were 30 minutes shorter. The QA engineer stopped keeping staging and production open simultaneously. She tested staging, closed it, opened production to verify, closed it. The context switch was intentional, not accidental. She made fewer mistakes.
+      </p>
+
+      <h2>Day 4: Clarity</h2>
+
+      <p>
+        By Thursday, the team had adapted. The average peak tab count was 5.2. The frontend lead had 5. The backend lead had 4. The DevOps engineer, who started at 14, had 3. He said he realized most of his tabs were dashboards he checked once an hour. He started checking them in previews instead.
+      </p>
+
+      <p>
+        Chrome CPU usage dropped across the board. The DevOps engineer's fan, which usually spun during builds, stopped spinning during normal work. Chrome CPU went from 35% to 8% on his machine. The frontend lead's RAM usage dropped from 6.2GB to 1.8GB. VS Code stopped lagging.
+      </p>
+
+      <p>
+        The mood changed too. People were not talking about tabs anymore. They were talking about work. The tab limit had become invisible. The new habits had replaced the old ones.
+      </p>
+
+      <div class="quote-box">
+        "I did not realize how much of my day was spent managing tabs until I stopped doing it. I thought I was productive. I was just busy."
+        <cite>— Frontend lead, Day 4</cite>
+      </div>
+
+      <h2>Day 5: The Vote</h2>
+
+      <p>
+        On Friday, I asked the team one question: "Do we keep the 5-tab limit as a team policy?"
+      </p>
+
+      <p>
+        9 of 12 voted yes. The backend lead, who called it sadistic on Monday, was the most enthusiastic yes. Two engineers wanted an 8-tab limit instead of 5. One wanted no limit at all. He said he worked better with more context. I asked him to try one more week. He agreed. By the end of Week 2, he had changed his vote to yes.
+      </p>
+
+      <p>
+        The two who wanted 8 tabs got a compromise: the limit is 5, but you can request a temporary exemption for specific tasks. In practice, nobody has requested one in three months. The 5-tab limit turned out to be enough for everything we do.
+      </p>
+
+      <h2>Before and After</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Metric</th>
+            <th style="width: 35%;" class="loser">Before (Baseline)</th>
+            <th style="width: 35%;" class="winner">After (Week 1)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Average peak tabs</strong></td>
+            <td class="loser">28</td>
+            <td class="winner">5.2</td>
+          </tr>
+          <tr>
+            <td><strong>Average RAM usage</strong></td>
+            <td class="loser">4.8 GB</td>
+            <td class="winner">1.4 GB</td>
+          </tr>
+          <tr>
+            <td><strong>Average Chrome CPU (idle)</strong></td>
+            <td class="loser">22%</td>
+            <td class="winner">6%</td>
+          </tr>
+          <tr>
+            <td><strong>Context switches per hour</strong></td>
+            <td class="loser">38</td>
+            <td class="winner">9</td>
+          </tr>
+          <tr>
+            <td><strong>Friday tab purge</strong></td>
+            <td class="loser">11 of 12 engineers</td>
+            <td class="winner">0 of 12 engineers</td>
+          </tr>
+          <tr>
+            <td><strong>Self-reported focus (1-10)</strong></td>
+            <td class="loser">5.2</td>
+            <td class="winner">7.8</td>
+          </tr>
+          <tr>
+            <td><strong>Time to find a specific tab</strong></td>
+            <td class="loser">8-15 seconds</td>
+            <td class="winner">1-2 seconds</td>
+          </tr>
+          <tr>
+            <td><strong>Duplicate tabs opened per day</strong></td>
+            <td class="loser">12 (average)</td>
+            <td class="winner">1 (average)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The numbers are stark. RAM dropped 71%. CPU dropped 73%. Context switches dropped 76%. The Friday tab purge, a weekly ritual for 11 of 12 engineers, disappeared entirely. Self-reported focus went from 5.2 to 7.8. The team was not just using fewer tabs. They were working better.
+      </p>
+
+      <h2>Three Workflows That Broke — and How We Fixed Them</h2>
+
+      <h3>1. Debugging</h3>
+
+      <p>
+        The broken version: open the error, open Stack Overflow, open docs, open the codebase, open the test runner, open the logs. Six tabs minimum. Switch between them constantly. Lose track of which tab has the relevant log line.
+      </p>
+
+      <p>
+        The fixed version: IDE in one tab, dev server in another. Preview Stack Overflow and docs with GoPeek. Keep the test runner in a third tab only while running tests. Close it when done. The logs stay in the terminal, not a browser tab. Total: 3 tabs, with previews for references.
+      </p>
+
+      <h3>2. Frontend Review</h3>
+
+      <p>
+        The broken version: open the design mockup, open the staging site, open the component library, open the PR, open the accessibility docs, open the browser dev tools. Six tabs. The designer and developer each have their own set. They share screens and both hunt for the right tab.
+      </p>
+
+      <p>
+        The fixed version: staging site in one tab, PR in another. Preview the design mockup and component library. Dev tools stay open in the staging tab. The designer and developer both stay under 5 tabs. Screen sharing is faster because neither person is tab-hunting.
+      </p>
+
+      <h3>3. QA Testing</h3>
+
+      <p>
+        The broken version: staging, production, test runner, bug tracker, spec doc, test data spreadsheet. Six tabs. The QA engineer keeps them all open "just in case" and switches between them for every test case.
+      </p>
+
+      <p>
+        The fixed version: test runner in one tab, bug tracker in another. Preview staging and production only when verifying specific bugs. Open the spec doc as a tab only during test planning. Close it during execution. The spreadsheet stays in Google Sheets, previewed when needed. Total: 2-3 tabs during active testing.
+      </p>
+
+      <h2>Two Things That Failed</h2>
+
+      <p>
+        Not everything worked. Two problems emerged that we had to address.
+      </p>
+
+      <h3>1. Onboarding Confusion</h3>
+
+      <p>
+        New hires on Day 1 did not understand why they could only have 5 tabs. They were learning the codebase, the docs, the tools. They needed more context. We fixed this by exempting new hires for their first two weeks. After that, the 5-tab limit applies. By Week 3, they are used to it.
+      </p>
+
+      <h3>2. Production Incidents</h3>
+
+      <p>
+        During a production incident on Day 4, the DevOps engineer needed the monitoring dashboard, the logs, the runbook, the deployment history, and the incident channel. Five tabs. Then he needed the database console. He had to close something. In an incident, every second matters. We added an incident exemption: during a declared incident, the limit is suspended. The on-call engineer uses whatever tabs they need. When the incident is resolved, the limit returns.
+      </p>
+
+      <div class="warning-box">
+        <strong>Important:</strong> The incident exemption has been used twice in three months. Both times, the engineer voluntarily returned to 5 tabs within an hour of resolution. The limit is not a prison. It is a default.
+      </div>
+
+      <h2>What We Do Now</h2>
+
+      <p>
+        The 5-tab limit is now team policy. It is in our onboarding doc. New hires learn it on Day 1, practice it for two weeks, and live by it from Week 3 onward. The incident exemption is documented in our runbook. Nobody has abused it.
+      </p>
+
+      <p>
+        We use GoPeek for previews. We use bookmarks for references we access daily. We close tabs when we are done. We do not save tabs for later. If it matters, it goes in a bookmark. If it does not, it gets closed.
+      </p>
+
+      <p>
+        The team is faster. The machines are cooler. The Friday tab purge is history. And nobody talks about tabs anymore. They talk about the product.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The policy in one sentence:</strong> Five tabs. Preview everything else. Bookmarks for references. Close when done. No exceptions except incidents and onboarding.
+      </div>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Try It on Your Team</h3>
+      <p>One week. Five tabs. The data will convince you faster than any argument.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Get GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Tab Limits</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-3-tab-rule.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">The 3-Tab Rule: Why I Never Let My Browser Exceed 3 Open Tabs</p>
+        </a>
+        <a href="blog-fullstack-dev-browser-setup.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Full-Stack Development in 2026: The Best Minimalist Browser Setup</p>
+        </a>
+        <a href="blog-github-issues-without-tabs.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">How to Read GitHub Issues Without Opening 20 Tabs</p>
+        </a>
+        <a href="blog-middle-click-worst-habit.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">The Middle-Click Is the Worst Habit in Modern Computing</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
