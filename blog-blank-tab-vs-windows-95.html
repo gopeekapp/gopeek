@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why a Blank Tab in 2026 Takes More RAM Than Windows 95 | GoPeek</title>
+
+  <meta name="description" content="A blank Chrome tab uses 50-80MB of RAM in 2026. Windows 95 ran on 4MB. Here is why modern browsers are so heavy — and what that means for your workflow." />
+  <meta name="keywords" content="chrome blank tab RAM, browser memory bloat, why browsers use so much RAM, chrome tab memory overhead, browser process model memory" />
+
+  <meta property="og:title" content="Why a Blank Tab in 2026 Takes More RAM Than Windows 95 | GoPeek" />
+  <meta property="og:description" content="A blank tab uses 50-80MB. Windows 95 ran on 4MB. Here is why browsers are so heavy." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Why a Blank Tab in 2026 Takes More RAM Than Windows 95" />
+  <meta name="twitter:description" content="A blank tab: 50-80MB. Windows 95: 4MB. The math is absurd." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-blank-tab-vs-windows-95.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script async src="https://plausible.io/js/pa-NZKToabHlGg_-94kzWyXo.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .prose code {
+      background: #f1f5f9;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #0f172a;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    .math-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .math-box .big-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #60a5fa;
+      display: block;
+      line-height: 1;
+    }
+
+    .math-box .math-label {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Blank Tab vs Windows 95</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Memory</span>
+      <span class="tag">History</span>
+      <span class="tag">Chrome</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      Why a Blank Tab in 2026 Takes More RAM Than Windows 95
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 20, 2026</span>
+      <span>·</span>
+      <span>6 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="Blank Chrome tab RAM usage compared to Windows 95 memory requirements" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">Windows 95 ran an entire OS on 4MB. Your blank tab uses 12x that.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        Windows 95 shipped with a minimum requirement of 4MB of RAM. Most people ran it on 8MB. The entire operating system — the kernel, the UI, the file system, the network stack, the drivers — fit in less memory than a single Slack message today.
+      </p>
+
+      <p>
+        In 2026, open Chrome. Open a new tab. Do not navigate anywhere. Leave it blank. Check Chrome's Task Manager. That empty tab uses 50 to 80MB of RAM. A blank page. No content. No JavaScript running. Just a white rectangle with an address bar. It uses 12 to 20 times the RAM of an entire 1995 operating system.
+      </p>
+
+      <div class="math-box">
+        <span class="big-number">15x</span>
+        <span class="math-label">A blank Chrome tab uses 15x the RAM of Windows 95</span>
+      </div>
+
+      <p>
+        This is not a bug. It is the cost of the modern web stack. And understanding where that cost comes from explains why your browser with 30 tabs uses more RAM than a 2010 gaming PC.
+      </p>
+
+      <h2>What a Blank Tab Actually Loads</h2>
+
+      <p>
+        A blank tab is not empty. Chrome creates a full renderer process for it. That process includes:
+      </p>
+
+      <ul>
+        <li><strong>V8 JavaScript engine:</strong> 8-12MB. Even on a blank page, V8 is initialized and ready. It compiles nothing, but the runtime is resident.</li>
+        <li><strong>Blink rendering engine:</strong> 6-10MB. The HTML/CSS layout engine, the compositor, the paint system. All initialized.</li>
+        <li><strong>Skia graphics library:</strong> 4-6MB. The 2D graphics engine that draws everything on screen.</li>
+        <li><strong>Network stack:</strong> 3-5MB. HTTP/2, HTTP/3, QUIC, DNS cache, cookie store, SSL/TLS state. Ready for the first request.</li>
+        <li><strong>Security sandbox:</strong> 2-4MB. The process isolation layer that keeps tabs from accessing each other or the OS.</li>
+        <li><strong>Extension hooks:</strong> 5-15MB. Every extension injects content scripts into every tab. Ad blockers, password managers, grammar checkers, preview tools — they all add overhead per tab.</li>
+        <li><strong>GPU process communication:</strong> 2-3MB. The channel between the renderer and the GPU process for compositing.</li>
+      </ul>
+
+      <p>
+        Add it up: 30 to 55MB for the core engine. Plus 5 to 15MB for extensions. Plus 5 to 10MB for the new tab page itself (which is not blank — it loads thumbnails, search suggestions, and analytics). Total: 50 to 80MB per tab. For nothing.
+      </p>
+
+      <h2>Why Windows 95 Fit in 4MB</h2>
+
+      <p>
+        Windows 95 was a 16/32-bit hybrid OS. It ran on a 386 processor. It had no GPU acceleration. No JavaScript engine. No network stack beyond basic TCP/IP. No sandboxing. No extensions. No compositor. No WebGL. No WebAssembly. No service workers. No push notifications.
+      </p>
+
+      <p>
+        It also had no security model to speak of. Every application ran with full system access. There was no process isolation. No sandbox. No permission system. If a program crashed, it could take down the OS. The trade-off was simplicity and small size.
+      </p>
+
+      <p>
+        Modern browsers are operating systems. They run code from arbitrary websites in isolated processes. They compile JavaScript to machine code in real time. They render vector graphics with GPU acceleration. They handle encrypted connections, certificate validation, and origin policies. They manage persistent storage, background sync, and push notifications. All of this costs memory. A lot of it.
+      </p>
+
+      <h2>The Process-Per-Tab Tax</h2>
+
+      <p>
+        Chrome's defining architectural decision is process-per-tab. Every tab is a separate OS process. This gives stability — one tab crash does not kill the browser — and security — each tab runs in its own sandbox. But it also means every tab pays the full process overhead.
+      </p>
+
+      <p>
+        A process on modern operating systems has baseline overhead:
+      </p>
+
+      <ul>
+        <li>Page tables: 2-4MB per process for memory mapping</li>
+        <li>Kernel structures: 1-2MB for the process control block, file descriptors, thread state</li>
+        <li>Shared library mappings: 5-10MB duplicated per process (V8, Blink, Skia, etc.)</li>
+        <li>Thread stacks: 1-2MB for the renderer thread, compositor thread, IO thread</li>
+      </ul>
+
+      <p>
+        This baseline is 10 to 20MB before the tab loads a single byte. Then the rendering engine initializes. Then the extensions inject. Then the new tab page loads. You are at 50 to 80MB before you type a URL.
+      </p>
+
+      <p>
+        Safari and Firefox use fewer processes. Safari groups tabs into a single process per site. Firefox uses a hybrid model. This saves RAM but sacrifices isolation. One bad tab can crash a group. The trade-off is real. Chrome chose isolation. You pay for it in RAM.
+      </p>
+
+      <h2>Where the RAM Goes: A Breakdown</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 35%;">Component</th>
+            <th style="width: 25%;">RAM (blank tab)</th>
+            <th style="width: 40%;">What It Does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>V8 JavaScript engine</strong></td>
+            <td>8-12 MB</td>
+            <td>JIT compiler, garbage collector, runtime. Initialized even on blank pages.</td>
+          </tr>
+          <tr>
+            <td><strong>Blink rendering engine</strong></td>
+            <td>6-10 MB</td>
+            <td>HTML/CSS parser, layout engine, DOM tree, style computation.</td>
+          </tr>
+          <tr>
+            <td><strong>Skia graphics</strong></td>
+            <td>4-6 MB</td>
+            <td>2D rasterization, text rendering, path operations.</td>
+          </tr>
+          <tr>
+            <td><strong>Network stack</strong></td>
+            <td>3-5 MB</td>
+            <td>HTTP/2, HTTP/3, QUIC, DNS, cookies, SSL state.</td>
+          </tr>
+          <tr>
+            <td><strong>Security sandbox</strong></td>
+            <td>2-4 MB</td>
+            <td>Process isolation, privilege reduction, syscall filtering.</td>
+          </tr>
+          <tr>
+            <td><strong>Extension content scripts</strong></td>
+            <td>5-15 MB</td>
+            <td>Ad blockers, password managers, preview tools injected per tab.</td>
+          </tr>
+          <tr>
+            <td><strong>New Tab Page</strong></td>
+            <td>5-10 MB</td>
+            <td>Thumbnails, search suggestions, analytics, background image.</td>
+          </tr>
+          <tr>
+            <td><strong>Process overhead</strong></td>
+            <td>10-18 MB</td>
+            <td>Page tables, kernel structures, shared libraries, thread stacks.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The extensions line is the most variable. A clean Chrome install with no extensions uses closer to 50MB per blank tab. Add uBlock Origin, Bitwarden, a preview tool, and a color picker, and you are at 70 to 80MB. Some enterprise extensions add 20MB per tab. The blank tab is not the problem. The ecosystem around it is.
+      </p>
+
+      <h2>What Windows 95 Did With 4MB</h2>
+
+      <p>
+        Windows 95's 4MB covered:
+      </p>
+
+      <ul>
+        <li>The kernel and executive: ~1MB</li>
+        <li>The GDI (graphics device interface): ~512KB</li>
+        <li>The USER module (window management): ~512KB</li>
+        <li>The file system cache: ~1MB</li>
+        <li>The virtual memory manager: ~256KB</li>
+        <li>Drivers and hardware abstraction: ~512KB</li>
+      </ul>
+
+      <p>
+        Total: ~4MB. No JavaScript. No GPU compositor. No network encryption. No sandbox. No extensions. It was a simpler time with simpler threats and simpler expectations.
+      </p>
+
+      <p>
+        But it also could not do what a browser does. It could not run untrusted code from the internet in a secure container. It could not render a responsive layout with animations and gradients. It could not stream video, compile WebAssembly, or maintain a persistent connection to a push notification server. The comparison is unfair because the jobs are different.
+      </p>
+
+      <h2>The Real Problem: We Treat Tabs as Free</h2>
+
+      <p>
+        A blank tab costs 50 to 80MB. A loaded tab costs 100 to 600MB. We open 20, 30, 50 of them without thinking. We middle-click links out of habit. We keep tabs open "just in case." We treat tabs as bookmarks with memory. And we wonder why our machines slow down.
+      </p>
+
+      <p>
+        The browser is not the villain. It is doing a complex job under complex constraints. The villain is the habit of opening tabs for glances. Every tab is a process. Every process is 50MB minimum. 20 tabs is 1GB before you load a single page. 50 tabs is 2.5GB of baseline overhead. That is not bloat. That is math.
+      </p>
+
+      <div class="warning-box">
+        <strong>The math:</strong> 50 blank tabs × 60MB average = 3GB of RAM. For blank pages. Add actual content and you are at 6-10GB. On a 16GB machine, that leaves nothing for your IDE, your Docker containers, or your OS.
+      </div>
+
+      <h2>What You Can Do About It</h2>
+
+      <p>
+        You cannot make a blank tab use 4MB. The modern web requires the modern stack. But you can stop paying the tax 50 times over.
+      </p>
+
+      <ul>
+        <li><strong>Remove unnecessary extensions.</strong> Each one adds 5-15MB per tab. A color picker you used once is costing you RAM on every tab, every day.</li>
+        <li><strong>Preview instead of opening.</strong> A preview does not create a new process. It uses the existing renderer. RAM cost: near zero. Tab cost: zero.</li>
+        <li><strong>Close tabs when done.</strong> A tab you are not using is a process you are paying for. The 5-second rule: if you will close it within 5 minutes, do not open it.</li>
+        <li><strong>Use bookmarks for storage.</strong> Bookmarks use kilobytes. Tabs use megabytes. Store references in bookmarks, not tabs.</li>
+        <li><strong>Enable Memory Saver.</strong> Chrome's Memory Saver puts idle tabs to sleep. It does not eliminate the process overhead, but it reduces it significantly.</li>
+      </ul>
+
+      <h2>Why This Matters</h2>
+
+      <p>
+        The blank tab is a symbol. It represents how far we have come and how much we waste. We have built a browser that can run Photoshop in a tab, compile C++ in a tab, and stream 4K video in a tab. And we use that power to keep 40 blank-ish tabs open because we might need them later.
+      </p>
+
+      <p>
+        Windows 95 ran an entire OS in 4MB because it had to. Hardware was scarce. Every byte mattered. Today, hardware is abundant. We stopped counting bytes. We stopped counting tabs. And our browsers became the most memory-hungry applications on our machines — not because they are poorly built, but because we use them poorly.
+      </p>
+
+      <p>
+        The browser is an operating system. Treat it like one. You would not run 50 idle applications on your desktop. Do not run 50 idle processes in your browser.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The hard truth:</strong> A blank tab uses more RAM than Windows 95 because a blank tab is not blank. It is a full operating system process waiting for work. Stop creating processes for glances.
+      </div>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Stop Paying the Tab Tax</h3>
+      <p>Preview links instead of opening tabs. Cut your browser RAM by 60% without touching a single setting.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Get GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Browser Memory</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-chrome-tab-ram-usage.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">How Much RAM Does a Single Chrome Tab Actually Use?</p>
+        </a>
+        <a href="blog-reduce-chrome-ram.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">How to Reduce Chrome RAM Usage: 10 Fixes That Actually Work</p>
+        </a>
+        <a href="blog-chrome-flags-memory.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">7 Hidden Chrome Flags to Instantly Reduce Memory Usage</p>
+        </a>
+        <a href="blog-middle-click-worst-habit.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">The Middle-Click Is the Worst Habit in Modern Computing</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
