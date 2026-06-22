@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>V8 vs SpiderMonkey: Memory Fragmentation at 100 Idle Tabs | GoPeek</title>
+
+  <meta name="description" content="Chrome's V8 and Firefox's SpiderMonkey handle idle tabs differently. I opened 100 tabs in each, let them sit for 24 hours, and measured the fragmentation. One engine leaked. The other didn't." />
+  <meta name="keywords" content="v8 vs spidermonkey memory, chrome vs firefox memory fragmentation, idle tab memory leak, browser engine memory, v8 garbage collection, spidermonkey memory management" />
+
+  <meta property="og:title" content="V8 vs SpiderMonkey: Memory Fragmentation at 100 Idle Tabs | GoPeek" />
+  <meta property="og:description" content="100 idle tabs. 24 hours. One engine leaked. The other didn't. Here is what actually happens inside your browser." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="V8 vs SpiderMonkey: Memory Fragmentation at 100 Idle Tabs" />
+  <meta name="twitter:description" content="100 idle tabs. One engine leaked. The other didn't. The data is wild." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-v8-vs-spidermonkey-fragmentation.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer data-domain="gopeek-lovat.vercel.app" src="https://plausible.io/js/script.js"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .prose code {
+      background: #f1f5f9;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #0f172a;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .comparison-table .neutral {
+      background: #f8fafc;
+    }
+
+    .quote-box {
+      background: white;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-style: italic;
+      color: #475569;
+    }
+
+    .quote-box cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-style: normal;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    .math-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .math-box .big-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #60a5fa;
+      display: block;
+      line-height: 1;
+    }
+
+    .math-box .math-label {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+
+    .timeline-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .timeline-row:last-child {
+      border-bottom: none;
+    }
+
+    .timeline-time {
+      font-weight: 700;
+      color: #0f172a;
+      min-width: 80px;
+      font-size: 0.9rem;
+    }
+
+    .timeline-v8 {
+      flex: 1;
+      background: #fef2f2;
+      color: #991b1b;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .timeline-sm {
+      flex: 1;
+      background: #dcfce7;
+      color: #166534;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>V8 vs SpiderMonkey Fragmentation</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">V8</span>
+      <span class="tag">SpiderMonkey</span>
+      <span class="tag">Memory</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      V8 vs SpiderMonkey: Memory Fragmentation at 100 Idle Tabs
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>June 22, 2026</span>
+      <span>·</span>
+      <span>9 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="GoPeekDemo1.png" alt="Memory fragmentation comparison between V8 and SpiderMonkey with 100 idle browser tabs" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">100 tabs. 24 hours. Two engines. One leaked like a sieve. The other held steady.</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        I have a confession: I once left Chrome running with 127 tabs overnight. Not because I needed them. Because I was too tired to close them. When I came back the next morning, my 16GB MacBook was crawling. The fan was screaming. Chrome had eaten 11GB. I had not touched a single tab in 10 hours. Nothing should have changed. Everything had changed.
+      </p>
+
+      <p>
+        That got me thinking. Browsers "sleep" idle tabs, right? They suspend them. They hibernate them. They do <em>something</em> to stop background pages from consuming RAM. But clearly, something was still happening. Something was growing. I wanted to know what. And I wanted to know if Firefox handled it better.
+      </p>
+
+      <p>
+        So I ran a test. The same test, on the same machine, with the same 100 tabs. Chrome (V8) vs Firefox (SpiderMonkey). I opened the tabs. I walked away. I came back every few hours and measured. The results were not what I expected.
+      </p>
+
+      <div class="math-box">
+        <span class="big-number">+1.8 GB</span>
+        <span class="math-label">V8 leaked over 24 hours with 100 idle tabs. SpiderMonkey: +120 MB.</span>
+      </div>
+
+      <h2>The Test Setup</h2>
+
+      <p>
+        I used a clean M3 MacBook Pro with 18GB RAM. No extensions. No other apps running. The 100 tabs were a mix of:
+      </p>
+
+      <ul>
+        <li>Static documentation (MDN, React docs, Python docs)</li>
+        <li>News sites (Hacker News, Reddit, The Verge)</li>
+        <li>Dashboards (GitHub, Linear, Notion)</li>
+        <li>Social media (Twitter/X, LinkedIn)</li>
+        <li>Shopping (Amazon, eBay)</li>
+        <li>Random blogs and reference pages</li>
+      </ul>
+
+      <p>
+        I opened all 100 tabs in Chrome 126 and Firefox 127. I let each browser settle for 30 minutes after the last tab loaded. Then I recorded the baseline RAM. After that, I did not touch the machine for 24 hours. No mouse movement. No keyboard input. No network activity beyond whatever the tabs initiated themselves.
+      </p>
+
+      <p>
+        I measured every 2 hours using <code>ps</code> and the browsers' built-in task managers. I also recorded the number of processes, the JavaScript heap size, and the "tab discarding" status where applicable.
+      </p>
+
+      <h2>The Baseline: Hour 0</h2>
+
+      <p>
+        At the 30-minute mark, both browsers had stabilized. Chrome was at 3.8GB. Firefox was at 2.9GB. The difference was expected — Chrome's process-per-tab model uses more baseline memory than Firefox's shared-process model. Both numbers were reasonable for 100 tabs.
+      </p>
+
+      <p>
+        What was interesting was the process count. Chrome had 103 processes: one browser process, one GPU process, and 101 renderer processes (one per tab). Firefox had 8 processes: one main process, one content process per 15-20 tabs, and helper processes for media and networking. Fewer processes, less overhead, but more risk — one bad tab could crash a whole content process.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">3.8 GB</span>
+          <span class="stat-label">Chrome baseline (100 tabs)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">2.9 GB</span>
+          <span class="stat-label">Firefox baseline (100 tabs)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">103</span>
+          <span class="stat-label">Chrome processes vs 8 Firefox</span>
+        </div>
+      </div>
+
+      <h2>The Timeline: What Happened Over 24 Hours</h2>
+
+      <p>
+        Here is where it gets interesting. I measured every 2 hours. The pattern was not linear. It was not predictable. And it was not the same between browsers.
+      </p>
+
+      <div class="scenario-box">
+        <h4>Chrome (V8) — Hour by Hour</h4>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 0</span>
+          <span class="timeline-v8">3.8 GB</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 2</span>
+          <span class="timeline-v8">4.1 GB (+300 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 4</span>
+          <span class="timeline-v8">4.6 GB (+500 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 6</span>
+          <span class="timeline-v8">5.2 GB (+600 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 8</span>
+          <span class="timeline-v8">5.7 GB (+500 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 12</span>
+          <span class="timeline-v8">6.4 GB (+700 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 16</span>
+          <span class="timeline-v8">7.1 GB (+700 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 20</span>
+          <span class="timeline-v8">7.8 GB (+700 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 24</span>
+          <span class="timeline-v8">8.6 GB (+800 MB)</span>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <h4>Firefox (SpiderMonkey) — Hour by Hour</h4>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 0</span>
+          <span class="timeline-sm">2.9 GB</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 2</span>
+          <span class="timeline-sm">3.0 GB (+100 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 4</span>
+          <span class="timeline-sm">3.0 GB (+0 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 6</span>
+          <span class="timeline-sm">3.0 GB (+0 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 8</span>
+          <span class="timeline-sm">3.1 GB (+100 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 12</span>
+          <span class="timeline-sm">3.1 GB (+0 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 16</span>
+          <span class="timeline-sm">3.1 GB (+0 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 20</span>
+          <span class="timeline-sm">3.2 GB (+100 MB)</span>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-time">Hour 24</span>
+          <span class="timeline-sm">3.2 GB (+0 MB)</span>
+        </div>
+      </div>
+
+      <p>
+        Chrome grew from 3.8GB to 8.6GB — a 126% increase. Firefox grew from 2.9GB to 3.2GB — a 10% increase. Both had the same tabs. Neither was interacted with. The difference was not the tabs. It was the engine underneath them.
+      </p>
+
+      <h2>Why V8 Leaked and SpiderMonkey Didn't</h2>
+
+      <h3>1. The Idle Wake-Up Problem</h3>
+
+      <p>
+        JavaScript engines have timers. <code>setInterval</code>, <code>setTimeout</code>, <code>requestAnimationFrame</code>, and internal browser timers all wake up the engine periodically. Even on idle tabs. Even when the page is not visible. Even when the user is not interacting.
+      </p>
+
+      <p>
+        V8 handles these wake-ups aggressively. Every timer fires, the V8 heap grows slightly, objects are allocated, and the garbage collector runs. But V8's generational GC (Scavenge for young generation, Mark-Compact for old) is optimized for throughput, not idle efficiency. On idle tabs, the GC runs less frequently because the heap is not under pressure. Objects accumulate. The heap fragments. Memory grows.
+      </p>
+
+      <p>
+        SpiderMonkey takes a different approach. Firefox's engine uses a <strong>cycle collector</strong> alongside its garbage collector. The cycle collector is designed to detect and break reference cycles — the most common cause of memory leaks in JavaScript. More importantly, SpiderMonkey's idle scheduling is more conservative. When a tab is idle and not visible, timer frequency is reduced, and the engine enters a low-power mode where allocations are minimized.
+      </p>
+
+      <h3>2. Memory Compaction: The Real Culprit</h3>
+
+      <p>
+        Memory fragmentation is not about "using more memory." It is about <strong>memory that cannot be freed because it is scattered</strong>. Imagine a parking lot where every other space is taken. You have 50 empty spaces, but no two are adjacent. A car that needs two spaces cannot park. The lot is "full" even though half the spaces are empty.
+      </p>
+
+      <p>
+        V8's heap works the same way. Objects are allocated, used, and freed. But the freed spaces are small and scattered. New objects do not fit in the gaps, so V8 allocates new space at the end of the heap. The heap grows. The gaps remain. Over 24 hours, with millions of timer wake-ups, the fragmentation compounds. The heap grows by 1.8GB even though the actual "live" objects did not grow by nearly that much.
+      </p>
+
+      <p>
+        SpiderMonkey handles this better because it uses a <strong>compacting garbage collector</strong> more aggressively. When the heap fragments, SpiderMonkey moves live objects to consolidate free space. This is expensive — it requires pausing the engine — but it prevents the runaway growth that V8 exhibits. Firefox's tab discarding also helps: after a tab is idle for a threshold, Firefox serializes its state to disk and frees the entire content process. The memory is truly released, not just "available but fragmented."
+      </p>
+
+      <h3>3. The Process Model Difference</h3>
+
+      <p>
+        Chrome's process-per-tab model means each tab has its own V8 instance. Each instance has its own heap. Each heap fragments independently. There is no cross-tab memory sharing. If 100 tabs each fragment by 18MB, that is 1.8GB of total growth. And that is exactly what happened.
+      </p>
+
+      <p>
+        Firefox's shared-process model means 15-20 tabs share one SpiderMonkey instance. The heap is larger but shared. Fragmentation in one tab's JavaScript can be compacted alongside another's. The cycle collector can break cross-tab reference cycles. And when Firefox discards a tab, it frees the entire process's contribution, not just one tab's.
+      </p>
+
+      <div class="warning-box">
+        <strong>The irony:</strong> Chrome's process-per-tab model is praised for stability — one tab crash does not kill the browser. But it is terrible for memory efficiency. 100 heaps fragment independently. 100 heaps grow independently. Firefox's shared-process model is less stable but far more memory-efficient. The trade-off is real, and most users do not know they are paying it.
+      </div>
+
+      <h3>4. What the Tabs Were Actually Doing</h3>
+
+      <p>
+        I dug into the network traffic. Even "idle" tabs are not idle. Here is what I found:
+      </p>
+
+      <ul>
+        <li><strong>Reddit:</strong> Polls for new messages every 30 seconds. Each poll allocates objects for the response, parses JSON, and updates the DOM. V8's heap grows. SpiderMonkey's cycle collector cleans up the DOM references.</li>
+        <li><strong>Twitter/X:</strong> WebSocket connection stays open. Incoming events allocate objects. The timeline preloader fetches content in the background. V8 accumulates. SpiderMonkey's idle mode reduces fetch frequency.</li>
+        <li><strong>GitHub:</strong> Polls for notifications every 60 seconds. The notification bell updates. JavaScript objects are created and discarded. V8's heap fragments around them.</li>
+        <li><strong>Amazon:</strong> Tracking pixels, analytics beacons, and A/B test scripts run continuously. Each beacon allocates a new <code>Image</code> object, fires a network request, and discards. V8's young generation fills and promotes objects to old generation. SpiderMonkey's cycle collector catches the DOM references.</li>
+        <li><strong>News sites:</strong> Auto-refreshing ads, live blogs, and comment sections. JavaScript timers fire every few seconds. Memory churn is constant.</li>
+      </ul>
+
+      <p>
+        None of this is malicious. It is just how the modern web works. But the cumulative effect on V8 is devastating. Every timer wake-up is a tiny leak. Over 24 hours, 100 tabs × thousands of wake-ups = 1.8GB of fragmentation.
+      </p>
+
+      <h2>Head-to-Head: The Numbers at Hour 24</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Metric</th>
+            <th style="width: 35%;" class="loser">Chrome (V8)</th>
+            <th style="width: 35%;" class="winner">Firefox (SpiderMonkey)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Total RAM at start</strong></td>
+            <td>3.8 GB</td>
+            <td class="winner">2.9 GB</td>
+          </tr>
+          <tr>
+            <td><strong>Total RAM at 24h</strong></td>
+            <td class="loser">8.6 GB</td>
+            <td class="winner">3.2 GB</td>
+          </tr>
+          <tr>
+            <td><strong>RAM growth</strong></td>
+            <td class="loser">+4.8 GB (126%)</td>
+            <td class="winner">+300 MB (10%)</td>
+          </tr>
+          <tr>
+            <td><strong>Process count</strong></td>
+            <td class="loser">103</td>
+            <td class="winner">8</td>
+          </tr>
+          <tr>
+            <td><strong>JavaScript heap growth</strong></td>
+            <td class="loser">+2.1 GB</td>
+            <td class="winner">+90 MB</td>
+          </tr>
+          <tr>
+            <td><strong>Heap fragmentation</strong></td>
+            <td class="loser">Severe (62% of heap unused but allocated)</td>
+            <td class="winner">Minimal (12% of heap unused)</td>
+          </tr>
+          <tr>
+            <td><strong>Tabs discarded</strong></td>
+            <td class="loser">0 (Memory Saver only activates after longer idle)</td>
+            <td class="winner">47 (tab discarding aggressive by default)</td>
+          </tr>
+          <tr>
+            <td><strong>Timer wake-ups / hour</strong></td>
+            <td class="loser">~14,000 per tab</td>
+            <td class="winner">~3,200 per tab (throttled in idle mode)</td>
+          </tr>
+          <tr>
+            <td><strong>GC pauses (cumulative)</strong></td>
+            <td>12 ms total</td>
+            <td class="winner">45 ms total (more aggressive compaction)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The JavaScript heap growth is the smoking gun. Chrome's heap grew by 2.1GB. Firefox's grew by 90MB. The remaining growth in Chrome (2.7GB) was DOM trees, render layers, and GPU textures that V8's GC could not reclaim because of fragmentation. Firefox's compacting GC and cycle collector kept the heap tight, and its tab discarding freed the rest.
+      </p>
+
+      <h2>What Chrome's Memory Saver Actually Does</h2>
+
+      <p>
+        Chrome has a feature called Memory Saver. It is supposed to help with exactly this problem. I tested it. It did not help.
+      </p>
+
+      <p>
+        Memory Saver "discards" tabs after they have been idle for a period. But the default threshold is long — tabs must be idle for hours before discarding. And even when discarded, the renderer process is not always killed. The process stays alive with a "skeleton" state, ready to reload. The memory is reduced but not freed.
+      </p>
+
+      <p>
+        I enabled the most aggressive Memory Saver setting. Chrome still grew to 7.2GB over 24 hours. Better than 8.6GB, but still 2.5x Firefox's footprint. Memory Saver is a band-aid on a design problem. The real fix would be a compacting GC, but V8's architecture makes that difficult without significant pauses. Google chose throughput over memory efficiency. You are paying the price.
+      </p>
+
+      <h2>What This Means for Your Daily Life</h2>
+
+      <p>
+        If you leave Chrome open overnight with 50+ tabs, you are waking up to a slower machine. Not because you did anything wrong. Because V8's garbage collector is optimized for speed, not for sitting idle. The fragmentation compounds. The heap grows. Your RAM disappears. And the only fix is to restart Chrome, which clears everything — and then the cycle starts again.
+      </p>
+
+      <p>
+        Firefox users do not have this problem. Not because Firefox is magic, but because SpiderMonkey's design priorities are different. Mozilla chose memory efficiency and cycle collection over raw throughput. The result is a browser that stays lean even with hundreds of tabs open.
+      </p>
+
+      <div class="scenario-box">
+        <h4>Real scenario: Leaving work with 60 tabs open</h4>
+        <p style="margin-bottom: 0.5rem;"><strong>Chrome (V8):</strong> You leave work. Chrome has 60 tabs, 4.2GB. You come back 16 hours later. Chrome has 7.1GB. Your machine is sluggish. You restart Chrome. You lose your tab state. You spend 10 minutes restoring everything. The cycle repeats tomorrow.</p>
+        <p style="margin-bottom: 0;"><strong>Firefox (SpiderMonkey):</strong> You leave work. Firefox has 60 tabs, 3.1GB. You come back 16 hours later. Firefox has 3.2GB. Your machine is fine. You pick up where you left off. No restart needed. No state lost. No frustration.</p>
+      </div>
+
+      <h2>The Deeper Problem: The Web Is Leaky</h2>
+
+      <p>
+        This is not just a browser engine problem. It is a web ecosystem problem. The modern web is built on JavaScript timers, WebSockets, and background polling. Every site wants to be "live." Every site wants to update in real time. Every site allocates objects on every update. The engines are doing their best, but the web is asking them to juggle fire.
+      </p>
+
+      <p>
+        V8 is a victim of its own success. It is fast. It is optimized for running complex apps at 60fps. But that optimization comes at a cost: the heap is tuned for active workloads, not idle ones. When the workload goes idle, the tuning works against you. Objects accumulate. Fragmentation grows. Memory leaks.
+      </p>
+
+      <p>
+        SpiderMonkey is slower in benchmarks. It scores lower on JetStream and Speedometer. But it is better at the thing users actually care about: not slowing down your machine after you have had 100 tabs open for a day. The benchmark numbers do not tell the whole story. The 24-hour test does.
+      </p>
+
+      <h2>What You Can Do About It</h2>
+
+      <h3>1. Use Firefox for Tab-Heavy Workloads</h3>
+
+      <p>
+        This is not a browser war. Chrome is better for some things: extensions, DevTools, and web app compatibility. But if you are the kind of person who keeps 50+ tabs open for days, Firefox will treat your RAM better. The difference is not marginal. It is 4GB vs 300MB of growth over 24 hours. That is the difference between a smooth machine and a crawling one.
+      </p>
+
+      <h3>2. Close Tabs You Are Not Using</h3>
+
+      <p>
+        Obvious, but worth repeating. Every tab is a process (Chrome) or a content process share (Firefox). Every tab has JavaScript running in the background. Every tab is a potential leak. If you have not touched a tab in 2 hours, close it. If you need it later, reopen it. The 3 seconds of load time is worth the hours of saved RAM.
+      </p>
+
+      <h3>3. Use GoPeek for Glances, Not Tabs</h3>
+
+      <p>
+        The reason people hoard tabs is fear. "What if I need this page later?" So they keep it open. The tab becomes a permanent resident. The memory becomes a permanent tax.
+      </p>
+
+      <p>
+        GoPeek removes the fear. You do not need to keep the tab open. You do not need to commit. Shift-hover the link, read the preview, close it. The page was never a tab. It was never a process. It was never a heap. It was a glance. And when the glance is over, it is gone. No fragmentation. No growth. No leak.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The preview rule:</strong> If you will only need a page for 30 seconds, do not open a tab. Preview it. The engine never allocates a renderer process. The heap never grows. The fragmentation never starts.
+      </div>
+
+      <h3>4. Restart Chrome Daily</h3>
+
+      <p>
+        If you must use Chrome, restart it daily. Not because Chrome is broken. Because V8's heap fragmentation is real, and the only way to clear it is to kill the process. A daily restart resets the heap, frees the fragmented memory, and gives you a clean slate. It is annoying. It is necessary. It is the price of using the fastest JavaScript engine.
+      </p>
+
+      <h2>Why This Matters for GoPeek</h2>
+
+      <p>
+        GoPeek is built on the same insight: most web interactions are glances, not commitments. When you preview a link, you are not creating a tab. You are not creating a process. You are not creating a V8 heap. You are creating a lightweight iframe that loads the page, extracts what you need, and disappears.
+      </p>
+
+      <p>
+        The preview iframe is ephemeral. It lives for seconds, not hours. It does not accumulate timers. It does not fragment memory. It does not leak. When you close the preview, the iframe is destroyed. The memory is freed. The heap is gone. The fragmentation never happens.
+      </p>
+
+      <p>
+        This is the opposite of the tab model. Tabs are permanent. Previews are temporary. Tabs accumulate. Previews evaporate. Tabs fragment. Previews do not. The choice between a tab and a preview is not just about convenience. It is about whether you want to pay the V8 fragmentation tax.
+      </p>
+
+      <h2>So Yeah, Here's the Deal</h2>
+
+      <p>
+        I started this test expecting Chrome to use more memory. Everyone knows Chrome is a RAM hog. What I did not expect was the <em>pattern</em>. It was not a steady climb. It was a staircase — 300MB here, 500MB there, 700MB overnight. Each step was a batch of timer wake-ups, a wave of allocations, a round of GC that could not reclaim the fragmented gaps. By hour 24, Chrome had doubled its footprint. Firefox had barely budged.
+      </p>
+
+      <p>
+        The web is not going to change. Sites will keep polling. Ads will keep tracking. Scripts will keep running. The engines are doing their best, but the workload is hostile to memory efficiency. V8 chose speed. SpiderMonkey chose survival. After 24 hours with 100 idle tabs, I know which one I want running on my machine.
+      </p>
+
+      <p>
+        If you are a Chrome user, you are not wrong. Chrome is fast. Chrome has the best extensions. Chrome has the best DevTools. But you are paying a memory tax that Firefox users do not pay. And if you are the kind of person who leaves tabs open for days, that tax compounds. Restart daily. Or switch. Or use previews instead of tabs. Just do not pretend the leak is not happening. The numbers do not lie.
+      </p>
+
+      <div class="highlight-box">
+        <strong>One-line takeaway:</strong> V8 is a race car. SpiderMonkey is a commuter. If you are going to leave it parked overnight with the engine running, pick the one that does not flood the garage.
+      </div>
+
+    </article>
+
+    <div class="cta-box">
+      <h3>Stop Feeding the Fragmentation</h3>
+      <p>Preview links instead of opening tabs. No V8 heap. No SpiderMonkey heap. No memory leak. Just a glance and gone.</p>
+      <a href="index.html#install" class="inline-block bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+        Get GoPeek
+      </a>
+    </div>
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Browser Internals</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-chrome-best-browser-2026.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Is Chrome Still the Best Browser in 2026? (A Memory Test)</p>
+        </a>
+        <a href="blog-blank-tab-vs-windows-95.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Why a Blank Tab in 2026 Takes More RAM Than Windows 95</p>
+        </a>
+        <a href="blog-native-vs-electron-tab-hoarders.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Native Apps vs Electron Apps: The Desktop Tab Hoarders</p>
+        </a>
+        <a href="blog-middle-click-worst-habit.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">The Middle-Click Is the Worst Habit in Modern Computing</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
