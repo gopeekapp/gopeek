@@ -617,7 +617,7 @@
       </p>
 
       <p>
-        Firefox uses <strong>NSPR</strong> for most of its network I/O. The N in NSPR stands for Netscape. When it comes to UDP, NSPR only offers <code>PR_SendTo</code> and <code>PR_RecvFrom</code> — thin wrappers around POSIX <code>sendto</code> and <code>recvfrom</code>. One datagram per system call. Every time. Operating systems have moved on. Linux has <code>sendmmsg</code> and <code>recvmmsg</code>. Some kernels and NICs support <strong>GSO</strong> (Generic Segmentation Offload) and <strong>GRO</strong> (Generic Receive Offload). Each of these can dramatically reduce the per-datagram overhead.
+        Firefox uses NSPR for most of its network I/O. The N in NSPR stands for Netscape. When it comes to UDP, NSPR only offers <code>PR_SendTo</code> and <code>PR_RecvFrom</code> — thin wrappers around POSIX <code>sendto</code> and <code>recvfrom</code>. One datagram per system call. Every time. Operating systems have moved on. Linux has <code>sendmmsg</code> and <code>recvmmsg</code>. Some kernels and NICs support GSO (Generic Segmentation Offload) and GRO (Generic Receive Offload). Each of these can dramatically reduce the per-datagram overhead.
       </p>
 
       <p>
@@ -797,10 +797,6 @@
       <p>
         Mozilla replaced a Netscape-era UDP stack with a modern Rust implementation in about a year. Throughput on CPU-bound QUIC benchmarks jumped from under 1 Gbit/s to 4 Gbit/s. The rewrite is now live for most Firefox users. Not every optimization landed on every platform — Windows URO/USO and macOS batching are still works in progress — but the foundation is solid, memory-safe, and built on a community library that keeps improving.
       </p>
-
-      <div class="highlight-box">
-        <strong>One-line rule:</strong> Sometimes the fastest path is not a new framework — it is replacing the 25-year-old wrapper around <code>sendto</code> with something that actually talks to the kernel like it is 2025.
-      </div>
 
     </article>
 
