@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fast UDP I/O for Firefox in Rust | GoPeek</title>
+
+  <meta name="description" content="How Mozilla replaced Firefox's aging NSPR UDP stack with a modern Rust implementation using quinn-udp, GSO/GRO, and multi-message system calls — boosting QUIC throughput from <1 Gbit/s to 4 Gbit/s." />
+  <meta name="keywords" content="firefox udp, quinn udp, rust networking, GSO GRO, HTTP/3 QUIC, NSPR replacement, sendmmsg recvmmsg" />
+
+  <meta property="og:title" content="Fast UDP I/O for Firefox in Rust | GoPeek" />
+  <meta property="og:description" content="Mozilla rewrote Firefox's UDP I/O stack in Rust. Here's how they went from <1 Gbit/s to 4 Gbit/s." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fast UDP I/O for Firefox in Rust" />
+  <meta name="twitter:description" content="From NSPR to quinn-udp: the full story of Firefox's UDP rewrite." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-fast-udp-io-firefox-rust.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script async="" src="https://plausible.io/js/pa-NZKToabHlGg_-94kzWyXo.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .comparison-table .neutral {
+      background: #f8fafc;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    .math-box {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      color: #0f172a;
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .math-box .big-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #2563eb;
+      display: block;
+      line-height: 1;
+    }
+    .math-box .math-label {
+      font-size: 1rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    /* ===== GOPEEK INLINE CARD STYLES ===== */
+    .gopeek-inline-card {
+      background: white;
+      border-radius: 20px;
+      border: 1.5px solid #e2e8f0;
+      padding: 1.75rem;
+      margin: 2rem 0;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      position: relative;
+    }
+    .gopeek-inline-card .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      color: #2563eb;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .gopeek-inline-card .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: gopeek-pulse 2s ease-in-out infinite;
+    }
+    .gopeek-inline-card h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin: 0 0 0.5rem 0;
+      color: #0f172a;
+    }
+    .gopeek-inline-card p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .gopeek-inline-card .store-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+    .gopeek-inline-card .store-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.8rem 1.1rem;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      text-decoration: none;
+      color: inherit;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .gopeek-inline-card .store-link:hover {
+      border-color: #2563eb;
+      background: #fafbff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+    }
+    .gopeek-inline-card .store-link .icon-wrap {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .gopeek-inline-card .store-link .icon-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .gopeek-inline-card .store-link .info {
+      flex: 1;
+    }
+    .gopeek-inline-card .store-link .info .name {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+    .gopeek-inline-card .store-link .info .desc {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+    .gopeek-inline-card .store-link .arrow {
+      color: #94a3b8;
+      font-size: 1rem;
+      transition: color 0.2s ease;
+    }
+    .gopeek-inline-card .store-link:hover .arrow {
+      color: #2563eb;
+    }
+    .gopeek-inline-card .store-link.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .gopeek-inline-card .store-link.disabled .info .name {
+      color: #94a3b8;
+    }
+    .gopeek-inline-card .soon-tag {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: 6px;
+      margin-left: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+    }
+
+    @keyframes gopeek-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* Code blocks */
+    pre {
+      background: #0f172a;
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    pre code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+    }
+    /* Inline code ONLY inside prose paragraphs and lists */
+    .prose p > code,
+    .prose li > code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.4rem;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+    /* Syntax highlighting */
+    .code-keyword { color: #c678dd; }
+    .code-string { color: #98c379; }
+    .code-comment { color: #5c6370; font-style: italic; }
+    .code-function { color: #61afef; }
+    .code-number { color: #d19a66; }
+    .code-operator { color: #56b6c2; }
+
+    /* Lightbox */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 2rem;
+    }
+    .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .lightbox-overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+    .lightbox-overlay.active img {
+      transform: scale(1);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .lightbox-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .gopeek-demo-img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      cursor: zoom-in;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .gopeek-demo-img:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    /* ASCII diagram box */
+    .ascii-diagram {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1.5rem;
+      border-radius: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      white-space: pre;
+    }
+
+    /* Inline code annotation */
+    .code-caption {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    /* Platform card */
+    .platform-card {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .platform-card h4 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .platform-card p {
+      margin: 0;
+      color: #475569;
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+    .platform-card .status {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .status.shipped { background: #dcfce7; color: #166534; }
+    .status.partial { background: #fef3c7; color: #92400e; }
+    .status.blocked { background: #fef2f2; color: #991b1b; }
+
+    @media (max-width: 640px) {
+      .cost-grid, .tradeoff-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Fast UDP I/O for Firefox in Rust</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Rust</span>
+      <span class="tag">Networking</span>
+      <span class="tag">Firefox</span>
+      <span class="tag">QUIC</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      Fast UDP I/O for Firefox in Rust
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>September 14, 2025</span>
+      <span>·</span>
+      <span>10 min read</span>
+      <span>·</span>
+      <span>By Max Inden</span>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        Around <strong>20% of Firefox's HTTP traffic</strong> today uses HTTP/3, which runs over QUIC, which in turn runs over UDP. That is a lot of UDP packets flying around. And until recently, Firefox was handling all of them with APIs from the Netscape era.
+      </p>
+
+      <p>
+        Firefox uses <strong>NSPR</strong> for most of its network I/O. The N in NSPR stands for Netscape. When it comes to UDP, NSPR only offers <code>PR_SendTo</code> and <code>PR_RecvFrom</code> — thin wrappers around POSIX <code>sendto</code> and <code>recvfrom</code>. One datagram per system call. Every time. Operating systems have moved on. Linux has <code>sendmmsg</code> and <code>recvmmsg</code>. Some kernels and NICs support <strong>GSO</strong> (Generic Segmentation Offload) and <strong>GRO</strong> (Generic Receive Offload). Each of these can dramatically reduce the per-datagram overhead.
+      </p>
+
+      <p>
+        So Mozilla asked: can we replace this aging stack with something modern, memory-safe, and faster? The answer was yes. The result is a <strong>4x throughput improvement</strong> in CPU-bound benchmarks.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">4×</span>
+          <span class="stat-label">Throughput gain<br>(CPU-bound)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">20%</span>
+          <span class="stat-label">Firefox HTTP/3<br>traffic share</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">1 yr</span>
+          <span class="stat-label">From prototype<br>to rollout</span>
+        </div>
+      </div>
+
+      <h2>The Basics: One Datagram at a Time</h2>
+
+      <p>
+        Traditionally, Firefox sends and receives single UDP datagrams via <code>sendto</code> and <code>recvfrom</code>. The OS passes each one to the NIC, which puts it on the wire. Simple, but expensive at scale — every datagram pays the full user-to-kernel transition cost, regardless of size.
+      </p>
+
+      <div class="ascii-diagram">    +----------------------+
+    |       Firefox        |
+    |    +-----------+     |
+    |    |   QUIC    |     |
+    |    +-----------+     |
+    +----------------------+
+              |
+         [ datagram ]
+              |
+    === User / Kernel ===
+              |
+         [ datagram ]
+              |
+    +----------------------+
+    |         OS           |
+    +----------------------+
+              |
+         [ datagram ]
+              |
+    +----------------------+
+    |         NIC          |
+    +----------------------+
+              |
+         [ datagram ]
+              |
+    +----------------------+
+    |      Internet        |
+    +----------------------+</div>
+
+      <h2>Batching: Many Datagrams, One Call</h2>
+
+      <p>
+        Modern OSes offer multi-message APIs. On Linux: <code>sendmmsg</code> and <code>recvmmsg</code>. Send a batch of datagrams in a single system call. The overhead that is independent of payload size — context switch, syscall entry/exit, socket lock — is paid once per batch, not once per packet.
+      </p>
+
+      <div class="ascii-diagram">    +--------------------------+
+    |         Firefox          |
+    |      +-----------+       |
+    |      |   QUIC    |       |
+    |      +-----------+       |
+    +--------------------------+
+                  |
+  [ datagram, datagram, datagram ]
+                  |
+    ===== User / Kernel =====
+                  |
+  [ datagram, datagram, datagram ]
+                  |
+    +--------------------------+
+    |           OS             |
+    +--------------------------+
+                  |
+  [ datagram, datagram, datagram ]
+                  |
+    +--------------------------+
+    |           NIC            |
+    +--------------------------+
+                  |
+  [ datagram, datagram, datagram ]
+                  |
+    +--------------------------+
+    |        Internet          |
+    +--------------------------+</div>
+
+      <h2>Segmentation Offload: One Giant, Many Small</h2>
+
+      <p>
+        GSO and GRO go further. Instead of batching multiple datagrams, you send <strong>one large UDP datagram</strong> — larger than the MTU — to the kernel. The kernel (or ideally the NIC) segments it into properly-sized packets, adds headers, and calculates checksums. On receive, multiple incoming packets get coalesced back into one large datagram.
+      </p>
+
+      <div class="ascii-diagram">    +------------------------------+
+    |           Firefox            |
+    |        +-----------+         |
+    |        |   QUIC    |         |
+    |        +-----------+         |
+    +------------------------------+
+                    |
+      [ large segmented datagram ]
+                    |
+      ====== User / Kernel ======
+                    |
+      [ large segmented datagram ]
+                    |
+    +------------------------------+
+    |             OS               |
+    +------------------------------+
+                    |
+      [ large segmented datagram ]
+                    |
+    +------------------------------+
+    |             NIC              |
+    +------------------------------+
+                    |
+    [ datagram, datagram, datagram ]
+                    |
+    +------------------------------+
+    |          Internet            |
+    +------------------------------+</div>
+
+      <div class="warning-box">
+        <strong>Note:</strong> Wireshark does not yet support GSO, which makes network-level debugging more of an adventure when these optimizations are active. Cloudflare's <a href="https://blog.cloudflare.com/accelerating-udp-packet-transmission-for-quic/">comprehensive study</a> has excellent benchmarks if you want the numbers.
+      </div>
+
+      <h2>The Rust Rewrite</h2>
+
+      <p>
+        The project started mid-2024. Goal: rewrite Firefox's QUIC UDP I/O in Rust, using modern syscalls across all tier-1 platforms (Windows, macOS, Linux, Android). Rust was the obvious choice — Firefox's QUIC state machine is already in Rust, so integration is seamless, and you get memory safety for free.
+      </p>
+
+      <p>
+        Instead of building from scratch, Mozilla built on top of <a href="https://github.com/quinn-rs/quinn">quinn-udp</a>, the UDP I/O library from the Quinn project. This sped things up massively. OS calls are full of idiosyncrasies, especially across versions, and Firefox supports some ancient ones — Android 5 was still on the supported list when this started.
+      </p>
+
+      <p>
+        By mid-2025, the new stack was rolling out to most Firefox users. CPU flamegraphs showed the majority of time now spent in actual I/O syscalls and cryptography — not in framework overhead.
+      </p>
+
+      <h2>Platform by Platform</h2>
+
+      <div class="platform-card">
+        <span class="status shipped">Shipped</span>
+        <h4>Linux</h4>
+        <p>The smoothest rollout. Linux has the most mature UDP optimization stack: <code>sendmmsg</code>/<code>recvmmsg</code> for batching, plus GSO/GRO for segmentation offloading. quinn-udp prioritizes GSO over sendmmsg for transmission — GSO is faster, and combining both has diminishing returns. Firefox uses one UDP socket per connection for privacy (harder to correlate traffic), which means it cannot leverage sendmmsg's cross-4-tuple batching anyway. GSO is the clear winner here. The switch was largely uneventful.</p>
+      </div>
+
+      <div class="platform-card">
+        <span class="status partial">Partial</span>
+        <h4>Windows</h4>
+        <p>Single-datagram <code>WSASendMsg</code> and <code>WSARecvMsg</code> work fine. But URO (coalesced receive) broke on ARM64 with WSL enabled — <code>WSARecvMsg</code> would not return a segment size, so Firefox could not tell where one QUIC packet ended and the next began. The reporter? A Mozilla employee. The fix? Max Inden bought the exact same laptop. URO remains disabled on Windows. USO (segmented send) also got rolled back after reports of increased packet loss and at least one network driver crash. More debugging needed. Microsoft has been notified.</p>
+      </div>
+
+      <div class="platform-card">
+        <span class="status partial">Partial</span>
+        <h4>macOS</h4>
+        <p>Switching from <code>sendto</code>/<code>recvfrom</code> to <code>sendmsg</code>/<code>recvmsg</code> went smoothly. macOS does not support UDP segmentation offloading at all. It does have two <em>undocumented</em> syscalls — <code>sendmsg_x</code> and <code>recvmsg_x</code> — for batching. Lars from Mozilla added support behind a feature flag. After multiple bugfix iterations, Mozilla decided <strong>not to ship it</strong>. Undocumented APIs that Apple could remove at any time are not something you want in a browser used by hundreds of millions.</p>
+      </div>
+
+      <div class="platform-card">
+        <span class="status shipped">Shipped</span>
+        <h4>Android</h4>
+        <p>Android is not Linux. x86 Android routes socket calls through <code>socketcall</code> instead of direct syscalls, and seccomp filters will crash you if you get it wrong. One single-line fix in quinn-udp fixed the dispatch. On API level 25 and below, setting ECN bits via <code>sendmsg</code> returns <code>EINVAL</code> — quinn-udp now retries with ECN disabled. The Quinn community also caught a bug where Android rejected GSO with a single segment. The upside of using a shared library: Firefox benefits from every fix upstream.</p>
+      </div>
+
+      <h2>ECN: A Nice Bonus</h2>
+
+      <p>
+        Modern syscalls come with another perk: ancillary data. Firefox can now send and receive <strong>Explicit Congestion Notification</strong> (ECN) bits across all major platforms. Nightly telemetry shows ~50% of QUIC connections now run on ECN-capable paths. With L4S gaining traction, this is a solid forward-looking win.
+      </p>
+
+      <p>
+        Mozilla replaced a Netscape-era UDP stack with a modern Rust implementation in about a year. Throughput on CPU-bound QUIC benchmarks jumped from under 1 Gbit/s to 4 Gbit/s. The rewrite is now live for most Firefox users. Not every optimization landed on every platform — Windows URO/USO and macOS batching are still works in progress — but the foundation is solid, memory-safe, and built on a community library that keeps improving.
+      </p>
+
+      <div class="highlight-box">
+        <strong>One-line rule:</strong> Sometimes the fastest path is not a new framework — it is replacing the 25-year-old wrapper around <code>sendto</code> with something that actually talks to the kernel like it is 2025.
+      </div>
+
+    </article>
+
+    <!--===== GOPEEK INLINE CARD (BOTTOM) =====-->
+    <div class="gopeek-inline-card">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Available Now
+      </div>
+      <h3>Get GoPeek</h3>
+      <p>Open links on your current page without creating new tabs. Available on Edge and Firefox. Chrome support coming soon.</p>
+      <div class="store-links">
+        <a class="store-link" href="https://microsoftedge.microsoft.com/addons/detail/gopeek/ffaeanmhghmohbponokefmbhfkkomnmk" rel="noopener" target="_blank">
+          <div class="icon-wrap">
+            <img alt="Microsoft Edge" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" />
+          </div>
+          <div class="info">
+            <div class="name">Microsoft Edge</div>
+            <div class="desc">Add to Edge — free</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="store-link" href="https://addons.mozilla.org/en-US/firefox/addon/gopeek/" rel="noopener" target="_blank">
+          <div class="icon-wrap">
+            <img alt="Mozilla Firefox" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" />
+          </div>
+          <div class="info">
+            <div class="name">Mozilla Firefox</div>
+            <div class="desc">Add to Firefox — free</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+        <div class="store-link disabled">
+          <div class="icon-wrap">
+            <img alt="Google Chrome" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" />
+          </div>
+          <div class="info">
+            <div class="name">
+              Google Chrome
+              <span class="soon-tag">Soon</span>
+            </div>
+            <div class="desc">Coming to the Chrome Web Store</div>
+          </div>
+        </div>
+      </div>
+      <img style="margin-top: 30px !important" src="https://gopeek-lovat.vercel.app/GoPeekDemo1.png" alt="GoPeek demo - preview links without opening tabs" class="gopeek-demo-img" onclick="openLightbox(this.src)" />
+    </div>
+    <!--===== END GOPEEK CARD =====-->
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Development</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-deno-vs-nodejs-proxy.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Deno vs Node.js: Building a Sub-ms Local Proxy for Link Previews</p>
+        </a>
+        <a href="blog-claude-opus-vs-glm-52.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Claude Opus 4.5 vs GLM-5.2</p>
+        </a>
+        <a href="blog-native-vs-electron-tab-hoarders.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Native Apps vs Electron Apps: The Desktop Tab Hoarders</p>
+        </a>
+        <a href="blog-v8-vs-spidermonkey-fragmentation.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">V8 vs SpiderMonkey: Memory Fragmentation at 100 Idle Tabs</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
+    <img src="" alt="Enlarged preview" id="lightbox-img" />
+  </div>
+
+  <script>
+    function openLightbox(src) {
+      const lb = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      img.src = src;
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(e) {
+      if (e.target === e.currentTarget || e.target.classList.contains('lightbox-close')) {
+        const lb = document.getElementById('lightbox');
+        lb.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const lb = document.getElementById('lightbox');
+        if (lb.classList.contains('active')) {
+          lb.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
