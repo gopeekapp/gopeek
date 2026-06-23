@@ -472,6 +472,68 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Lightbox */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 2rem;
+    }
+    .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .lightbox-overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+    .lightbox-overlay.active img {
+      transform: scale(1);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .lightbox-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .gopeek-demo-img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      cursor: zoom-in;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .gopeek-demo-img:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
   </style>
 </head>
 
@@ -646,5 +708,37 @@ EOF
     </div>
   </footer>
 
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
+    <img src="" alt="Enlarged preview" id="lightbox-img" />
+  </div>
+
+  <script>
+    function openLightbox(src) {
+      const lb = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      img.src = src;
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(e) {
+      if (e.target === e.currentTarget || e.target.classList.contains('lightbox-close')) {
+        const lb = document.getElementById('lightbox');
+        lb.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const lb = document.getElementById('lightbox');
+        if (lb.classList.contains('active')) {
+          lb.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+    });
+  </script>
 </body>
 </html>
