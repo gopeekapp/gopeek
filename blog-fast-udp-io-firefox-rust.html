@@ -892,6 +892,7 @@
       img.src = src;
       lb.classList.add('active');
       document.body.style.overflow = 'hidden';
+            if (window.plausible) plausible('Lightbox Open', { props: { src: src } });
     }
     function closeLightbox(e) {
       if (e.target === e.currentTarget || e.target.classList.contains('lightbox-close')) {
