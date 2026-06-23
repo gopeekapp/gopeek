@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You Already Have a Git Server | GoPeek</title>
+
+  <meta name="description" content="You already have a git server. Stop overcomplicating deployment. Use SSH + git hooks to publish anything." />
+  <meta name="keywords" content="git server, ssh git, git hooks, static site deployment, simple deployment, git push deploy" />
+
+  <meta property="og:title" content="You Already Have a Git Server | GoPeek" />
+  <meta property="og:description" content="You already have a git server. Stop overcomplicating deployment." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="You Already Have a Git Server" />
+  <meta name="twitter:description" content="SSH + git hooks = your entire deployment pipeline." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-you-already-have-a-git-server.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer data-domain="gopeek-lovat.vercel.app" src="https://plausible.io/js/script.js"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .comparison-table .neutral {
+      background: #f8fafc;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    .math-box {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      color: #0f172a;
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .math-box .big-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #2563eb;
+      display: block;
+      line-height: 1;
+    }
+    .math-box .math-label {
+      font-size: 1rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    /* ===== GOPEEK INLINE CARD STYLES ===== */
+    .gopeek-inline-card {
+      background: white;
+      border-radius: 20px;
+      border: 1.5px solid #e2e8f0;
+      padding: 1.75rem;
+      margin: 2rem 0;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      position: relative;
+    }
+    .gopeek-inline-card .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      color: #2563eb;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .gopeek-inline-card .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: gopeek-pulse 2s ease-in-out infinite;
+    }
+    .gopeek-inline-card h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin: 0 0 0.5rem 0;
+      color: #0f172a;
+    }
+    .gopeek-inline-card p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .gopeek-inline-card .store-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+    .gopeek-inline-card .store-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.8rem 1.1rem;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      text-decoration: none;
+      color: inherit;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .gopeek-inline-card .store-link:hover {
+      border-color: #2563eb;
+      background: #fafbff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+    }
+    .gopeek-inline-card .store-link .icon-wrap {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .gopeek-inline-card .store-link .icon-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .gopeek-inline-card .store-link .info {
+      flex: 1;
+    }
+    .gopeek-inline-card .store-link .info .name {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+    .gopeek-inline-card .store-link .info .desc {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+    .gopeek-inline-card .store-link .arrow {
+      color: #94a3b8;
+      font-size: 1rem;
+      transition: color 0.2s ease;
+    }
+    .gopeek-inline-card .store-link:hover .arrow {
+      color: #2563eb;
+    }
+    .gopeek-inline-card .store-link.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .gopeek-inline-card .store-link.disabled .info .name {
+      color: #94a3b8;
+    }
+    .gopeek-inline-card .soon-tag {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: 6px;
+      margin-left: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+    }
+
+    @keyframes gopeek-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* Code blocks */
+    pre {
+      background: #0f172a;
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    pre code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+    }
+    /* Inline code ONLY inside prose paragraphs and lists */
+    .prose p > code,
+    .prose li > code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.4rem;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+    /* Syntax highlighting */
+    .code-keyword { color: #c678dd; }
+    .code-string { color: #98c379; }
+    .code-comment { color: #5c6370; font-style: italic; }
+    .code-function { color: #61afef; }
+    .code-number { color: #d19a66; }
+    .code-operator { color: #56b6c2; }
+
+
+    /* Inline code annotation */
+    .code-caption {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    /* Backup callout */
+    .backup-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+      border: 1.5px solid #bbf7d0;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .backup-box h4 {
+      margin: 0 0 0.5rem 0;
+      color: #166534;
+      font-weight: 700;
+    }
+    .backup-box p {
+      margin: 0;
+      color: #475569;
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    @media (max-width: 640px) {
+      .cost-grid, .tradeoff-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>You Already Have a Git Server</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">DevOps</span>
+      <span class="tag">Git</span>
+      <span class="tag">Deployment</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      You Already Have a Git Server
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>2025-10-24 — 2026-01-26</span>
+      <span>·</span>
+      <span>4 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        If you have a git repository on a server with SSH access, you can just clone it:
+      </p>
+
+      <pre><code><span class="code-function">git</span> <span class="code-keyword">clone</span> <span class="code-string">ssh://username@hostname/path/to/repo</span></code></pre>
+
+      <p>
+        That is it. No Docker. No CI pipeline. No serverless function. No YAML file with 47 indents. Just SSH and git — two tools you already have.
+      </p>
+
+      <p>
+        Once you have done some work, you can push your changes back to the origin server. By default, git will not let you push to the branch that is currently checked out, but this is easy to change:
+      </p>
+
+      <p class="code-caption">Run this on the remote server.</p>
+      <pre><code><span class="code-function">git</span> <span class="code-keyword">config</span> receive.denyCurrentBranch updateInstead</code></pre>
+
+      <p>
+        This is a nice way to work on server-side files without SSH lag or error-prone copying. You edit locally, commit normally, and <code>git push</code> just works. The files land on the server exactly as they are in your repo. No <code>scp</code>. No <code>rsync</code> flags you forgot. No "oops I overwrote the wrong file."
+      </p>
+
+      <h2>Auto-Deploy with Hooks</h2>
+
+      <p>
+        If you need more than just a file server, git can run a shell script when it receives a new push:
+      </p>
+
+      <pre><code><span class="code-function">cat</span> > .git/hooks/post-update <<EOF
+<span class="code-comment">#!/bin/sh</span>
+<span class="code-keyword">set</span> -euo pipefail
+<span class="code-function">cd</span> /path/to/site
+/path/to/generator
+EOF
+<span class="code-function">chmod</span> a+x .git/hooks/post-update</code></pre>
+
+      <p>
+        You will even get the script's output sent back to your computer's terminal. So if your static site generator throws an error, you see it immediately. No tab-switching to a dashboard. No refreshing a build log page.
+      </p>
+
+      <div class="highlight-box">
+        <strong>I have git set up to this blog's site generator.</strong> It is very nice to be able to type up posts locally, and then push them to the server. Write. Commit. Push. Live. That is the whole workflow.
+      </div>
+
+      <!-- <h2>It Is Also Backed Up by Default</h2>
+
+      <div class="backup-box">
+        <h4>🛡️ Two copies, zero effort</h4>
+        <p>If the server breaks, you still have the copy on your laptop. If your laptop breaks, you can download everything from the server. Git is distributed by design. Your backup strategy is not a strategy — it is a side effect.</p>
+      </div>
+
+      <p>
+        Compare that to a typical "modern" setup: your files live in a proprietary CMS, the database is on a managed instance, the media is in object storage, and your deployment pipeline is a 200-line GitHub Actions file that breaks every time a dependency updates. And your backup? A cron job you set up once and forgot to monitor.
+      </p>
+
+      <p>
+        With git-over-SSH, you get version history, rollback, branching, and off-site backup for free. The tools are 20 years old and they will still be here in 20 more.
+      </p>
+
+      <div class="highlight-box">
+        <strong>One-line rule:</strong> If you can SSH into it, you can deploy to it. Stop complicating what git already solved.
+      </div>
+
+    </article> -->
+
+    <!--===== GOPEEK INLINE CARD (BOTTOM) =====-->
+    <div class="gopeek-inline-card">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Available Now
+      </div>
+      <h3>Get GoPeek</h3>
+      <p>Preview links without opening tabs. Available on Edge and Firefox. Chrome support coming soon.</p>
+      <div class="store-links">
+        <a class="store-link" href="https://microsoftedge.microsoft.com/addons/detail/gopeek/ffaeanmhghmohbponokefmbhfkkomnmk" rel="noopener" target="_blank">
+          <div class="icon-wrap">
+            <img alt="Microsoft Edge" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" />
+          </div>
+          <div class="info">
+            <div class="name">Microsoft Edge</div>
+            <div class="desc">Add to Edge — free</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="store-link" href="https://addons.mozilla.org/en-US/firefox/addon/gopeek/" rel="noopener" target="_blank">
+          <div class="icon-wrap">
+            <img alt="Mozilla Firefox" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" />
+          </div>
+          <div class="info">
+            <div class="name">Mozilla Firefox</div>
+            <div class="desc">Add to Firefox — free</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+        <div class="store-link disabled">
+          <div class="icon-wrap">
+            <img alt="Google Chrome" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" />
+          </div>
+          <div class="info">
+            <div class="name">
+              Google Chrome
+              <span class="soon-tag">Soon</span>
+            </div>
+            <div class="desc">Coming to the Chrome Web Store</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--===== END GOPEEK CARD =====-->
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Development</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-deno-vs-nodejs-proxy.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Deno vs Node.js: Building a Sub-ms Local Proxy for Link Previews</p>
+        </a>
+        <a href="blog-claude-opus-vs-glm-52.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Claude Opus 4.5 vs GLM-5.2</p>
+        </a>
+        <a href="blog-native-vs-electron-tab-hoarders.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Native Apps vs Electron Apps: The Desktop Tab Hoarders</p>
+        </a>
+        <a href="blog-v8-vs-spidermonkey-fragmentation.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">V8 vs SpiderMonkey: Memory Fragmentation at 100 Idle Tabs</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
