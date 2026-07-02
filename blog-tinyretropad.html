@@ -278,6 +278,7 @@
       text-align: center;
       box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
       position: relative;
+
     }
     .gopeek-inline-card .badge {
       display: inline-flex;
@@ -291,6 +292,7 @@
       border-radius: 9999px;
       margin-bottom: 1rem;
       letter-spacing: 0.02em;
+      
     }
     .gopeek-inline-card .badge-dot {
       width: 6px;
@@ -330,6 +332,7 @@
       color: inherit;
       text-align: left;
       transition: all 0.2s ease;
+      text-decoration: none !important;
     }
     .gopeek-inline-card .store-link:hover {
       border-color: #2563eb;
@@ -688,15 +691,7 @@
         TinyRetroPad is a Notepad-style text editor contained in roughly 2.5 kilobytes (KB). One kilobyte traditionally refers to 1,024 bytes, which means the new editor is definitely using a lot of optimization tricks to contain a usable application inside such a tiny package. Plummer forked TinyRetroPad from Dave's Tiny Editor, which was previously forked from the coder's <a href="https://github.com/PlummersSoftwareLLC/HelloAssembly">HelloAssembly project</a> (tiny.asm).
       </p>
 
-      <p>
-        Tiny.asm was designed to be the smallest possible Windows application, and TinyRetroPad is certainly a very small text editor. The new project keeps the same minimalist, size-obsessed spirit while providing some "modern" features such as Notepad-style Menus. Needless to say, both projects are programmed in Assembly.
-      </p>
-
-      <p>
-        Plummer explained that TinyRetroPad is essentially a wrapper built around the "RICHEDIT50W" control provided by the Windows API. All further additions to tiny.asm were kept as "cheap" as possible, exploiting Crinkler's compression algorithm to reduce the program's size at build time. The final executable file should work, look, and "feel" like a classic Notepad application, while being 100 times smaller than the latest Notepad version included in Windows 11.
-      </p>
-
-      <!--===== GOPEEK INLINE CARD (MIDDLE) =====-->
+<!--===== GOPEEK INLINE CARD (MIDDLE) =====-->
       <div class="gopeek-inline-card">
         <div class="badge">
           <span class="badge-dot"></span>
@@ -740,6 +735,31 @@
         </div>
       </div>
       <!--===== END GOPEEK CARD =====-->
+      
+      <p>
+        Tiny.asm was designed to be the smallest possible Windows application, and TinyRetroPad is certainly a very small text editor. The new project keeps the same minimalist, size-obsessed spirit while providing some "modern" features such as Notepad-style Menus. Needless to say, both projects are programmed in Assembly.
+      </p>
+
+      <p>
+        Plummer explained that TinyRetroPad is essentially a wrapper built around the "RICHEDIT50W" control provided by the Windows API. All further additions to tiny.asm were kept as "cheap" as possible, exploiting Crinkler's compression algorithm to reduce the program's size at build time. The final executable file should work, look, and "feel" like a classic Notepad application, while being 100 times smaller than the latest Notepad version included in Windows 11.
+      </p>
+
+      <!-- Inline article image -->
+<figure class="my-10">
+  <div class="glass rounded-2xl p-4">
+    <div class="w-full rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
+      <img
+        src="https://www.techspot.com/images2/news/bigimage/2026/07/2026-07-01-image-25-j_1100.webp"
+        alt="Descriptive image alt text"
+        class="w-full h-auto object-cover rounded-xl"
+        loading="lazy"
+      />
+    </div>
+    <figcaption class="text-center text-sm text-slate-500 mt-3">
+      Your image caption goes here.
+    </figcaption>
+  </div>
+</figure>
 
       <p>
         Plummer said that back in his Microsoft days, engineers knew pretty well that Notepad was for plain text editing while WordPad was for RTF editing jobs. It was an important difference, and coders were advised to never cross the streams. Meanwhile, today's Notepad is often being used by Microsoft as a guinea pig for testing unnecessary features, including generative AI and image embedding.
