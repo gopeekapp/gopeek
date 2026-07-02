@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Former Microsoft dev built a 2.5KB Notepad clone with zero AI features | GoPeek</title>
+
+  <meta name="description" content="Dave Plummer, former Microsoft developer and creator of Task Manager, built TinyRetroPad — a 2.5KB Notepad clone in Assembly with zero AI features." />
+  <meta name="keywords" content="tinyretropad, dave plummer, notepad clone, assembly, windows notepad, zero ai, 2.5kb text editor" />
+
+  <meta property="og:title" content="Former Microsoft dev built a 2.5KB Notepad clone with zero AI features | GoPeek" />
+  <meta property="og:description" content="Dave Plummer's TinyRetroPad: a 2.5KB Assembly text editor with no AI, no bloat, just pure retro Notepad functionality." />
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Former Microsoft dev built a 2.5KB Notepad clone with zero AI features" />
+  <meta name="twitter:description" content="A 2.5KB Assembly text editor with zero AI features." />
+
+  <link rel="icon" href="GoPeek_Logo.png" type="image/png" />
+  <link rel="canonical" href="https://gopeek-lovat.vercel.app/blog-tinyretropad.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer data-domain="gopeek-lovat.vercel.app" src="https://plausible.io/js/script.js"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #f8fafc; overflow-x: hidden; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #0f172a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .prose h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .prose h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .prose p {
+      color: #475569;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+    }
+
+    .prose ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #475569;
+    }
+
+    .prose ul li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .prose strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prose a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .prose a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .warning-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .scenario-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-box h4 {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+      background: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .comparison-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .winner {
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .comparison-table .loser {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .comparison-table .neutral {
+      background: #f8fafc;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      margin: 3rem 0;
+    }
+
+    .cta-box h3 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box p {
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumbs {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumbs a {
+      color: #64748b;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+      color: #2563eb;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    .math-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .math-box .big-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #60a5fa;
+      display: block;
+      line-height: 1;
+    }
+
+    .math-box .math-label {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+
+    /* ===== GOPEEK INLINE CARD STYLES ===== */
+    .gopeek-inline-card {
+      background: white;
+      border-radius: 20px;
+      border: 1.5px solid #e2e8f0;
+      padding: 1.75rem;
+      margin: 2rem 0;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      position: relative;
+    }
+    .gopeek-inline-card .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+      color: #2563eb;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .gopeek-inline-card .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: gopeek-pulse 2s ease-in-out infinite;
+    }
+    .gopeek-inline-card h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin: 0 0 0.5rem 0;
+      color: #0f172a;
+    }
+    .gopeek-inline-card p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .gopeek-inline-card .store-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+    .gopeek-inline-card .store-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.8rem 1.1rem;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      text-decoration: none;
+      color: inherit;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .gopeek-inline-card .store-link:hover {
+      border-color: #2563eb;
+      background: #fafbff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+    }
+    .gopeek-inline-card .store-link .icon-wrap {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .gopeek-inline-card .store-link .icon-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .gopeek-inline-card .store-link .info {
+      flex: 1;
+    }
+    .gopeek-inline-card .store-link .info .name {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+    .gopeek-inline-card .store-link .info .desc {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+    .gopeek-inline-card .store-link .arrow {
+      color: #94a3b8;
+      font-size: 1rem;
+      transition: color 0.2s ease;
+    }
+    .gopeek-inline-card .store-link:hover .arrow {
+      color: #2563eb;
+    }
+    .gopeek-inline-card .store-link.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .gopeek-inline-card .store-link.disabled .info .name {
+      color: #94a3b8;
+    }
+    .gopeek-inline-card .soon-tag {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: 6px;
+      margin-left: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+    }
+
+    @keyframes gopeek-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* Scorecard table */
+    .scorecard-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.92rem;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .scorecard-table thead {
+      background: #0f172a;
+      color: white;
+    }
+    .scorecard-table th {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .scorecard-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    .scorecard-table tbody tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    .scorecard-table tbody tr:hover {
+      background: #f1f5f9;
+    }
+    .scorecard-table .winner {
+      color: #16a34a;
+      font-weight: 700;
+    }
+    .scorecard-table .note {
+      color: #64748b;
+      font-size: 0.8rem;
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    /* Cost cards */
+    .cost-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .cost-card {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.25rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .cost-card:hover {
+      border-color: #2563eb;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+    }
+    .cost-card .model-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+    .cost-card .price {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0.4rem 0;
+    }
+    .cost-card .price-label {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+    .cost-card .route {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 0.5rem;
+    }
+    .cost-card.winner-card {
+      border-color: #22c55e;
+      background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+    }
+    .cost-card.winner-card .price {
+      color: #16a34a;
+    }
+    .cost-card .savings-badge {
+      display: inline-block;
+      background: #dcfce7;
+      color: #16a34a;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-top: 0.4rem;
+    }
+
+    /* Monthly estimate */
+    .monthly-box {
+      background: #0f172a;
+      color: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .monthly-box h4 {
+      margin: 0 0 1rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .monthly-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #1e293b;
+    }
+    .monthly-row:last-child {
+      border-bottom: none;
+    }
+    .monthly-row .model {
+      font-weight: 600;
+    }
+    .monthly-row .amount {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .monthly-row .amount.highlight {
+      color: #4ade80;
+    }
+    .monthly-row .amount.loss {
+      color: #f87171;
+    }
+    .monthly-gap {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed #334155;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+    .monthly-gap strong {
+      color: #fbbf24;
+    }
+
+    /* Tradeoff sections */
+    .tradeoff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .tradeoff-card {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.25rem;
+    }
+    .tradeoff-card h4 {
+      margin: 0 0 0.75rem 0;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .tradeoff-card.choose-claude h4 { color: #7c3aed; }
+    .tradeoff-card.choose-glm h4 { color: #2563eb; }
+    .tradeoff-card ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+    .tradeoff-card li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Switch friction */
+    .switch-box {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+    }
+    .switch-box h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #475569;
+    }
+    .switch-box p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 640px) {
+      .cost-grid, .tradeoff-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+<base target="_blank">
+</head>
+
+<body class="text-slate-900 min-h-screen font-sans">
+
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-120px] left-[-80px] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-blue-400/20 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-[-120px] right-[-80px] w-[320px] md:w-[420px] h-[320px] md:h-[420px] bg-indigo-400/20 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3">
+      <img src="GoPeek_Logo.png" alt="GoPeek Logo" class="w-10 h-10 object-contain drop-shadow-md rounded-xl" />
+      <span class="text-xl font-bold text-slate-800">GoPeek</span>
+    </a>
+    <a href="index.html#install" class="glass text-slate-800 font-medium px-4 py-2 rounded-xl hover:bg-white transition text-sm">
+      Get GoPeek
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-24">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a>
+      <span> / </span>
+      <a href="blog.html">Blog</a>
+      <span> / </span>
+      <span>Former Microsoft dev built a 2.5KB Notepad clone with zero AI features</span>
+    </nav>
+
+    <div class="mb-6">
+      <span class="tag">Windows</span>
+      <span class="tag">Assembly</span>
+      <span class="tag">Retro Computing</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-6 gradient-text">
+      Former Microsoft dev built a 2.5KB Notepad clone with zero AI features
+    </h1>
+
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-10">
+      <span>July 2, 2026</span>
+      <span>·</span>
+      <span>4 min read</span>
+      <span>·</span>
+      <span>By GoPeek Team</span>
+    </div>
+
+    <!-- <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <div class="text-center p-8">
+          <div class="text-6xl mb-4">📝</div>
+          <p class="text-slate-500 font-medium">TinyRetroPad — 2.5KB of pure Assembly</p>
+        </div>
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">Dave Plummer's TinyRetroPad: a 100x smaller Notepad with zero AI, zero bloat, and pure retro functionality.</p>
+    </div> -->
+    
+    <div class="glass rounded-2xl p-4 mb-10">
+      <div class="w-full rounded-xl bg-slate-100 flex items-center justify-center aspect-video overflow-hidden border border-slate-200">
+        <img src="tinypad.webp" alt="TinyRetroPad — 2.5KB of pure Assembly" class="w-full h-full object-contain" loading="lazy" />
+      </div>
+      <p class="text-center text-sm text-slate-500 mt-3">TinyRetroPad — 2.5KB of pure Assembly</p>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        Dave Plummer started his programmer's career at Microsoft back in the MS-DOS days. He knows a thing or two about code optimization, which is why he is now trying to strip Notepad of the unwanted AI shovelware Microsoft has been adding over the past few years.
+      </p>
+
+      <p>
+        Plummer is the man who claims to have created some major Windows features, including the original Task Manager application. Now, the YouTuber and retired developer shared his latest creation: a text editor named <a href="https://github.com/PlummersSoftwareLLC/TinyRetroPad">TinyRetroPad</a>, which is designed to mimic Notepad's text editing functionality while staying as small as possible on disk.
+      </p>
+
+      <p>
+        TinyRetroPad is a Notepad-style text editor contained in roughly 2.5 kilobytes (KB). One kilobyte traditionally refers to 1,024 bytes, which means the new editor is definitely using a lot of optimization tricks to contain a usable application inside such a tiny package. Plummer forked TinyRetroPad from Dave's Tiny Editor, which was previously forked from the coder's <a href="https://github.com/PlummersSoftwareLLC/HelloAssembly">HelloAssembly project</a> (tiny.asm).
+      </p>
+
+      <p>
+        Tiny.asm was designed to be the smallest possible Windows application, and TinyRetroPad is certainly a very small text editor. The new project keeps the same minimalist, size-obsessed spirit while providing some "modern" features such as Notepad-style Menus. Needless to say, both projects are programmed in Assembly.
+      </p>
+
+      <p>
+        Plummer explained that TinyRetroPad is essentially a wrapper built around the "RICHEDIT50W" control provided by the Windows API. All further additions to tiny.asm were kept as "cheap" as possible, exploiting Crinkler's compression algorithm to reduce the program's size at build time. The final executable file should work, look, and "feel" like a classic Notepad application, while being 100 times smaller than the latest Notepad version included in Windows 11.
+      </p>
+
+      <!--===== GOPEEK INLINE CARD (MIDDLE) =====-->
+      <div class="gopeek-inline-card">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Available Now
+        </div>
+        <h3>Get GoPeek</h3>
+        <p>Preview links without opening tabs. Available on Edge and Firefox. Chrome support coming soon.</p>
+        <div class="store-links">
+          <a class="store-link" href="https://microsoftedge.microsoft.com/addons/detail/gopeek/ffaeanmhghmohbponokefmbhfkkomnmk" rel="noopener" target="_blank">
+            <div class="icon-wrap">
+              <img alt="Microsoft Edge" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" />
+            </div>
+            <div class="info">
+              <div class="name">Microsoft Edge</div>
+              <div class="desc">Add to Edge — free</div>
+            </div>
+            <span class="arrow">→</span>
+          </a>
+          <a class="store-link" href="https://addons.mozilla.org/en-US/firefox/addon/gopeek/" rel="noopener" target="_blank">
+            <div class="icon-wrap">
+              <img alt="Mozilla Firefox" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" />
+            </div>
+            <div class="info">
+              <div class="name">Mozilla Firefox</div>
+              <div class="desc">Add to Firefox — free</div>
+            </div>
+            <span class="arrow">→</span>
+          </a>
+          <div class="store-link disabled">
+            <div class="icon-wrap">
+              <img alt="Google Chrome" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" />
+            </div>
+            <div class="info">
+              <div class="name">
+                Google Chrome
+                <span class="soon-tag">Soon</span>
+              </div>
+              <div class="desc">Coming to the Chrome Web Store</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--===== END GOPEEK CARD =====-->
+
+      <p>
+        Plummer said that back in his Microsoft days, engineers knew pretty well that Notepad was for plain text editing while WordPad was for RTF editing jobs. It was an important difference, and coders were advised to never cross the streams. Meanwhile, today's Notepad is often being used by Microsoft as a guinea pig for testing unnecessary features, including generative AI and image embedding.
+      </p>
+
+      <p>
+        Plummer is not a fan of the modern Notepad, so he decided to rebuild the tool from scratch by creating TinyRetroPad. The new editor should resemble the Notepad version included in Windows XP, with no unnecessary features and absolutely no AI whatsoever.
+      </p>
+
+      <p>
+        Plummer is credited with making some significant contributions to Microsoft software products, and coding some minor annoyances as well. After retiring from the company, the coder founded his own venture named SoftwareOnline. The firm made money by selling software products with questionable value, and was later sued by the Washington State Attorney General's Office for violating the Consumer Protection Act.
+      </p>
+
+      <div class="highlight-box">
+        <strong>The bottom line:</strong> At 2.5KB, TinyRetroPad proves that a perfectly functional text editor doesn't need AI, image embedding, or bloat. Sometimes, the best software is the software that does one thing and does it well.
+      </div>
+
+    </article>
+
+    <!--===== GOPEEK INLINE CARD (BOTTOM) =====-->
+    <div class="gopeek-inline-card">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Available Now
+      </div>
+      <h3>Get GoPeek</h3>
+      <p>Preview links without opening tabs. Available on Edge and Firefox. Chrome support coming soon.</p>
+      <div class="store-links">
+        <a class="store-link" href="https://microsoftedge.microsoft.com/addons/detail/gopeek/ffaeanmhghmohbponokefmbhfkkomnmk" rel="noopener" target="_blank">
+          <div class="icon-wrap">
+            <img alt="Microsoft Edge" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Microsoft_Edge_logo_%282019%29.png" />
+          </div>
+          <div class="info">
+            <div class="name">Microsoft Edge</div>
+            <div class="desc">Add to Edge — free</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="store-link" href="https://addons.mozilla.org/en-US/firefox/addon/gopeek/" rel="noopener" target="_blank">
+          <div class="icon-wrap">
+            <img alt="Mozilla Firefox" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" />
+          </div>
+          <div class="info">
+            <div class="name">Mozilla Firefox</div>
+            <div class="desc">Add to Firefox — free</div>
+          </div>
+          <span class="arrow">→</span>
+        </a>
+        <div class="store-link disabled">
+          <div class="icon-wrap">
+            <img alt="Google Chrome" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" />
+          </div>
+          <div class="info">
+            <div class="name">
+              Google Chrome
+              <span class="soon-tag">Soon</span>
+            </div>
+            <div class="desc">Coming to the Chrome Web Store</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--===== END GOPEEK CARD =====-->
+
+    <div class="mt-16">
+      <h3 class="text-xl font-bold mb-4 text-slate-900">More on Tech & Productivity</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="blog-claude-opus-vs-glm-52.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Claude Opus 4.5 vs GLM-5.2</p>
+        </a>
+        <a href="blog-deno-vs-nodejs-proxy.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Deno vs Node.js: Building a Sub-ms Local Proxy for Link Previews</p>
+        </a>
+        <a href="blog-developer-tab-survey.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">I Asked 50 Developers How They Manage Browser Tabs (And the Results Are Wild)</p>
+        </a>
+        <a href="blog-native-vs-electron-tab-hoarders.html" class="glass rounded-2xl p-5 hover:scale-[1.02] transition block">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Read Next</p>
+          <p class="font-bold text-slate-800">Native Apps vs Electron Apps: The Desktop Tab Hoarders</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-10 pt-4 text-slate-500 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-200/50">
+    <div>© 2026 GoPeek</div>
+    <div class="flex items-center gap-5">
+      <a href="privacy.html" class="hover:text-slate-900 transition">Privacy</a>
+      <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+      <a href="blog.html" class="hover:text-slate-900 transition">Blog</a>
+    </div>
+  </footer>
+
+</body>
+</html>
